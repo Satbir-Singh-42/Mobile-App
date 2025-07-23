@@ -8,6 +8,7 @@ import { useLocation } from "wouter";
 import { ArrowLeftIcon, FingerprintIcon, ShieldCheckIcon, KeyIcon, UserIcon, EditIcon, LanguagesIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { authAPI } from "@/lib/auth";
+import { useTranslation, createLanguageChangeEvent } from "@/lib/i18n";
 // Using native select for language dropdown
 
 interface BiometricSettings {
@@ -23,6 +24,8 @@ interface BiometricSettings {
 export const SettingsPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { t } = useTranslation();
+  const [forceRerender, setForceRerender] = useState(0);
   const [biometricSettings, setBiometricSettings] = useState<BiometricSettings>({
     fingerprintEnabled: false,
     faceIdEnabled: false,
@@ -60,6 +63,14 @@ export const SettingsPage = (): JSX.Element => {
     checkBiometricSupport();
     loadSettings();
     loadUserProfile();
+
+    // Listen for language changes
+    const handleLanguageChange = () => {
+      setForceRerender(prev => prev + 1);
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    return () => window.removeEventListener('languageChanged', handleLanguageChange);
   }, []);
 
   const loadUserProfile = () => {
@@ -297,9 +308,10 @@ export const SettingsPage = (): JSX.Element => {
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
     localStorage.setItem('userLanguage', language);
+    createLanguageChangeEvent();
     toast({
-      title: "Language Updated",
-      description: `Language preference changed to ${language}`,
+      title: t('language_updated'),
+      description: `${t('language_changed_to')} ${language}`,
     });
   };
 
@@ -315,7 +327,7 @@ export const SettingsPage = (): JSX.Element => {
         >
           <ArrowLeftIcon className="h-6 w-6 text-[#4157ff]" />
         </Button>
-        <h1 className="font-['Poppins'] font-semibold text-xl text-[#242424]">Settings</h1>
+        <h1 className="font-['Poppins'] font-semibold text-xl text-[#242424]">{t('settings')}</h1>
         <div className="w-10" />
       </div>
 
@@ -326,7 +338,7 @@ export const SettingsPage = (): JSX.Element => {
           <CardHeader>
             <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
               <UserIcon className="h-6 w-6 text-[#4157ff]" />
-              Profile Settings
+{t('profile_settings')}
             </CardTitle>
             <CardDescription className="font-['Poppins'] text-sm text-gray-600">
               Manage your account information and personal details.
@@ -338,7 +350,7 @@ export const SettingsPage = (): JSX.Element => {
                 <div className="p-4 bg-gray-50 rounded-xl">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-['Poppins'] text-sm font-medium text-gray-600">Username</span>
+                      <span className="font-['Poppins'] text-sm font-medium text-gray-600">{t('username')}</span>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -353,13 +365,13 @@ export const SettingsPage = (): JSX.Element => {
                 </div>
                 <div className="p-4 bg-gray-50 rounded-xl">
                   <div className="space-y-2">
-                    <span className="font-['Poppins'] text-sm font-medium text-gray-600">Email</span>
+                    <span className="font-['Poppins'] text-sm font-medium text-gray-600">{t('email')}</span>
                     <p className="font-['Poppins'] text-[#242424]">{profileData.email}</p>
                   </div>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-xl">
                   <div className="space-y-2">
-                    <span className="font-['Poppins'] text-sm font-medium text-gray-600">Phone</span>
+                    <span className="font-['Poppins'] text-sm font-medium text-gray-600">{t('phone')}</span>
                     <p className="font-['Poppins'] text-[#242424]">{profileData.phone || 'Not provided'}</p>
                   </div>
                 </div>
@@ -367,7 +379,7 @@ export const SettingsPage = (): JSX.Element => {
             ) : (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="font-['Poppins'] text-sm font-medium">Username</Label>
+                  <Label htmlFor="username" className="font-['Poppins'] text-sm font-medium">{t('username')}</Label>
                   <Input
                     id="username"
                     value={profileData.username}
@@ -376,7 +388,7 @@ export const SettingsPage = (): JSX.Element => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="font-['Poppins'] text-sm font-medium">Email</Label>
+                  <Label htmlFor="email" className="font-['Poppins'] text-sm font-medium">{t('email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -386,7 +398,7 @@ export const SettingsPage = (): JSX.Element => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="font-['Poppins'] text-sm font-medium">Phone</Label>
+                  <Label htmlFor="phone" className="font-['Poppins'] text-sm font-medium">{t('phone')}</Label>
                   <Input
                     id="phone"
                     value={profileData.phone}
@@ -400,7 +412,7 @@ export const SettingsPage = (): JSX.Element => {
                     disabled={isUpdatingProfile}
                     className="flex-1 bg-[#4157ff] hover:bg-[#3146e6] font-['Poppins']"
                   >
-                    {isUpdatingProfile ? 'Updating...' : 'Save Changes'}
+{isUpdatingProfile ? 'Updating...' : t('save_changes')}
                   </Button>
                   <Button
                     variant="outline"
@@ -410,7 +422,7 @@ export const SettingsPage = (): JSX.Element => {
                     }}
                     className="flex-1 font-['Poppins']"
                   >
-                    Cancel
+                    {t('cancel')}
                   </Button>
                 </div>
               </div>
@@ -423,7 +435,7 @@ export const SettingsPage = (): JSX.Element => {
           <CardHeader>
             <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
               <KeyIcon className="h-6 w-6 text-[#4157ff]" />
-              Change Password
+              {t('change_password')}
             </CardTitle>
             <CardDescription className="font-['Poppins'] text-sm text-gray-600">
               Update your account password for enhanced security.
@@ -436,7 +448,7 @@ export const SettingsPage = (): JSX.Element => {
                 variant="outline"
                 className="w-full font-['Poppins']"
               >
-                Change Password
+                {t('change_password')}
               </Button>
             ) : (
               <div className="space-y-4">
@@ -486,7 +498,7 @@ export const SettingsPage = (): JSX.Element => {
                     }}
                     className="flex-1 font-['Poppins']"
                   >
-                    Cancel
+                    {t('cancel')}
                   </Button>
                 </div>
               </div>
@@ -499,15 +511,15 @@ export const SettingsPage = (): JSX.Element => {
           <CardHeader>
             <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
               <LanguagesIcon className="h-6 w-6 text-[#4157ff]" />
-              Language Preferences
+{t('language_preferences')}
             </CardTitle>
             <CardDescription className="font-['Poppins'] text-sm text-gray-600">
-              Choose your preferred language for the app interface and content.
+{t('choose_language_description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <Label className="font-['Poppins'] text-sm font-medium">App Language</Label>
+              <Label className="font-['Poppins'] text-sm font-medium">{t('app_language')}</Label>
               <select 
                 value={selectedLanguage} 
                 onChange={(e) => handleLanguageChange(e.target.value)}

@@ -17,14 +17,25 @@ import {
   UserIcon
 } from "lucide-react";
 import { authAPI } from "@/lib/auth";
+import { useTranslation } from "@/lib/i18n";
 
 export const ProfilePage = (): JSX.Element => {
   const [, setLocation] = useLocation();
   const [user, setUser] = useState<any>(null);
+  const { t } = useTranslation();
+  const [forceRerender, setForceRerender] = useState(0);
 
   useEffect(() => {
     const userData = authAPI.getUser();
     setUser(userData);
+
+    // Listen for language changes
+    const handleLanguageChange = () => {
+      setForceRerender(prev => prev + 1);
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    return () => window.removeEventListener('languageChanged', handleLanguageChange);
   }, []);
 
   const getInitials = (username: string) => {
@@ -34,27 +45,27 @@ export const ProfilePage = (): JSX.Element => {
   const menuItems = [
     {
       icon: <EditIcon className="h-5 w-5 text-gray-600" />,
-      title: "Edit Profile",
+      title: t('edit_profile'),
       action: () => setLocation("/settings")
     },
     {
       icon: <BookOpenIcon className="h-5 w-5 text-gray-600" />,
-      title: "Learning Progress",
+      title: t('learning_progress'),
       action: () => setLocation("/dashboard")
     },
     {
       icon: <TrendingUpIcon className="h-5 w-5 text-gray-600" />,
-      title: "Goals Summary",
+      title: t('goals_summary'),
       action: () => setLocation("/dashboard")
     },
     {
       icon: <ShieldCheckIcon className="h-5 w-5 text-gray-600" />,
-      title: "Security & Settings",
+      title: t('security_settings'),
       action: () => setLocation("/settings")
     },
     {
       icon: <HelpCircleIcon className="h-5 w-5 text-gray-600" />,
-      title: "Help & Feedback",
+      title: t('help_feedback'),
       action: () => {}
     }
   ];
@@ -106,7 +117,7 @@ export const ProfilePage = (): JSX.Element => {
         >
           <ArrowLeftIcon className="h-6 w-6 text-gray-600" />
         </Button>
-        <h1 className="font-['Poppins'] font-semibold text-lg text-[#242424]">My Profile</h1>
+        <h1 className="font-['Poppins'] font-semibold text-lg text-[#242424]">{t('profile')}</h1>
         <div className="w-10" />
       </div>
 
@@ -121,7 +132,7 @@ export const ProfilePage = (): JSX.Element => {
               Hi, {user.username}!
             </h2>
             <p className="font-['Poppins'] text-sm text-gray-600">
-              Welcome to Face2Finance
+              {t('welcome_to_face2finance')}
             </p>
           </div>
         </div>
