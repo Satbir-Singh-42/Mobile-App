@@ -59,15 +59,15 @@ export const LoginPage = (): JSX.Element => {
         <div className="w-full max-w-md mx-auto space-y-6 sm:space-y-8">
           {/* Header */}
           <div className="text-center space-y-4 sm:space-y-6">
-            <h1 className="font-['Anta'] text-[#242424] text-2xl sm:text-3xl md:text-4xl tracking-[-2px] sm:tracking-[-4px]">
+            <h1 className="font-['Anta'] text-[#242424] text-3xl sm:text-4xl md:text-5xl tracking-[-2px] sm:tracking-[-4px]">
               Face2Finance
             </h1>
             
             <div className="space-y-2">
-              <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-lg sm:text-xl md:text-2xl leading-tight">
+              <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-xl sm:text-2xl md:text-3xl leading-tight">
                 Welcome Back
               </h2>
-              <p className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base">
+              <p className="font-['Poppins'] font-medium text-[#4157ff] text-base sm:text-lg md:text-xl">
                 Login to continue
               </p>
             </div>

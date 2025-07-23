@@ -144,7 +144,7 @@ export const Questionnaire = mongoose.model('Questionnaire', questionnaireSchema
 export const connectDB = async (): Promise<void> => {
   try {
     // Use the provided MongoDB connection string
-    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://satbirsinghubhi:iVGmMxlrke69nx0I@cluster0.ygrqvfb.mongodb.net/face2finance';
+    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://satbirsinghubhi:Nobody.1234@cluster0.ygrqvfb.mongodb.net/face2finance?retryWrites=true&w=majority';
     
     await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
