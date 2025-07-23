@@ -78,14 +78,14 @@ export const GamingPage = (): JSX.Element => {
   );
 
   const renderMapView = () => (
-    <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-6 relative overflow-hidden">
+    <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-48 relative overflow-hidden">
       {/* Decorative Background Elements */}
-      <div className="absolute top-20 left-8 w-3 h-3 bg-white/20 rounded-full"></div>
-      <div className="absolute top-32 right-12 w-2 h-2 bg-white/15 rounded-full"></div>
-      <div className="absolute bottom-40 left-16 w-4 h-4 bg-white/10 rounded-full"></div>
-      <div className="absolute top-48 right-8 w-2 h-2 bg-white/25 rounded-full"></div>
+      <div className="absolute top-20 left-4 w-2 h-2 bg-white/20 rounded-full"></div>
+      <div className="absolute top-32 right-4 w-1 h-1 bg-white/15 rounded-full"></div>
+      <div className="absolute bottom-80 left-8 w-2 h-2 bg-white/10 rounded-full"></div>
+      <div className="absolute top-48 right-12 w-1 h-1 bg-white/25 rounded-full"></div>
       
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex items-center justify-between mb-8">
         <Button
           variant="ghost"
           size="sm"
@@ -95,101 +95,65 @@ export const GamingPage = (): JSX.Element => {
           <ArrowLeftIcon className="h-6 w-6" />
         </Button>
         <div className="text-center">
-          <h1 className="text-2xl font-bold font-['Poppins']">Map 1</h1>
-          <p className="text-sm opacity-75 mt-1">Financial Basics Journey</p>
+          <h1 className="text-xl font-bold font-['Poppins']">Map 1</h1>
+          <p className="text-xs opacity-75 mt-1">Financial Basics Journey</p>
         </div>
         <div className="w-10"></div>
       </div>
 
       {/* Map Progress Path */}
-      <div className="flex flex-col items-center space-y-6 mt-12 relative">
+      <div className="flex flex-col items-center space-y-4 mt-8 pb-8">
         {/* Level 4 - Locked */}
-        <div className="relative">
-          <div className="w-20 h-20 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg border-4 border-gray-300/30">
-            <span className="text-white font-bold text-xl">4</span>
-          </div>
-          <div className="absolute -right-8 top-1/2 transform -translate-y-1/2">
-            <div className="w-6 h-6 bg-gray-400/50 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
-            </div>
-          </div>
+        <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg">
+          <span className="text-white font-bold">4</span>
         </div>
         
         {/* Connecting Path */}
-        <div className="w-2 h-16 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full relative">
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-gray-500 rounded-full"></div>
-        </div>
+        <div className="w-1 h-8 bg-gray-400 rounded-full"></div>
         
         {/* Level 3 - Locked */}
-        <div className="relative">
-          <div className="w-20 h-20 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg border-4 border-gray-300/30">
-            <span className="text-white font-bold text-xl">3</span>
-          </div>
-          <div className="absolute -left-8 top-1/2 transform -translate-y-1/2">
-            <div className="w-6 h-6 bg-gray-400/50 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
-            </div>
-          </div>
+        <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg">
+          <span className="text-white font-bold">3</span>
         </div>
         
         {/* Connecting Path */}
-        <div className="w-2 h-16 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full relative">
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-gray-500 rounded-full"></div>
-        </div>
+        <div className="w-1 h-8 bg-gray-400 rounded-full"></div>
         
         {/* Level 2 - Locked */}
-        <div className="relative">
-          <div className="w-20 h-20 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg border-4 border-gray-300/30">
-            <span className="text-white font-bold text-xl">2</span>
-          </div>
-          <div className="absolute -right-8 top-1/2 transform -translate-y-1/2">
-            <div className="w-6 h-6 bg-gray-400/50 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
-            </div>
-          </div>
+        <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg">
+          <span className="text-white font-bold">2</span>
         </div>
         
         {/* Connecting Path - Active */}
-        <div className="w-2 h-16 bg-gradient-to-b from-green-400 to-green-500 rounded-full relative animate-pulse">
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-green-400 rounded-full shadow-lg"></div>
-        </div>
+        <div className="w-1 h-8 bg-green-400 rounded-full"></div>
         
         {/* Level 1 - Active/Available */}
-        <div className="relative">
-          <Button
-            onClick={() => setCurrentView('quiz')}
-            className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 rounded-full flex items-center justify-center shadow-xl border-4 border-green-300/50 transition-all duration-300 hover:scale-110"
-          >
-            <span className="text-white font-bold text-xl">1</span>
-          </Button>
-          <div className="absolute -left-8 top-1/2 transform -translate-y-1/2">
-            <div className="w-6 h-6 bg-green-400/70 rounded-full flex items-center justify-center animate-pulse">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            </div>
-          </div>
-          {/* Glow effect */}
-          <div className="absolute inset-0 w-20 h-20 bg-green-400/30 rounded-full animate-ping"></div>
-        </div>
+        <Button
+          onClick={() => setCurrentView('quiz')}
+          className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-105"
+        >
+          <span className="text-white font-bold">1</span>
+        </Button>
       </div>
 
       {/* Bottom Info Cards */}
-      <div className="absolute bottom-8 left-6 right-6 space-y-3">
+      <div className="fixed bottom-0 left-0 right-0 p-6 space-y-3">
         {/* Current Challenge Info */}
         <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center border border-white/20">
-          <div className="text-orange-400 text-3xl mb-2">!</div>
+          <div className="text-orange-400 text-2xl mb-2">!</div>
           <p className="text-sm font-medium mb-1">Complete Level 1 to unlock the next challenge</p>
           <p className="text-xs opacity-75">Progress: 0/4 levels completed</p>
         </div>
         
         {/* Next Map Preview */}
-        <div className="bg-gradient-to-r from-orange-500/20 to-purple-500/20 backdrop-blur-md rounded-2xl p-4 text-center border border-orange-400/30">
-          <div className="flex items-center justify-center space-x-2 mb-2">
-            <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-            <span className="text-sm font-medium text-orange-300">Map 2</span>
-            <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+        <div className="bg-gradient-to-r from-orange-500/20 to-purple-500/20 backdrop-blur-md rounded-xl p-3 text-center border border-orange-400/30">
+          <div className="flex items-center justify-center space-x-2 mb-1">
+            <div className="w-1 h-1 bg-orange-400 rounded-full"></div>
+            <span className="text-xs font-medium text-orange-300">Map 2</span>
+            <div className="w-1 h-1 bg-orange-400 rounded-full"></div>
           </div>
           <p className="text-xs opacity-90">Advanced Financial Planning</p>
-          <p className="text-xs opacity-75 mt-1">🔓 Unlocks tomorrow</p>
+          <p className="text-xs opacity-75">🔓 Unlocks tomorrow</p>
         </div>
       </div>
     </div>
