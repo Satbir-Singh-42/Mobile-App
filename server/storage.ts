@@ -525,11 +525,9 @@ export class MongoStorage implements IStorage {
 
   async seedQuizQuestions(): Promise<void> {
     try {
-      const existingCount = await QuizQuestion.countDocuments();
-      if (existingCount > 0) {
-        console.log('Quiz questions already seeded');
-        return;
-      }
+      // Clear existing questions to ensure fresh seeding with mapNumber field
+      await QuizQuestion.deleteMany({});
+      console.log('Cleared existing quiz questions for re-seeding');
 
       const questionsToSeed = [
         // Level 1 Questions
@@ -548,6 +546,7 @@ export class MongoStorage implements IStorage {
         },
         {
           level: 1,
+          mapNumber: 1,
           question: "What percentage of your income should ideally go to savings?",
           options: [
             "At least 20% of your income",
@@ -559,6 +558,7 @@ export class MongoStorage implements IStorage {
         },
         {
           level: 1,
+          mapNumber: 1,
           question: "How many months of expenses should you keep in an emergency fund?",
           options: [
             "3-6 months of expenses",
@@ -570,6 +570,7 @@ export class MongoStorage implements IStorage {
         },
         {
           level: 1,
+          mapNumber: 1,
           question: "What should you do first when creating a budget?",
           options: [
             "Track your current spending for a month",
@@ -582,6 +583,7 @@ export class MongoStorage implements IStorage {
         // Level 2 Questions
         {
           level: 2,
+          mapNumber: 1,
           question: "What is compound interest?",
           options: [
             "Interest earned on both principal and previously earned interest",
@@ -593,6 +595,7 @@ export class MongoStorage implements IStorage {
         },
         {
           level: 2,
+          mapNumber: 1,
           question: "What is diversification in investing?",
           options: [
             "Spreading investments across different asset types to reduce risk",
@@ -604,6 +607,7 @@ export class MongoStorage implements IStorage {
         },
         {
           level: 2,
+          mapNumber: 1,
           question: "What is a credit score used for?",
           options: [
             "To determine your creditworthiness for loans and credit cards",
@@ -615,6 +619,7 @@ export class MongoStorage implements IStorage {
         },
         {
           level: 2,
+          mapNumber: 1,
           question: "What is dollar-cost averaging?",
           options: [
             "Investing the same amount regularly regardless of market conditions",
@@ -623,6 +628,104 @@ export class MongoStorage implements IStorage {
           ],
           correctAnswer: "Investing the same amount regularly regardless of market conditions",
           explanation: "Dollar-cost averaging involves investing a fixed amount regularly, which can help reduce the impact of market volatility over time."
+        },
+        // Level 3 Questions  
+        {
+          level: 3,
+          mapNumber: 1,
+          question: "What is the difference between stocks and bonds?",
+          options: [
+            "Stocks represent ownership, bonds represent debt",
+            "Stocks are safer than bonds",
+            "Bonds always pay higher returns"
+          ],
+          correctAnswer: "Stocks represent ownership, bonds represent debt",
+          explanation: "Stocks give you partial ownership in a company with potential for growth but higher risk, while bonds are loans to companies/governments with fixed returns but lower risk."
+        },
+        {
+          level: 3,
+          mapNumber: 1,
+          question: "What is a Roth IRA?",
+          options: [
+            "A retirement account with tax-free withdrawals",
+            "A type of savings account",
+            "A high-risk investment"
+          ],
+          correctAnswer: "A retirement account with tax-free withdrawals",
+          explanation: "A Roth IRA is a retirement account where you pay taxes upfront but withdrawals in retirement are tax-free, making it great for long-term wealth building."
+        },
+        {
+          level: 3,
+          mapNumber: 1,
+          question: "What does it mean to 'pay yourself first'?",
+          options: [
+            "Save money before spending on other things",
+            "Always buy expensive items first",
+            "Pay your bills before anyone else's"
+          ],
+          correctAnswer: "Save money before spending on other things",
+          explanation: "Paying yourself first means prioritizing savings and investments before other expenses to ensure you build wealth consistently."
+        },
+        {
+          level: 3,
+          mapNumber: 1,
+          question: "What is inflation and how does it affect your money?",
+          options: [
+            "Rising prices that reduce purchasing power over time",
+            "A banking fee that increases annually",
+            "The interest rate on savings accounts"
+          ],
+          correctAnswer: "Rising prices that reduce purchasing power over time",
+          explanation: "Inflation is the gradual increase in prices over time, which means your money buys less in the future than it does today, highlighting the importance of investing."
+        },
+        // Level 4 Questions
+        {
+          level: 4,
+          mapNumber: 1,
+          question: "What is asset allocation in portfolio management?",
+          options: [
+            "Dividing investments among different asset categories",
+            "Buying only the most expensive assets",
+            "Selling assets when they lose value"
+          ],
+          correctAnswer: "Dividing investments among different asset categories",
+          explanation: "Asset allocation involves spreading your investments across stocks, bonds, and other assets based on your risk tolerance, goals, and time horizon."
+        },
+        {
+          level: 4,
+          mapNumber: 1,
+          question: "What is the rule of 72?",
+          options: [
+            "A way to estimate how long it takes to double your money",
+            "The maximum age to start investing",
+            "The percentage of income to save"
+          ],
+          correctAnswer: "A way to estimate how long it takes to double your money",
+          explanation: "The rule of 72 helps estimate investment doubling time by dividing 72 by your annual return rate. For example, at 8% return, money doubles in about 9 years (72÷8=9)."
+        },
+        {
+          level: 4,
+          mapNumber: 1,
+          question: "What is a expense ratio in mutual funds?",
+          options: [
+            "The annual fee charged by the fund",
+            "The fund's performance compared to the market",
+            "The minimum investment required"
+          ],
+          correctAnswer: "The annual fee charged by the fund",
+          explanation: "The expense ratio is the annual fee mutual funds charge for management and operations, expressed as a percentage of your investment. Lower ratios mean more money stays invested."
+        },
+        {
+          level: 4,
+          mapNumber: 1,
+          question: "What is dollar-cost averaging's main benefit?",
+          options: [
+            "Reduces impact of market volatility over time",
+            "Guarantees higher returns",
+            "Eliminates all investment risk"
+          ],
+          correctAnswer: "Reduces impact of market volatility over time",
+          explanation: "Dollar-cost averaging smooths out market fluctuations by buying more shares when prices are low and fewer when prices are high, reducing the average cost per share over time."
         },
         // Level 3 Questions
         {

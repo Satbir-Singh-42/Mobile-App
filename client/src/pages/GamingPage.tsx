@@ -80,11 +80,20 @@ export const GamingPage = (): JSX.Element => {
   const [questionAnswers, setQuestionAnswers] = useState<Record<string, string>>({});
 
   // Get user progress from server (persistent across logins)
-  const { data: userProgress } = useQuery({
+  const { data: userProgress, error: progressError } = useQuery({
     queryKey: ['/api/gaming/progress'],
     enabled: true,
-    refetchOnMount: true
+    refetchOnMount: true,
+    retry: 1
   });
+
+  // Handle authentication errors
+  useEffect(() => {
+    if (progressError && progressError.message.includes('Session expired')) {
+      console.log('Session expired, redirecting to login');
+      setLocation('/login');
+    }
+  }, [progressError, setLocation]);
 
   // Sync user level with server progress
   useEffect(() => {
