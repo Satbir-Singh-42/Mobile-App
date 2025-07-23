@@ -962,53 +962,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Check if map is completed (all 4 levels done)
         const isMapCompleted = updatedLevelsCompleted.length === 4;
         
-        // Determine next level (restart from 1 if map not completed daily, or stay at 4 if completed)
-        const nextLevel = isMapCompleted ? 4 : Math.min(level + 1, 4);
+        // For repeat levels, don't update progression - just award replay points (0 XP)
+        if (isRepeatLevel) {
+          // Only update last played time for replayed levels, no progression changes
+          await storage.updateUserProgress(userId, {
+            lastPlayedAt: new Date()
+          });
+        } else {
+          // Determine next level (restart from 1 if map not completed daily, or stay at 4 if completed)
+          const nextLevel = isMapCompleted ? 4 : Math.min(level + 1, 4);
 
-        // Update map progress
-        const newMapProgress = {
-          ...progress.mapProgress,
-          [mapKey]: {
-            completed: isMapCompleted,
-            levelsCompleted: updatedLevelsCompleted,
-            pointsEarned: !isRepeatLevel || mapProgress.pointsEarned
+          // Update map progress
+          const newMapProgress = {
+            ...progress.mapProgress,
+            [mapKey]: {
+              completed: isMapCompleted,
+              levelsCompleted: updatedLevelsCompleted,
+              pointsEarned: true
+            }
+          };
+
+          // Update overall progress
+          const completedLevels = [...progress.completedLevels];
+          if (!completedLevels.includes(level)) {
+            completedLevels.push(level);
           }
-        };
 
-        // Update overall progress
-        const completedLevels = [...progress.completedLevels];
-        if (!completedLevels.includes(level)) {
-          completedLevels.push(level);
+          const completedMaps = [...(progress.completedMaps || [])];
+          if (isMapCompleted && !completedMaps.includes(currentMap)) {
+            completedMaps.push(currentMap);
+          }
+
+          // Update progress in database only for new levels
+          await storage.updateUserProgress(userId, {
+            currentLevel: nextLevel,
+            currentMap,
+            completedLevels,
+            completedMaps,
+            mapProgress: newMapProgress,
+            totalScore: progress.totalScore + score,
+            totalXP: progress.totalXP + earnedXP,
+            lastPlayedAt: new Date()
+          });
         }
-
-        const completedMaps = [...(progress.completedMaps || [])];
-        if (isMapCompleted && !completedMaps.includes(currentMap)) {
-          completedMaps.push(currentMap);
-        }
-
-        // Update progress in database
-        await storage.updateUserProgress(userId, {
-          currentLevel: nextLevel,
-          currentMap,
-          completedLevels,
-          completedMaps,
-          mapProgress: newMapProgress,
-          totalScore: progress.totalScore + score,
-          totalXP: progress.totalXP + earnedXP,
-          lastPlayedAt: new Date()
-        });
         
         res.json({ 
           message: isRepeatLevel ? "Level replayed (no bonus XP)" : "Quiz completed successfully!",
           score,
           earnedXP,
           totalXP: progress.totalXP + earnedXP,
-          levelUnlocked: nextLevel,
+          levelUnlocked: isRepeatLevel ? progress.currentLevel : (isMapCompleted ? 4 : Math.min(level + 1, 4)),
           currentMap,
-          isMapCompleted,
+          isMapCompleted: isRepeatLevel ? false : isMapCompleted, // Don't show map completed for replays
           isRepeatLevel,
           passed: true,
-          mapStatus: isMapCompleted ? `Map ${currentMap} completed! New map unlocks daily.` : `Map ${currentMap} - Level ${nextLevel} unlocked`,
+          mapStatus: isRepeatLevel ? `Level ${level} replayed - no progression change` : (isMapCompleted ? `Map ${currentMap} completed! New map unlocks daily.` : `Map ${currentMap} - Level ${Math.min(level + 1, 4)} unlocked`),
           bonusUnlocked: !isRepeatLevel
         });
       } else {

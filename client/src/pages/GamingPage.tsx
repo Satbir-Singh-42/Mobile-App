@@ -176,12 +176,13 @@ export const GamingPage = (): JSX.Element => {
     },
     onSuccess: (data) => {
       // Update user level and bonus points from server response
-      if (data.passed && data.levelUnlocked) {
+      if (data.passed && !data.isRepeatLevel && data.levelUnlocked) {
         setUserLevel(data.levelUnlocked);
         localStorage.setItem('userLevel', data.levelUnlocked.toString());
         setLevelUnlocked(data.bonusUnlocked || false);
         setBonusPoints(data.bonusUnlocked ? 100 : 0);
       } else {
+        // For repeat levels, don't change progression state
         setLevelUnlocked(false);
         setBonusPoints(0);
       }
@@ -667,6 +668,13 @@ export const GamingPage = (): JSX.Element => {
             {levelUnlocked ? 'Level Unlocked!' : 'Nice Work!'}
           </h1>
           <p className="text-lg mb-6">You got {quizSession.score} out of {quizSession.questions.length} correct</p>
+          
+          {/* Show replay message if this is a repeated level */}
+          {!levelUnlocked && bonusPoints === 0 && (
+            <p className="text-sm text-white/80 mb-4">
+              Level replayed - your progress remains unchanged
+            </p>
+          )}
           
           <div className="flex items-center justify-center space-x-2 mb-6">
             {[1, 2, 3].map((starNum) => (
