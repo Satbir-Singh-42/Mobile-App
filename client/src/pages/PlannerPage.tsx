@@ -169,13 +169,7 @@ export const PlannerPage = (): JSX.Element => {
               <ArrowLeftIcon className="h-6 w-6" />
             </Button>
             <h1 className="text-xl font-semibold">Create a Task</h1>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="p-2 text-white hover:bg-white/20"
-            >
-              <SearchIcon className="h-6 w-6" />
-            </Button>
+            <div className="w-10"></div>
           </div>
         </div>
 
@@ -287,13 +281,7 @@ export const PlannerPage = (): JSX.Element => {
             <ArrowLeftIcon className="h-6 w-6" />
           </Button>
           <h1 className="text-xl font-semibold text-[#1F2937]">Financial Planner</h1>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-2 text-gray-600"
-          >
-            <SearchIcon className="h-6 w-6" />
-          </Button>
+          <div className="w-10"></div>
         </div>
 
         {/* Calendar Header */}
