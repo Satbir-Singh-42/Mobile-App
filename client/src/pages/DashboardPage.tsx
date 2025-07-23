@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { taskAPI } from "@/lib/taskAPI";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
@@ -41,6 +43,23 @@ export const DashboardPage = (): JSX.Element => {
   const { t } = useTranslation();
   const [user, setUser] = useState<any>(null);
   const [forceRerender, setForceRerender] = useState(0);
+
+  // Fetch tasks from database for dashboard
+  const { data: tasksData, isLoading: isLoadingTasks } = useQuery({
+    queryKey: ["/api/tasks"],
+    queryFn: () => taskAPI.getTasks(),
+  });
+
+  // Get only 2 most urgent upcoming tasks for dashboard
+  const urgentTasks = (tasksData?.tasks || [])
+    .filter(task => !task.completed) // Only show incomplete tasks
+    .sort((a, b) => {
+      // Sort by date and time for closest deadline
+      const dateA = new Date(`${a.date} ${a.startTime}`);
+      const dateB = new Date(`${b.date} ${b.startTime}`);
+      return dateA.getTime() - dateB.getTime();
+    })
+    .slice(0, 2); // Show only 2 most urgent
 
   useEffect(() => {
     const userData = authAPI.getUser();
@@ -251,34 +270,63 @@ export const DashboardPage = (): JSX.Element => {
             </Button>
           </div>
           
-          {/* Design Changes Items */}
+          {/* Real Tasks from Database - Only 2 Most Urgent */}
           <div className="space-y-3 mb-4">
-            <Card className="border border-gray-200">
-              <CardContent className="flex items-center gap-4 p-4">
-                <div className="w-12 h-12 bg-[#6366F1] rounded-xl flex items-center justify-center">
-                  <PlayIcon className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-['Poppins'] font-medium text-[#1F2937]">Design Changes</h4>
-                  <p className="text-sm text-gray-500">2 Day Ago</p>
-                </div>
-                <ArrowRightIcon className="w-5 h-5 text-gray-400" />
-              </CardContent>
-            </Card>
-            
-            <Card className="border border-gray-200">
-              <CardContent className="flex items-center gap-4 p-4">
-                <div className="w-12 h-12 bg-[#6366F1] rounded-xl flex items-center justify-center">
-                  <PlayIcon className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-['Poppins'] font-medium text-[#1F2937]">Design Changes</h4>
-                  <p className="text-sm text-gray-500">1 Day Ago</p>
-                </div>
-                <ArrowRightIcon className="w-5 h-5 text-gray-400" />
-              </CardContent>
-            </Card>
+            {isLoadingTasks ? (
+              <div className="text-center py-4">
+                <p className="text-gray-500">Loading tasks...</p>
+              </div>
+            ) : urgentTasks.length === 0 ? (
+              <Card className="border border-gray-200">
+                <CardContent className="flex items-center justify-center p-8">
+                  <div className="text-center">
+                    <CalendarIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500 mb-2">No upcoming tasks</p>
+                    <Button
+                      onClick={() => setLocation("/planner")}
+                      className="bg-[#6366F1] text-white px-4 py-2 rounded-lg text-sm"
+                    >
+                      Create your first task
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              urgentTasks.map((task) => (
+                <Card key={task._id} className="border border-gray-200">
+                  <CardContent className="flex items-center gap-4 p-4">
+                    <div className={`w-3 h-16 ${task.color} rounded-full flex-shrink-0`}></div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <div>
+                          <h4 className="font-semibold text-[#1F2937] text-sm">Progress</h4>
+                          <p className="text-xs text-gray-500 mt-1">More</p>
+                        </div>
+                      </div>
+                      <h3 className="font-medium text-[#1F2937] mb-1">{task.title}</h3>
+                      <p className="text-xs text-gray-400 mb-2">
+                        {task.startTime} - {task.endTime}
+                      </p>
+                    </div>
+                    <ArrowRightIcon className="w-5 h-5 text-gray-400" />
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
+          
+          {/* Show planner link if there are tasks */}
+          {urgentTasks.length > 0 && (
+            <div className="text-center">
+              <Button
+                variant="ghost"
+                onClick={() => setLocation("/planner")}
+                className="text-[#6366F1] font-['Poppins'] text-sm"
+              >
+                View all tasks in planner →
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Monthly Preview */}

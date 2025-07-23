@@ -24,7 +24,7 @@ import {
 
 export const PlannerPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
-  const [currentDate, setCurrentDate] = useState(new Date(2020, 9, 24)); // Oct 24, 2020
+  const [currentDate, setCurrentDate] = useState(new Date()); // Current date
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const queryClient = useQueryClient();
@@ -35,17 +35,14 @@ export const PlannerPage = (): JSX.Element => {
     queryFn: () => taskAPI.getTasks(),
   });
 
-  // Sort tasks by deadline and show only latest 2 closest to deadline
+  // Get all tasks for planner - show ALL tasks, not just 2
   const allTasks = tasksData?.tasks || [];
-  const tasks = allTasks
-    .filter(task => !task.completed) // Only show incomplete tasks
-    .sort((a, b) => {
-      // Sort by date and time for closest deadline
-      const dateA = new Date(`${a.date} ${a.startTime}`);
-      const dateB = new Date(`${b.date} ${b.startTime}`);
-      return dateA.getTime() - dateB.getTime();
-    })
-    .slice(0, 2); // Show only latest 2 tasks
+  const tasks = allTasks.sort((a, b) => {
+    // Sort by date and time for proper ordering
+    const dateA = new Date(`${a.date} ${a.startTime}`);
+    const dateB = new Date(`${b.date} ${b.startTime}`);
+    return dateA.getTime() - dateB.getTime();
+  });
 
   // Create task mutation
   const createTaskMutation = useMutation({
@@ -128,7 +125,11 @@ export const PlannerPage = (): JSX.Element => {
       userId: "", // This will be set by the server
       title: newTask.title,
       description: newTask.description,
-      date: "Oct 24, 2020",
+      date: currentDate.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+      }),
       startTime: newTask.startTime,
       endTime: newTask.endTime,
       category: newTask.category,
