@@ -10,7 +10,10 @@ import {
   CalendarIcon,
   GamepadIcon,
   UserIcon,
-  StarIcon
+  StarIcon,
+  MoreVertical,
+  CheckCircle,
+  XCircle
 } from "lucide-react";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
