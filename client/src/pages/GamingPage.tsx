@@ -38,71 +38,43 @@ export const GamingPage = (): JSX.Element => {
   };
 
   const renderMainView = () => (
-    <>
-      {/* Purple Header with Question Marks */}
-      <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white px-6 pt-12 pb-16 rounded-b-[2rem] relative overflow-hidden">
-        {/* Decorative Question Marks */}
-        <div className="absolute top-8 left-4 text-6xl opacity-20 rotate-12">?</div>
-        <div className="absolute top-16 right-8 text-4xl opacity-15 -rotate-12">?</div>
-        <div className="absolute bottom-8 left-12 text-5xl opacity-10 rotate-45">?</div>
+    <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-24 relative overflow-hidden flex flex-col justify-center">
+      {/* Decorative Question Marks - Enhanced */}
+      <div className="absolute top-16 left-4 text-8xl opacity-15 rotate-12">?</div>
+      <div className="absolute top-32 right-8 text-6xl opacity-20 -rotate-12">?</div>
+      <div className="absolute bottom-32 left-12 text-7xl opacity-10 rotate-45">?</div>
+      <div className="absolute top-48 left-1/2 text-5xl opacity-10 -rotate-12">?</div>
+      <div className="absolute bottom-16 right-16 text-6xl opacity-15 rotate-12">?</div>
+      
+      {/* Header */}
+      <div className="flex items-center justify-between mb-16 relative z-10">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setLocation("/dashboard")}
+          className="p-2 text-white hover:bg-white/20 rounded-full"
+        >
+          <ArrowLeftIcon className="h-6 w-6" />
+        </Button>
+        <div className="w-10"></div>
+      </div>
+
+      {/* Main Content - Centered */}
+      <div className="text-center relative z-10 flex-1 flex flex-col justify-center">
+        <h1 className="text-4xl font-bold mb-4 font-['Poppins']">Interesting QUIZ</h1>
+        <h2 className="text-3xl font-semibold mb-6">Awaits You</h2>
+        <p className="text-lg opacity-90 mb-12 leading-relaxed max-w-xs mx-auto">
+          Test yourself on finance basics<br/>and get various prizes
+        </p>
         
-        <div className="flex items-center justify-between mb-8 relative z-10">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation("/dashboard")}
-            className="p-2 text-white hover:bg-white/20 rounded-full"
-          >
-            <ArrowLeftIcon className="h-6 w-6" />
-          </Button>
-          <div className="w-10"></div>
-        </div>
-
-        <div className="text-center relative z-10">
-          <h1 className="text-2xl font-bold mb-4 font-['Poppins']">Interesting QUIZ</h1>
-          <h2 className="text-xl font-semibold mb-2">Awaits You</h2>
-          <p className="text-sm opacity-90 mb-6">Test yourself on finance basics<br/>and get various prizes</p>
-          
-          <Button 
-            onClick={() => setCurrentView('map')}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-semibold"
-          >
-            Start →
-          </Button>
-        </div>
+        <Button 
+          onClick={() => setCurrentView('map')}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-12 py-4 rounded-full font-semibold text-lg mx-auto"
+        >
+          Start →
+        </Button>
       </div>
-
-      {/* Achievements Section */}
-      <div className="px-6 py-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Achievements</h2>
-        <div className="grid grid-cols-2 gap-3">
-          {achievements.map((achievement, index) => (
-            <Card key={index} className="border-0 shadow-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-2">{achievement.icon}</div>
-                <h3 className="font-medium text-sm text-gray-900 mb-1">{achievement.name}</h3>
-                <p className="text-xs text-gray-600">{achievement.points} pts</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="mt-6">
-          <h3 className="text-md font-semibold text-gray-900 mb-2">Your Rank</h3>
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-gray-900">#15 in Leaderboard</p>
-                  <p className="text-sm text-gray-600">1,250 points earned</p>
-                </div>
-                <div className="text-orange-500 text-2xl">🏆</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </>
+    </div>
   );
 
   const renderMapView = () => (
@@ -257,11 +229,7 @@ export const GamingPage = (): JSX.Element => {
       case 'success':
         return renderSuccessView();
       default:
-        return (
-          <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden pb-24">
-            {renderMainView()}
-          </div>
-        );
+        return renderMainView();
     }
   };
 
