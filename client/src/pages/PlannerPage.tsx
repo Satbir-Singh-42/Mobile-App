@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { taskAPI } from "@/lib/taskAPI";
+import type { Task, InsertTask } from "@shared/schema";
 import { 
   ArrowLeftIcon, 
   SearchIcon,
@@ -17,70 +20,65 @@ import {
   UserIcon
 } from "lucide-react";
 
-interface Task {
-  id: number;
-  title: string;
-  description?: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  category: string;
-  completed: boolean;
-  color: string;
-}
+
 
 export const PlannerPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
   const [currentDate, setCurrentDate] = useState(new Date(2020, 9, 24)); // Oct 24, 2020
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 1,
-      title: "Design Changes",
-      description: "Lorem ipsum dolor sit amet, et adipiscing elit, sed dislutmod nibh euismod. dolor sit amet, et adipiscing elit, sed dislutmod nibh euismod.",
-      date: "Oct 24, 2020",
-      startTime: "01:22 pm",
-      endTime: "03:20 pm",
-      category: "Design",
-      completed: false,
-      color: "bg-[#6366F1]"
+  const queryClient = useQueryClient();
+
+  // Fetch tasks from API
+  const { data: tasksData, isLoading } = useQuery({
+    queryKey: ["/api/tasks"],
+    queryFn: () => taskAPI.getTasks(),
+  });
+
+  const tasks = tasksData?.tasks || [];
+
+  // Create task mutation
+  const createTaskMutation = useMutation({
+    mutationFn: taskAPI.createTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      setShowCreateTask(false);
+      setNewTask({
+        title: "",
+        description: "",
+        startTime: "",
+        endTime: "",
+        category: "Design"
+      });
     },
-    {
-      id: 2,
-      title: "Design Changes",
-      description: "Review and implement new design specifications for the financial dashboard",
-      date: "Oct 24, 2020",
-      startTime: "04:00 pm",
-      endTime: "05:30 pm",
-      category: "Design",
-      completed: false,
-      color: "bg-[#6366F1]"
+  });
+
+  // Update task mutation
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ id, updates }: { id: string; updates: Partial<Task> }) =>
+      taskAPI.updateTask(id, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      setSelectedTask(null);
     },
-    {
-      id: 3,
-      title: "Design Changes",
-      description: "Finalize color schemes and typography for mobile interface",
-      date: "Oct 24, 2020",
-      startTime: "06:00 pm",
-      endTime: "07:15 pm",
-      category: "Design",
-      completed: true,
-      color: "bg-[#6366F1]"
+  });
+
+  // Delete task mutation
+  const deleteTaskMutation = useMutation({
+    mutationFn: taskAPI.deleteTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
     },
-    {
-      id: 4,
-      title: "Design Changes",
-      description: "Create wireframes for new user onboarding flow",
-      date: "Oct 24, 2020",
-      startTime: "08:00 pm",
-      endTime: "09:30 pm",
-      category: "Design",
-      completed: false,
-      color: "bg-[#6366F1]"
-    }
-  ]);
+  });
+
+  // Toggle task completion mutation
+  const toggleTaskMutation = useMutation({
+    mutationFn: ({ id, completed }: { id: string; completed: boolean }) =>
+      taskAPI.toggleTask(id, completed),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+    },
+  });
 
   const [newTask, setNewTask] = useState({
     title: "",

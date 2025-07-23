@@ -1,8 +1,10 @@
-import { User, OTP, Questionnaire } from "./database";
+import { User, OTP, Questionnaire, Task } from "./database";
 import type { 
   InsertUser, 
   QuestionnaireData, 
-  User as UserType
+  User as UserType,
+  Task as TaskType,
+  InsertTask
 } from "@shared/schema";
 
 export interface IStorage {
@@ -21,6 +23,12 @@ export interface IStorage {
   // OTP operations
   storeOTP(email: string, otp: string): Promise<boolean>;
   verifyOTP(email: string, otp: string): Promise<boolean>;
+  
+  // Task operations
+  createTask(task: InsertTask): Promise<TaskType>;
+  getTasksByUserId(userId: string): Promise<TaskType[]>;
+  updateTask(id: string, updates: Partial<TaskType>): Promise<TaskType | null>;
+  deleteTask(id: string): Promise<boolean>;
 }
 
 export class MongoStorage implements IStorage {
@@ -75,6 +83,72 @@ export class MongoStorage implements IStorage {
     } catch (error) {
       console.error('Error getting user by email:', error);
       return null;
+    }
+  }
+
+  async createTask(task: InsertTask): Promise<TaskType> {
+    try {
+      const newTask = new Task(task);
+      const savedTask = await newTask.save();
+      const taskObj = savedTask.toObject() as any;
+      return {
+        ...taskObj,
+        _id: taskObj._id.toString(),
+        userId: taskObj.userId.toString(),
+        createdAt: taskObj.createdAt || new Date(),
+        updatedAt: taskObj.updatedAt || new Date(),
+      };
+    } catch (error) {
+      console.error('Error creating task:', error);
+      throw error;
+    }
+  }
+
+  async getTasksByUserId(userId: string): Promise<TaskType[]> {
+    try {
+      const tasks = await Task.find({ userId });
+      return tasks.map(task => {
+        const taskObj = task.toObject() as any;
+        return {
+          ...taskObj,
+          _id: taskObj._id.toString(),
+          userId: taskObj.userId.toString(),
+          createdAt: taskObj.createdAt || new Date(),
+          updatedAt: taskObj.updatedAt || new Date(),
+        };
+      });
+    } catch (error) {
+      console.error('Error getting tasks by user ID:', error);
+      return [];
+    }
+  }
+
+  async updateTask(id: string, updates: Partial<TaskType>): Promise<TaskType | null> {
+    try {
+      const updatedTask = await Task.findByIdAndUpdate(id, updates, { new: true });
+      if (!updatedTask) return null;
+      
+      const taskObj = updatedTask.toObject() as any;
+      return {
+        ...taskObj,
+        _id: taskObj._id.toString(),
+        userId: taskObj.userId.toString(),
+        createdAt: taskObj.createdAt || new Date(),
+        updatedAt: taskObj.updatedAt || new Date(),
+      };
+    } catch (error) {
+      console.error('Error updating task:', error);
+      return null;
+    }
+  }
+
+  async deleteTask(id: string): Promise<boolean> {
+    try {
+      const result = await Task.findByIdAndDelete(id);
+      return !!result;
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      return false;
     }
   }
 

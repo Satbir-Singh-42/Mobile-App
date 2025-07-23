@@ -132,13 +132,59 @@ const questionnaireSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Task Schema for Planner
+const taskSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  title: {
+    type: String,
+    required: true,
+    maxlength: 255
+  },
+  description: {
+    type: String,
+    maxlength: 1000
+  },
+  date: {
+    type: String,
+    required: true
+  },
+  startTime: {
+    type: String,
+    required: true
+  },
+  endTime: {
+    type: String,
+    required: true
+  },
+  category: {
+    type: String,
+    required: true
+  },
+  completed: {
+    type: Boolean,
+    default: false
+  },
+  color: {
+    type: String,
+    required: true
+  }
+}, {
+  timestamps: true
+});
+
 // Create indexes for performance
 otpSchema.index({ email: 1, expiresAt: 1 });
 otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+taskSchema.index({ userId: 1, date: 1 });
 
 export const User = mongoose.model<IUser>('User', userSchema);
 export const OTP = mongoose.model('OTP', otpSchema);
 export const Questionnaire = mongoose.model('Questionnaire', questionnaireSchema);
+export const Task = mongoose.model('Task', taskSchema);
 
 // Database connection
 export const connectDB = async (): Promise<void> => {

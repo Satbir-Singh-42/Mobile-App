@@ -14,7 +14,8 @@ import {
   forgotPasswordSchema, 
   verifyOtpSchema,
   resetPasswordSchema,
-  questionnaireSchema 
+  questionnaireSchema,
+  insertTaskSchema 
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -25,13 +26,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/test-db", async (req: Request, res: Response) => {
     try {
       // Test MongoDB connection and database operations
-      const mongoose = require('mongoose');
+      const mongoose = await import('mongoose');
       
-      if (mongoose.connection.readyState !== 1) {
+      if (mongoose.default.connection.readyState !== 1) {
         return res.status(500).json({ 
           success: false,
           message: "MongoDB not connected",
-          connectionState: mongoose.connection.readyState,
+          connectionState: mongoose.default.connection.readyState,
           states: {
             0: "disconnected",
             1: "connected", 
@@ -56,16 +57,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const retrievedUser = await storage.getUserById(createdUser._id!);
       
       // Clean up test user
-      const { User } = require('./database');
+      const { User } = await import('./database');
       await User.findByIdAndDelete(createdUser._id);
 
       res.json({
         success: true,
         message: "MongoDB connection and operations successful",
-        connectionState: mongoose.connection.readyState,
-        database: mongoose.connection.name,
-        host: mongoose.connection.host,
-        port: mongoose.connection.port,
+        connectionState: mongoose.default.connection.readyState,
+        database: mongoose.default.connection.name,
+        host: mongoose.default.connection.host,
+        port: mongoose.default.connection.port,
         testResults: {
           userCreated: !!createdUser,
           userRetrieved: !!retrievedUser,
@@ -481,6 +482,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       res.status(500).json({ message: "Failed to update questionnaire" });
+    }
+  });
+
+  // Task/Planner Routes
+
+  // Get tasks for authenticated user
+  app.get("/api/tasks", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const tasks = await storage.getTasksByUserId(userId);
+      res.json({ tasks });
+    } catch (error: any) {
+      console.error("Get tasks error:", error);
+      res.status(500).json({ 
+        message: "Failed to get tasks", 
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Create new task
+  app.post("/api/tasks", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const taskData = { ...req.body, userId };
+      const validatedData = insertTaskSchema.parse(taskData);
+      
+      const task = await storage.createTask(validatedData);
+      
+      res.status(201).json({
+        message: "Task created successfully",
+        task
+      });
+    } catch (error: any) {
+      console.error("Create task error:", error);
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ 
+          message: "Invalid task data", 
+          details: "Please check all required fields are filled correctly",
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ 
+        message: "Failed to create task", 
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Update task
+  app.put("/api/tasks/:id", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const taskId = req.params.id;
+      const userId = (req as any).user._id.toString();
+      
+      // Verify task belongs to user
+      const existingTasks = await storage.getTasksByUserId(userId);
+      const taskExists = existingTasks.find(task => task._id === taskId);
+      
+      if (!taskExists) {
+        return res.status(404).json({ 
+          message: "Task not found", 
+          details: "Task does not exist or you don't have permission to modify it"
+        });
+      }
+      
+      const updatedTask = await storage.updateTask(taskId, req.body);
+      
+      if (!updatedTask) {
+        return res.status(404).json({ 
+          message: "Task not found", 
+          details: "Task could not be updated"
+        });
+      }
+      
+      res.json({
+        message: "Task updated successfully",
+        task: updatedTask
+      });
+    } catch (error: any) {
+      console.error("Update task error:", error);
+      res.status(500).json({ 
+        message: "Failed to update task", 
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Delete task
+  app.delete("/api/tasks/:id", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const taskId = req.params.id;
+      const userId = (req as any).user._id.toString();
+      
+      // Verify task belongs to user
+      const existingTasks = await storage.getTasksByUserId(userId);
+      const taskExists = existingTasks.find(task => task._id === taskId);
+      
+      if (!taskExists) {
+        return res.status(404).json({ 
+          message: "Task not found", 
+          details: "Task does not exist or you don't have permission to delete it"
+        });
+      }
+      
+      const deleted = await storage.deleteTask(taskId);
+      
+      if (!deleted) {
+        return res.status(404).json({ 
+          message: "Task not found", 
+          details: "Task could not be deleted"
+        });
+      }
+      
+      res.json({
+        message: "Task deleted successfully"
+      });
+    } catch (error: any) {
+      console.error("Delete task error:", error);
+      res.status(500).json({ 
+        message: "Failed to delete task", 
+        details: "Please try again later"
+      });
     }
   });
 
