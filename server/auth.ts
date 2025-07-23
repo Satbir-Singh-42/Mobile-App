@@ -1,0 +1,180 @@
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import { User, OTP } from './database';
+import type { Request, Response, NextFunction } from 'express';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+// Email configuration
+const createEmailTransporter = () => {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+};
+
+// Generate JWT token
+export const generateToken = (userId: string): string => {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+};
+
+// Verify JWT token
+export const verifyToken = (token: string): { userId: string } | null => {
+  try {
+    return jwt.verify(token, JWT_SECRET) as { userId: string };
+  } catch (error) {
+    return null;
+  }
+};
+
+// Generate OTP
+export const generateOTP = (): string => {
+  return crypto.randomInt(100000, 999999).toString();
+};
+
+// Send OTP email
+export const sendOTPEmail = async (email: string, otp: string): Promise<boolean> => {
+  try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.log('Email credentials not configured. OTP would be:', otp);
+      return true; // For development
+    }
+
+    const transporter = createEmailTransporter();
+    
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: 'Face2Finance - Password Reset OTP',
+      html: `
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+          <h1 style="color: #4157ff; text-align: center;">Face2Finance</h1>
+          <h2 style="color: #333; text-align: center;">Password Reset Request</h2>
+          
+          <p>You have requested to reset your password. Please use the following OTP to proceed:</p>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+            <h1 style="color: #4157ff; font-size: 32px; letter-spacing: 8px; margin: 0;">${otp}</h1>
+          </div>
+          
+          <p style="color: #666;">This OTP will expire in 10 minutes for security reasons.</p>
+          
+          <p style="color: #666;">If you didn't request this password reset, please ignore this email.</p>
+          
+          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+          <p style="color: #999; font-size: 12px; text-align: center;">
+            This is an automated email from Face2Finance. Please do not reply to this email.
+          </p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error('Error sending OTP email:', error);
+    return false;
+  }
+};
+
+// Store OTP in database
+export const storeOTP = async (email: string, otp: string): Promise<boolean> => {
+  try {
+    // Remove any existing OTPs for this email
+    await OTP.deleteMany({ email });
+    
+    // Create new OTP
+    await OTP.create({
+      email,
+      otp,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Error storing OTP:', error);
+    return false;
+  }
+};
+
+// Verify OTP
+export const verifyOTP = async (email: string, otp: string): Promise<boolean> => {
+  try {
+    const otpRecord = await OTP.findOne({
+      email,
+      otp,
+      used: false,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!otpRecord) {
+      return false;
+    }
+
+    // Mark OTP as used
+    otpRecord.used = true;
+    await otpRecord.save();
+
+    return true;
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    return false;
+  }
+};
+
+// Middleware to authenticate requests
+export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+  if (!token) {
+    return res.status(401).json({ message: 'Access token required' });
+  }
+
+  const decoded = verifyToken(token);
+  if (!decoded) {
+    return res.status(403).json({ message: 'Invalid or expired token' });
+  }
+
+  try {
+    const user = await User.findById(decoded.userId).select('-password');
+    if (!user) {
+      return res.status(403).json({ message: 'User not found' });
+    }
+
+    (req as any).user = user;
+    next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    res.status(500).json({ message: 'Authentication error' });
+  }
+};
+
+// Optional authentication middleware (doesn't fail if no token)
+export const optionalAuth = async (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token) {
+    const decoded = verifyToken(token);
+    if (decoded) {
+      try {
+        const user = await User.findById(decoded.userId).select('-password');
+        if (user) {
+          (req as any).user = user;
+        }
+      } catch (error) {
+        console.error('Optional auth error:', error);
+      }
+    }
+  }
+
+  next();
+};
