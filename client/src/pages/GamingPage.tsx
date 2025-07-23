@@ -78,14 +78,8 @@ export const GamingPage = (): JSX.Element => {
   );
 
   const renderMapView = () => (
-    <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-48 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-20 left-4 w-2 h-2 bg-white/20 rounded-full"></div>
-      <div className="absolute top-32 right-4 w-1 h-1 bg-white/15 rounded-full"></div>
-      <div className="absolute bottom-80 left-8 w-2 h-2 bg-white/10 rounded-full"></div>
-      <div className="absolute top-48 right-12 w-1 h-1 bg-white/25 rounded-full"></div>
-      
-      <div className="flex items-center justify-between mb-8">
+    <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-32 relative overflow-hidden">
+      <div className="flex items-center justify-between mb-12">
         <Button
           variant="ghost"
           size="sm"
@@ -94,66 +88,61 @@ export const GamingPage = (): JSX.Element => {
         >
           <ArrowLeftIcon className="h-6 w-6" />
         </Button>
-        <div className="text-center">
-          <h1 className="text-xl font-bold font-['Poppins']">Map 1</h1>
-          <p className="text-xs opacity-75 mt-1">Financial Basics Journey</p>
-        </div>
+        <h1 className="text-xl font-bold font-['Poppins']">Map 1</h1>
         <div className="w-10"></div>
       </div>
 
-      {/* Map Progress Path */}
-      <div className="flex flex-col items-center space-y-4 mt-8 pb-8">
-        {/* Level 4 - Locked */}
-        <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg">
-          <span className="text-white font-bold">4</span>
+      {/* Hexagonal Map Layout */}
+      <div className="flex flex-col items-center space-y-8 mt-16">
+        {/* Row 1: Level 4 and Gift */}
+        <div className="flex items-center space-x-8">
+          <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="transform -rotate-45 text-white text-2xl">🎁</div>
+          </div>
+          <div className="w-2 h-2 bg-white/30 rounded-full"></div>
+          <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="transform -rotate-45 text-white text-2xl">🔒</div>
+          </div>
         </div>
-        
-        {/* Connecting Path */}
-        <div className="w-1 h-8 bg-gray-400 rounded-full"></div>
-        
-        {/* Level 3 - Locked */}
-        <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg">
-          <span className="text-white font-bold">3</span>
+
+        {/* Connecting Lines */}
+        <div className="w-1 h-12 bg-white/30 rounded-full"></div>
+
+        {/* Row 2: Level 3 alone */}
+        <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+          <div className="transform -rotate-45 text-white text-2xl">🔒</div>
         </div>
-        
-        {/* Connecting Path */}
-        <div className="w-1 h-8 bg-gray-400 rounded-full"></div>
-        
-        {/* Level 2 - Locked */}
-        <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-lg">
-          <span className="text-white font-bold">2</span>
+
+        {/* Connecting Lines */}
+        <div className="w-1 h-12 bg-white/30 rounded-full"></div>
+
+        {/* Row 3: Level 2 and Gift */}
+        <div className="flex items-center space-x-8">
+          <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="transform -rotate-45 text-white text-2xl">🔒</div>
+          </div>
+          <div className="w-2 h-2 bg-white/30 rounded-full"></div>
+          <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="transform -rotate-45 text-white text-2xl">🎁</div>
+          </div>
         </div>
-        
-        {/* Connecting Path - Active */}
-        <div className="w-1 h-8 bg-green-400 rounded-full"></div>
-        
-        {/* Level 1 - Active/Available */}
+
+        {/* Connecting Lines */}
+        <div className="w-1 h-12 bg-teal-400 rounded-full shadow-lg"></div>
+
+        {/* Row 4: Level 1 - Active */}
         <Button
           onClick={() => setCurrentView('quiz')}
-          className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-105"
+          className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
         >
-          <span className="text-white font-bold">1</span>
+          <div className="transform -rotate-45 text-white font-bold text-xl">1</div>
         </Button>
       </div>
 
-      {/* Bottom Info Cards */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 space-y-3">
-        {/* Current Challenge Info */}
-        <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center border border-white/20">
-          <div className="text-orange-400 text-2xl mb-2">!</div>
-          <p className="text-sm font-medium mb-1">Complete Level 1 to unlock the next challenge</p>
-          <p className="text-xs opacity-75">Progress: 0/4 levels completed</p>
-        </div>
-        
-        {/* Next Map Preview */}
-        <div className="bg-gradient-to-r from-orange-500/20 to-purple-500/20 backdrop-blur-md rounded-xl p-3 text-center border border-orange-400/30">
-          <div className="flex items-center justify-center space-x-2 mb-1">
-            <div className="w-1 h-1 bg-orange-400 rounded-full"></div>
-            <span className="text-xs font-medium text-orange-300">Map 2</span>
-            <div className="w-1 h-1 bg-orange-400 rounded-full"></div>
-          </div>
-          <p className="text-xs opacity-90">Advanced Financial Planning</p>
-          <p className="text-xs opacity-75">🔓 Unlocks tomorrow</p>
+      {/* Bottom Progress Bar */}
+      <div className="fixed bottom-20 left-6 right-6">
+        <div className="bg-white/10 rounded-full h-2 mb-4">
+          <div className="bg-orange-400 h-2 rounded-full w-1/4"></div>
         </div>
       </div>
     </div>
@@ -161,7 +150,7 @@ export const GamingPage = (): JSX.Element => {
 
   const renderQuizView = () => (
     <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-6">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <Button
           variant="ghost"
           size="sm"
@@ -170,32 +159,42 @@ export const GamingPage = (): JSX.Element => {
         >
           <ArrowLeftIcon className="h-6 w-6" />
         </Button>
-        <h1 className="text-xl font-bold font-['Poppins']">Question {currentQuestion}</h1>
+        <h1 className="text-lg font-bold font-['Poppins']">Question 1</h1>
         <div className="w-10"></div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="mb-8">
+        <div className="bg-white/20 rounded-full h-2">
+          <div className="bg-orange-400 h-2 rounded-full w-1/4"></div>
+        </div>
       </div>
 
       {/* Question Card */}
       <Card className="bg-white text-gray-900 border-0 rounded-3xl shadow-xl mb-6">
         <CardContent className="p-6">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-white text-2xl font-bold">?</span>
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <span className="text-white text-4xl font-bold">?</span>
             </div>
-            <h2 className="text-lg font-semibold mb-4">{quizData.question}</h2>
+            <h2 className="text-lg font-bold text-gray-900 leading-tight">{quizData.question}</h2>
           </div>
         </CardContent>
       </Card>
 
       {/* Answer Options */}
-      <div className="space-y-4 mb-8">
+      <div className="space-y-3 mb-8">
         {quizData.answers.map((answer, index) => (
           <Button
             key={index}
             onClick={() => setSelectedAnswer(answer)}
-            className={`w-full p-4 text-left rounded-2xl transition-all ${
+            variant="outline"
+            className={`w-full p-4 text-left justify-start rounded-xl border-2 text-sm transition-all ${
               selectedAnswer === answer 
-                ? 'bg-green-500 text-white' 
-                : 'bg-white/20 text-white hover:bg-white/30'
+                ? 'bg-orange-500 text-white border-orange-500' 
+                : index === 1
+                ? 'bg-orange-400 text-white border-orange-400'
+                : 'bg-purple-100 text-gray-900 border-purple-200 hover:border-purple-300'
             }`}
           >
             {answer}
@@ -207,7 +206,7 @@ export const GamingPage = (): JSX.Element => {
       {selectedAnswer && (
         <Button
           onClick={() => setCurrentView('success')}
-          className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-2xl font-semibold"
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold"
         >
           Submit Answer
         </Button>
