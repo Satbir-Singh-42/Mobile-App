@@ -77,28 +77,54 @@ export const DashboardPage = (): JSX.Element => {
     return () => window.removeEventListener('languageChanged', handleLanguageChange);
   }, []);
 
-  // SVG Icon Components
+  // Updated SVG Icon Components matching Figma design
   const BudgetingIcon = () => (
     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm0-4h-2V7h2v8z"/>
+      <path d="M15 13.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5z"/>
     </svg>
   );
 
   const SavingIcon = () => (
     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M7 4V2c0-.55-.45-1-1-1s-1 .45-1 1v2H4c-.55 0-1 .45-1 1s.45 1 1 1h1v2c0 .55.45 1 1 1s1-.45 1-1V6h1c.55 0 1-.45 1-1s-.45-1-1-1H7zM12 9c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h7c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-7zm7 10h-7v-8h7v8z"/>
+      <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
     </svg>
   );
 
   const CyberIcon = () => (
     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM15.1 8H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+      <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,20V10H6V20H18M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10C4,8.89 4.89,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
     </svg>
   );
 
   const PrivacyIcon = () => (
     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11H16.3V16H7.7V11H9.2V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,10V11H13.5V10C13.5,8.7 12.8,8.2 12,8.2Z"/>
+      <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9L10,17Z"/>
+    </svg>
+  );
+
+  const CalculatorIcon = () => (
+    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M7,2H17A2,2 0 0,1 19,4V20A2,2 0 0,1 17,22H7A2,2 0 0,1 5,20V4A2,2 0 0,1 7,2M7,4V8H17V4H7M7,10V12H9V10H7M11,10V12H13V10H11M15,10V12H17V10H15M7,14V16H9V14H7M11,14V16H13V14H11M15,14V16H17V14H15M7,18V20H9V18H7M11,18V20H13V18H11M15,18V20H17V18H15Z"/>
+    </svg>
+  );
+
+  const TipsIcon = () => (
+    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
+    </svg>
+  );
+
+  const QuizIcon = () => (
+    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12,3C16.97,3 21,7.03 21,12C21,16.97 16.97,21 12,21C7.03,21 3,16.97 3,12C3,7.03 7.03,3 12,3M13,9H11V7H13V9M13,17H11V11H13V17Z"/>
+      <path d="M9,12L11,14L15,10"/>
+    </svg>
+  );
+
+  const GoalsIcon = () => (
+    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
     </svg>
   );
 
@@ -119,37 +145,37 @@ export const DashboardPage = (): JSX.Element => {
       id: "fraud",
       title: "Cyber Fraud Types", 
       icon: CyberIcon,
-      color: "bg-[#4FC3F7]"
+      color: "bg-[#FFB74D]"
     },
     {
       id: "privacy",
       title: "Data Privacy & Protection",
       icon: PrivacyIcon,
-      color: "bg-[#FFB74D]"
+      color: "bg-[#6366F1]"
     },
     {
-      id: "calculator",
-      title: "Calculator",
+      id: "calculators",
+      title: "Calculators",
       icon: CalculatorIcon,
-      color: "bg-[#BA68C8]"
+      color: "bg-[#60A5FA]"
     },
     {
-      id: "tax", 
-      title: "Tax",
-      icon: BookOpenIcon,
-      color: "bg-[#FF7043]"
+      id: "tips", 
+      title: "Tips",
+      icon: TipsIcon,
+      color: "bg-[#8B5CF6]"
     },
     {
       id: "quiz",
       title: "Quiz",
-      icon: Gamepad2Icon,
-      color: "bg-[#66BB6A]"
+      icon: QuizIcon,
+      color: "bg-[#34D399]"
     },
     {
       id: "goals",
       title: "Goals",
-      icon: TargetIcon,
-      color: "bg-[#EF5350]"
+      icon: GoalsIcon,
+      color: "bg-[#F472B6]"
     }
   ];
 
@@ -183,62 +209,53 @@ export const DashboardPage = (): JSX.Element => {
 
   return (
     <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
-      {/* Top Status Bar */}
-      <div className="flex items-center justify-between px-6 py-3 text-sm font-medium bg-white">
-        <span className="text-[#1F2937]">9:41</span>
-        <div className="flex items-center gap-1">
-          <WifiIcon className="w-4 h-4 text-black" />
-          <div className="flex gap-1 mx-1">
-            <div className="w-1 h-1 bg-black rounded-full"></div>
-            <div className="w-1 h-1 bg-black rounded-full"></div>
-            <div className="w-1 h-1 bg-black rounded-full"></div>
-            <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+      {/* Figma-style header with built-in status bar */}
+      <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white px-6 pt-12 pb-8 rounded-b-[2rem]">
+        {/* Top status bar simulation matching Figma */}
+        <div className="flex items-center justify-between mb-6 text-sm font-medium">
+          <div>9:41</div>
+          <div className="flex items-center gap-1">
+            <div className="flex gap-1">
+              <div className="w-1 h-3 bg-white rounded-full"></div>
+              <div className="w-1 h-3 bg-white rounded-full"></div>
+              <div className="w-1 h-3 bg-white rounded-full"></div>
+              <div className="w-1 h-3 bg-white/60 rounded-full"></div>
+            </div>
+            <WifiIcon className="w-4 h-4 ml-2" />
+            <BatteryIcon className="w-5 h-3 ml-1" />
           </div>
-          <BatteryIcon className="w-6 h-4 text-black" />
         </div>
-      </div>
 
-      {/* NEW FIGMA DESIGN: Header Greeting Card */}
-      <div className="px-6 py-4">
-        <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white relative overflow-hidden shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90 mb-1">Monday</p>
-                <h1 className="text-2xl font-bold mb-1">25 October</h1>
-                <h2 className="text-xl font-semibold mb-1">Hi, {user?.username || "Rahul"}</h2>
-                <p className="text-sm opacity-90">Welcome to Face2Finance</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setLocation("/notifications")}
-                  className="p-2 text-white hover:bg-white/20 relative"
-                >
-                  <BellIcon className="h-5 w-5" />
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-xs text-white font-medium">5</span>
-                  </div>
-                </Button>
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <UserIcon className="h-6 w-6 text-white" />
-                </div>
-              </div>
+        {/* Profile header matching Figma */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <div className="text-sm opacity-90 mb-1">Monday</div>
+            <div className="text-2xl font-bold font-['Poppins'] mb-2">25 October</div>
+            <div className="text-xl font-semibold font-['Poppins'] mb-1">Hi, {user?.username || 'Rahul'}</div>
+            <div className="text-sm opacity-90">Welcome to Face2Finance</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <BellIcon className="w-6 h-6 text-white" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
             </div>
-            
-            {/* Search Bar */}
-            <div className="mt-4 relative">
-              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search tutorials, fraud types, or finance tips"
-                className="w-full pl-10 pr-4 py-3 rounded-xl border-0 text-gray-700 placeholder-gray-400 text-sm"
-                onClick={() => setLocation("/search")}
-              />
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30">
+              <UserIcon className="w-6 h-6 text-white" />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
+        {/* Search Bar matching Figma */}
+        <div className="relative">
+          <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search tutorials, fraud types, or finance tips..."
+            className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 shadow-sm"
+            onClick={() => setLocation("/search")}
+            readOnly
+          />
+        </div>
       </div>
 
       {/* Main Content */}
