@@ -21,6 +21,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Connect to MongoDB (non-blocking)
   connectDB().catch(console.error);
 
+  // Database test endpoint
+  app.get("/api/test-db", async (req: Request, res: Response) => {
+    try {
+      // Test MongoDB connection and database operations
+      const mongoose = require('mongoose');
+      
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(500).json({ 
+          success: false,
+          message: "MongoDB not connected",
+          connectionState: mongoose.connection.readyState,
+          states: {
+            0: "disconnected",
+            1: "connected", 
+            2: "connecting",
+            3: "disconnecting"
+          }
+        });
+      }
+
+      // Test database operations
+      const testUser = {
+        username: `test_${Date.now()}`,
+        email: `test_${Date.now()}@example.com`,
+        phone: "1234567890",
+        password: "testpass123"
+      };
+
+      // Create a test user to verify database write operations
+      const createdUser = await storage.createUser(testUser);
+      
+      // Verify read operations  
+      const retrievedUser = await storage.getUserById(createdUser._id!);
+      
+      // Clean up test user
+      const { User } = require('./database');
+      await User.findByIdAndDelete(createdUser._id);
+
+      res.json({
+        success: true,
+        message: "MongoDB connection and operations successful",
+        connectionState: mongoose.connection.readyState,
+        database: mongoose.connection.name,
+        host: mongoose.connection.host,
+        port: mongoose.connection.port,
+        testResults: {
+          userCreated: !!createdUser,
+          userRetrieved: !!retrievedUser,
+          idsMatch: createdUser._id === retrievedUser?._id
+        }
+      });
+
+    } catch (error: any) {
+      console.error("Database test error:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Database test failed",
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
+    }
+  });
+
   // Authentication Routes
 
   // Register/Signup
