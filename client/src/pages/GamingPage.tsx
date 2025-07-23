@@ -222,6 +222,11 @@ export const GamingPage = (): JSX.Element => {
           answers: [...prev.answers, newAnswer],
           score: data.isCorrect ? prev.score + 1 : prev.score
         } : null);
+
+        // Auto-advance to next question after 2 seconds
+        setTimeout(() => {
+          handleNextQuestion();
+        }, 2000);
       }
     });
   };
