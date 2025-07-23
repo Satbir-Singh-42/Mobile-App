@@ -10,6 +10,7 @@ export interface IStorage {
   getUserById(id: string): Promise<UserType | null>;
   getUserByUsername(username: string): Promise<UserType | null>;
   getUserByEmail(email: string): Promise<UserType | null>;
+  getUserForLogin(username: string): Promise<{ _id: string; username: string; email: string; phone: string; comparePassword: (password: string) => Promise<boolean> } | null>;
   createUser(user: InsertUser): Promise<UserType>;
   updateUser(id: string, updates: Partial<UserType>): Promise<UserType | null>;
   
@@ -200,6 +201,27 @@ export class MongoStorage implements IStorage {
     } catch (error) {
       console.error('Error verifying OTP:', error);
       return false;
+    }
+  }
+
+  async getUserForLogin(username: string): Promise<{ _id: string; username: string; email: string; phone: string; comparePassword: (password: string) => Promise<boolean> } | null> {
+    try {
+      const user = await User.findOne({ 
+        $or: [{ username }, { email: username }] 
+      });
+      
+      if (!user) return null;
+      
+      return {
+        _id: user._id.toString(),
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
+        comparePassword: user.comparePassword.bind(user)
+      };
+    } catch (error) {
+      console.error('Error getting user for login:', error);
+      return null;
     }
   }
 }

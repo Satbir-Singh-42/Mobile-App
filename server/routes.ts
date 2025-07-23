@@ -71,24 +71,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, password } = loginSchema.parse(req.body);
       
-      // Find user by username or email
-      let user = await storage.getUserByUsername(username);
-      if (!user) {
-        user = await storage.getUserByEmail(username);
-      }
+      // Find user by username or email using the storage method
+      const user = await storage.getUserForLogin(username);
 
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Check password
-      const bcrypt = require('bcryptjs');
-      const isMatch = await bcrypt.compare(password, user.password);
+      // Check password using the model's comparePassword method
+      const isMatch = await user.comparePassword(password);
       if (!isMatch) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      const token = generateToken(user._id!.toString());
+      const token = generateToken(user._id);
 
       res.json({
         message: "Login successful",
