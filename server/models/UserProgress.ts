@@ -34,6 +34,19 @@ const userProgressSchema = new mongoose.Schema({
   lastPlayedAt: {
     type: Date,
     default: Date.now
+  },
+  lastNotificationDate: {
+    type: Date,
+    default: null
+  },
+  streakDays: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  isReturningUser: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true // Creates createdAt and updatedAt automatically
@@ -54,6 +67,9 @@ export interface IUserProgress extends mongoose.Document {
   totalXP: number;
   achievements: string[];
   lastPlayedAt: Date;
+  lastNotificationDate?: Date;
+  streakDays: number;
+  isReturningUser: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

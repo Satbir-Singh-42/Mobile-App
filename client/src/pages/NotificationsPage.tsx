@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { authAPI } from "@/lib/auth";
+import { apiRequest } from "@/lib/queryClient";
 import { 
   ArrowLeftIcon, 
   BellIcon,
@@ -29,10 +31,57 @@ export const NotificationsPage = (): JSX.Element => {
     setUser(userData);
   }, []);
 
+  // Check for daily gaming notifications
+  const { data: gamingNotification } = useQuery({
+    queryKey: ['/api/gaming/daily-notification'],
+    enabled: !!user,
+    refetchInterval: 5 * 60 * 1000 // Check every 5 minutes
+  });
+
   // Dynamic notifications based on user activity
   const generateNotifications = () => {
     const notifications = [];
     const now = new Date();
+    
+    // Add gaming notification if available
+    if (gamingNotification?.notification?.shouldNotify) {
+      const notification = gamingNotification.notification;
+      let icon = InfoIcon;
+      let color = "text-blue-600";
+      let bgColor = "bg-blue-100";
+      
+      switch (notification.notificationType) {
+        case 'map_discovered':
+          icon = BookOpenIcon;
+          color = "text-purple-600";
+          bgColor = "bg-purple-100";
+          break;
+        case 'progression_reminder':
+          icon = TrendingUpIcon;
+          color = "text-green-600";
+          bgColor = "bg-green-100";
+          break;
+        case 'daily_challenge':
+          icon = GraduationCapIcon;
+          color = "text-orange-600";
+          bgColor = "bg-orange-100";
+          break;
+      }
+      
+      notifications.push({
+        id: Date.now(),
+        title: notification.notificationType === 'map_discovered' ? "New Map Discovered!" : 
+               notification.notificationType === 'progression_reminder' ? "Continue Your Journey" : 
+               "Daily Challenge",
+        message: notification.message,
+        time: "Just now",
+        icon,
+        color,
+        bgColor,
+        isRead: false,
+        category: "gaming"
+      });
+    }
     
     // Welcome notification for new users
     if (!user?.lastLogin || (now.getTime() - new Date(user.lastLogin).getTime()) > 86400000) {

@@ -807,6 +807,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Check daily gaming notification for returning users
+  app.get("/api/gaming/daily-notification", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const notification = await storage.checkDailyGamingNotification(userId);
+      
+      res.json({ notification });
+    } catch (error: any) {
+      console.error("Daily gaming notification error:", error);
+      res.status(500).json({ 
+        message: "Failed to check daily notification", 
+        details: "Please try again later"
+      });
+    }
+  });
+
   // Start quiz session
   app.post("/api/gaming/start-quiz", authenticateToken, async (req: Request, res: Response) => {
     try {

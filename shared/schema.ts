@@ -65,6 +65,9 @@ export const userProgressSchema = z.object({
   totalXP: z.number().default(0),
   achievements: z.array(z.string()).default([]),
   lastPlayedAt: z.date().default(() => new Date()),
+  lastNotificationDate: z.date().optional(),
+  streakDays: z.number().min(0).default(0),
+  isReturningUser: z.boolean().default(false),
   createdAt: z.date().default(() => new Date()),
 });
 

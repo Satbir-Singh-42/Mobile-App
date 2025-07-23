@@ -43,6 +43,7 @@ export interface IStorage {
   // Gaming operations
   getUserProgress(userId: string): Promise<UserProgress | null>;
   updateUserProgress(userId: string, updates: Partial<UserProgress>): Promise<UserProgress | null>;
+  checkDailyGamingNotification(userId: string): Promise<{ shouldNotify: boolean; notificationType: string; message: string } | null>;
   createQuizSession(session: InsertQuizSession): Promise<QuizSession>;
   addQuizAnswer(sessionId: string, answer: { questionId: string; selectedAnswer: string; correctAnswer: string; isCorrect: boolean }): Promise<void>;
   completeQuizSession(sessionId: string, score: number): Promise<void>;
@@ -694,6 +695,63 @@ export class MongoStorage implements IStorage {
     } catch (error) {
       console.error('Error seeding quiz questions:', error);
       throw error;
+    }
+  }
+
+  // Daily Gaming Notification System
+  async checkDailyGamingNotification(userId: string): Promise<{ shouldNotify: boolean; notificationType: string; message: string } | null> {
+    try {
+      const { UserProgress } = await import('./models/UserProgress');
+      
+      const progress = await UserProgress.findOne({ userId });
+      if (!progress) return null;
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const lastNotification = progress.lastNotificationDate ? new Date(progress.lastNotificationDate) : null;
+      const lastNotificationDate = lastNotification ? new Date(lastNotification.getFullYear(), lastNotification.getMonth(), lastNotification.getDate()) : null;
+
+      // Check if notification already sent today
+      if (lastNotificationDate && lastNotificationDate.getTime() === today.getTime()) {
+        return null;
+      }
+
+      // Check if user hasn't played for more than 24 hours (returning user)
+      const timeSinceLastPlay = now.getTime() - progress.lastPlayedAt.getTime();
+      const hoursAway = timeSinceLastPlay / (1000 * 60 * 60);
+
+      let notificationType = '';
+      let message = '';
+      let shouldNotify = false;
+
+      if (hoursAway >= 24) {
+        // Mark as returning user and update notification date
+        await UserProgress.findOneAndUpdate(
+          { userId },
+          { 
+            isReturningUser: true,
+            lastNotificationDate: now
+          }
+        );
+
+        shouldNotify = true;
+
+        if (hoursAway >= 168) { // 1 week
+          notificationType = 'map_discovered';
+          message = `New gaming map discovered with exciting challenges! Your progress from Level ${progress.currentLevel} is safely saved!`;
+        } else if (hoursAway >= 72) { // 3 days
+          notificationType = 'progression_reminder';
+          message = `Your gaming journey continues! Resume from Level ${progress.currentLevel} and earn more XP. You have ${progress.totalXP} points so far!`;
+        } else if (hoursAway >= 24) { // 1 day
+          notificationType = 'daily_challenge';
+          message = `Daily challenge available! Complete Level ${progress.currentLevel} quizzes to unlock new achievements and earn bonus XP!`;
+        }
+      }
+
+      return shouldNotify ? { shouldNotify, notificationType, message } : null;
+    } catch (error) {
+      console.error('Error checking daily gaming notification:', error);
+      return null;
     }
   }
 }

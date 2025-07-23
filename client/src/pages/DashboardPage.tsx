@@ -64,6 +64,12 @@ export const DashboardPage = (): JSX.Element => {
     queryFn: () => taskAPI.getTasks(),
   });
 
+  // Fetch gaming progress for dashboard integration
+  const { data: gamingProgress } = useQuery({
+    queryKey: ['/api/gaming/progress'],
+    enabled: true
+  });
+
   // Get only 2 most urgent upcoming tasks for dashboard
   const urgentTasks = (tasksData?.tasks || [])
     .filter(task => !task.completed) // Only show incomplete tasks
@@ -172,6 +178,10 @@ export const DashboardPage = (): JSX.Element => {
   ];
 
   // Dynamic stats based on user progress - connected to database
+  const progress = (gamingProgress as any)?.progress;
+  const gamingLevel = progress?.currentLevel || 1;
+  const totalXP = progress?.totalXP || 0;
+
   const monthlyStats = [
     {
       id: "completed",
@@ -180,21 +190,21 @@ export const DashboardPage = (): JSX.Element => {
       color: "bg-[#4ECDC4]"
     },
     {
-      id: "progress",
+      id: "gaming_level",
+      title: "Gaming Level",
+      value: gamingLevel.toString(),
+      color: "bg-[#8B5CF6]"
+    },
+    {
+      id: "gaming_xp",
+      title: "Total XP",
+      value: totalXP.toString(),
+      color: "bg-[#F59E0B]"
+    },
+    {
+      id: "active_tasks",
       title: "Active Tasks",
       value: tasksData?.tasks?.filter(task => !task.completed).length.toString() || "0", 
-      color: "bg-[#FFB74D]"
-    },
-    {
-      id: "goals",
-      title: "Total Tasks",
-      value: tasksData?.tasks?.length.toString() || "0",
-      color: "bg-[#FF6B8A]"
-    },
-    {
-      id: "attempted",
-      title: "Categories Used",
-      value: tasksData?.tasks ? Array.from(new Set(tasksData.tasks.map(task => task.category))).length.toString() : "0",
       color: "bg-[#4FC3F7]"
     }
   ];
