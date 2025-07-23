@@ -242,8 +242,28 @@ export const GamingPage = (): JSX.Element => {
   );
 
   const renderQuizView = () => (
-    <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="fixed inset-0 bg-gradient-to-b from-[#6366F1] to-[#8B5CF6] text-white flex flex-col">
+      {/* Mobile Status Bar */}
+      <div className="flex items-center justify-between px-4 py-2 text-sm font-medium">
+        <span>19:27</span>
+        <div className="flex items-center space-x-1">
+          <div className="flex space-x-1">
+            <div className="w-1 h-3 bg-white rounded-full"></div>
+            <div className="w-1 h-3 bg-white rounded-full"></div>
+            <div className="w-1 h-3 bg-white rounded-full"></div>
+            <div className="w-1 h-3 bg-white/50 rounded-full"></div>
+          </div>
+          <div className="ml-2">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
+              <path d="M1 3.5C1 2.12 2.12 1 3.5 1h9C13.88 1 15 2.12 15 3.5v5c0 1.38-1.12 2.5-2.5 2.5h-9C2.12 11 1 9.88 1 8.5v-5z"/>
+            </svg>
+          </div>
+          <div className="w-6 h-3 bg-white rounded-sm"></div>
+        </div>
+      </div>
+
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-4">
         <Button
           variant="ghost"
           size="sm"
@@ -253,94 +273,110 @@ export const GamingPage = (): JSX.Element => {
           <ArrowLeftIcon className="h-6 w-6" />
         </Button>
         <h1 className="text-lg font-bold font-['Poppins']">Question 1</h1>
-        <div className="w-10"></div>
+        <Button variant="ghost" size="icon" className="text-white p-2">
+          <MoreVertical size={20} />
+        </Button>
       </div>
 
       {/* Progress Bar */}
-      <div className="mb-8">
+      <div className="px-4 mb-8">
         <div className="bg-white/20 rounded-full h-2">
           <div className="bg-orange-400 h-2 rounded-full w-1/4"></div>
         </div>
       </div>
 
-      {currentQuizQuestion ? (
-        <>
-          {/* Question Card */}
-          <Card className="bg-white text-gray-900 border-0 rounded-3xl shadow-xl mb-6">
-            <CardContent className="p-6">
-              <div className="text-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <div className="text-white">
-                    <QuestionIcon />
+      {/* Content Area - Scrollable */}
+      <div className="flex-1 px-4 pb-4 overflow-y-auto">
+
+        {currentQuizQuestion ? (
+          <>
+            {/* Question Card */}
+            <Card className="bg-white text-gray-900 border-0 rounded-3xl shadow-xl mb-6">
+              <CardContent className="p-8">
+                <div className="text-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <div className="text-white">
+                      <QuestionIcon />
+                    </div>
                   </div>
-                </div>
-                <h2 className="text-lg font-bold text-gray-900 leading-tight">{currentQuizQuestion.question}</h2>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Answer Options */}
-          <div className="space-y-3 mb-8">
-            {currentQuizQuestion.options.map((answer: string, index: number) => (
-              <Button
-                key={index}
-                onClick={() => !showFeedback && handleAnswerSubmit(answer)}
-                disabled={showFeedback}
-                variant="outline"
-                className={`w-full p-4 text-left justify-start rounded-xl border-2 text-sm transition-all ${
-                  selectedAnswer === answer 
-                    ? showFeedback && isCorrect
-                      ? 'bg-green-500 text-white border-green-500' 
-                      : showFeedback && !isCorrect
-                      ? 'bg-red-500 text-white border-red-500'
-                      : 'bg-orange-500 text-white border-orange-500'
-                    : showFeedback && answer === currentQuizQuestion.correctAnswer
-                    ? 'bg-green-400 text-white border-green-400'
-                    : 'bg-purple-100 text-gray-900 border-purple-200 hover:border-purple-300'
-                }`}
-              >
-                {answer}
-              </Button>
-            ))}
-          </div>
-
-          {/* Feedback */}
-          {showFeedback && (
-            <Card className="bg-white border-0 rounded-2xl shadow-lg mb-6">
-              <CardContent className="p-4">
-                <div className={`text-center ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                  <h3 className="font-bold text-lg mb-2">
-                    {isCorrect ? '🎉 Correct!' : '❌ Incorrect'}
-                  </h3>
-                  <p className="text-sm text-gray-700 mb-2">{currentQuizQuestion.explanation}</p>
-                  {!isCorrect && (
-                    <p className="text-xs text-gray-600">
-                      Correct answer: {currentQuizQuestion.correctAnswer}
-                    </p>
-                  )}
+                  <h2 className="text-xl font-bold text-gray-900 leading-tight">{currentQuizQuestion.question}</h2>
                 </div>
               </CardContent>
             </Card>
-          )}
 
-          {/* Next Button */}
-          {showFeedback && (
-            <Button
-              onClick={() => setCurrentView('success')}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold"
-            >
-              Continue
-            </Button>
-          )}
-        </>
-      ) : (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="text-white">Loading question...</p>
+            {/* Answer Options */}
+            <div className="space-y-4 mb-8">
+              {currentQuizQuestion.options.map((answer: string, index: number) => (
+                <Button
+                  key={index}
+                  onClick={() => !showFeedback && handleAnswerSubmit(answer)}
+                  disabled={showFeedback}
+                  className={`w-full p-6 text-left rounded-2xl text-white font-medium transition-all text-base ${
+                    selectedAnswer === answer 
+                      ? showFeedback && isCorrect
+                        ? 'bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 border-2 border-orange-300' 
+                        : showFeedback && !isCorrect
+                        ? 'bg-red-500 hover:bg-red-500'
+                        : 'bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600'
+                      : showFeedback && answer === currentQuizQuestion.correctAnswer
+                      ? 'bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 border-2 border-orange-300'
+                      : 'bg-white/20 hover:bg-white/30 border-2 border-transparent hover:border-white/50'
+                  }`}
+                >
+                  {answer}
+                </Button>
+              ))}
+            </div>
+
+            {/* Feedback */}
+            {showFeedback && (
+              <Card className="bg-white/10 border-0 rounded-2xl mb-6">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-3 mb-3">
+                    {isCorrect ? (
+                      <CheckCircle className="text-green-400" size={24} />
+                    ) : (
+                      <XCircle className="text-red-400" size={24} />
+                    )}
+                    <span className="font-bold text-lg">
+                      {isCorrect ? 'Correct!' : 'Not quite right'}
+                    </span>
+                  </div>
+                  <p className="text-white/90 leading-relaxed text-base">
+                    {currentQuizQuestion.explanation}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Continue Button */}
+            {showFeedback && (
+              <Button
+                onClick={() => setCurrentView('success')}
+                className="w-full bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg"
+              >
+                Continue
+              </Button>
+            )}
+          </>
+        ) : (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+              <p className="text-white">Loading question...</p>
+            </div>
           </div>
+        )}
+      </div>
+
+      {/* Bottom Navigation Dots */}
+      <div className="flex justify-center pb-4">
+        <div className="flex space-x-2">
+          <div className="w-8 h-1 bg-white rounded-full"></div>
+          <div className="w-8 h-1 bg-white/30 rounded-full"></div>
+          <div className="w-8 h-1 bg-white/30 rounded-full"></div>
         </div>
-      )}
+      </div>
     </div>
   );
 
