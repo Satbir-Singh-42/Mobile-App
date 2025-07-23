@@ -241,12 +241,8 @@ export const GamingPage = (): JSX.Element => {
           score: data.isCorrect ? prev.score + 1 : prev.score
         } : null);
 
-        // Auto-advance to next question after 5 seconds - only if not on last question
-        if (quizSession.currentQuestionIndex < quizSession.questions.length - 1) {
-          setTimeout(() => {
-            handleNextQuestion();
-          }, 5000);
-        }
+        // Only auto-advance if not on the last question (to prevent skipping)
+        // Removed auto-advance to give users time to read feedback
       }
     });
   };
@@ -555,7 +551,7 @@ export const GamingPage = (): JSX.Element => {
                 key={index}
                 onClick={() => !showFeedback && handleAnswerSubmit(answer)}
                 disabled={showFeedback}
-                className={`w-full p-6 text-left rounded-2xl font-medium transition-all text-base ${
+                className={`w-full p-6 text-left rounded-2xl font-medium transition-all text-base min-h-[70px] flex items-start ${
                   selectedAnswer === answer 
                     ? showFeedback && isCorrect
                       ? 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700'
@@ -565,7 +561,9 @@ export const GamingPage = (): JSX.Element => {
                     : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
                 }`}
                 >
-                  {answer}
+                  <span className="break-words whitespace-normal leading-relaxed text-left w-full">
+                    {answer}
+                  </span>
                 </Button>
               ))}
             </div>
@@ -693,7 +691,13 @@ export const GamingPage = (): JSX.Element => {
           
           <Button
             onClick={() => {
-              setCurrentView('map');
+              // Check if this was level 4 completion (map completion)
+              if (quizSession.level === 4) {
+                // Show completion message or redirect appropriately
+                setCurrentView('map');
+              } else {
+                setCurrentView('map');
+              }
               // Reset bonus state
               setBonusPoints(0);
               setLevelUnlocked(false);
@@ -702,7 +706,7 @@ export const GamingPage = (): JSX.Element => {
             }}
             className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-semibold mb-4"
           >
-            Continue to Map
+            {quizSession.level === 4 ? 'Map Complete!' : 'Continue to Map'}
           </Button>
         </div>
       </div>
