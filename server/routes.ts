@@ -791,6 +791,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Gaming Routes - User Progress and Quiz Sessions
 
+  // Restore user progress (for development/testing)
+  app.post("/api/gaming/restore-progress", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      
+      // Restore user to level 4 with completed map 1
+      await storage.updateUserProgress(userId, {
+        currentLevel: 4,
+        currentMap: 1,
+        completedLevels: [1, 2, 3, 4],
+        completedMaps: [1],
+        mapProgress: {
+          "1": {
+            completed: true,
+            levelsCompleted: [1, 2, 3, 4],
+            pointsEarned: true
+          }
+        },
+        totalScore: 16, // 4 levels × 4 questions each = 16 points
+        totalXP: 800, // Restored XP based on completed levels
+        lastPlayedAt: new Date()
+      });
+      
+      res.json({ 
+        message: "Progress restored successfully",
+        details: "You now have access to all 4 levels with full XP"
+      });
+    } catch (error: any) {
+      console.error("Restore progress error:", error);
+      res.status(500).json({ 
+        message: "Failed to restore progress", 
+        details: "Please try again later"
+      });
+    }
+  });
+
   // Get user progress
   app.get("/api/gaming/progress", authenticateToken, async (req: Request, res: Response) => {
     try {

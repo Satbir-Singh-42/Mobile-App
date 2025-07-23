@@ -160,6 +160,26 @@ export const GamingPage = (): JSX.Element => {
     }
   });
 
+  // Restore progress mutation
+  const restoreProgressMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('/api/gaming/restore-progress', {
+        method: 'POST'
+      });
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log('Progress restored successfully:', data);
+      // Refresh progress data from server
+      queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
+      queryClient.refetchQueries({ queryKey: ['/api/gaming/progress'] });
+    },
+    onError: (error) => {
+      console.error('Failed to restore progress:', error);
+    }
+  });
+
   // Complete quiz mutation
   const completeQuizMutation = useMutation({
     mutationFn: async (completionData: {
@@ -357,10 +377,10 @@ export const GamingPage = (): JSX.Element => {
                 });
                 setCurrentView('success');
               }}
-              className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
+              className="w-20 h-20 bg-gradient-to-br from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
             >
-              <div className="transform -rotate-45 text-white">
-                <GiftIcon />
+              <div className="transform -rotate-45 text-white text-2xl">
+                🎁
               </div>
             </Button>
             <div className="w-2 h-2 bg-white/30 rounded-full"></div>
@@ -441,14 +461,14 @@ export const GamingPage = (): JSX.Element => {
                 }
               }}
               disabled={currentLevel < 2}
-              className={`w-16 h-16 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg transition-all duration-300 ${
+              className={`w-20 h-20 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg transition-all duration-300 ${
                 currentLevel >= 2 
                   ? 'bg-gradient-to-br from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 hover:scale-110 cursor-pointer' 
                   : 'bg-gradient-to-br from-teal-400/60 to-teal-500/60'
               }`}
             >
-              <div className="transform -rotate-45 text-white">
-                <GiftIcon />
+              <div className="transform -rotate-45 text-white text-2xl">
+                🎁
               </div>
             </Button>
           </div>
@@ -471,6 +491,17 @@ export const GamingPage = (): JSX.Element => {
           <div className="bg-white/10 rounded-full h-2 mb-4">
             <div className="bg-orange-400 h-2 rounded-full transition-all duration-300" style={{ width: `${(currentLevel / 4) * 100}%` }}></div>
           </div>
+        </div>
+
+        {/* Restore Progress Button (Development) */}
+        <div className="fixed bottom-32 right-6">
+          <Button
+            onClick={() => restoreProgressMutation.mutate()}
+            disabled={restoreProgressMutation.isPending}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm shadow-lg"
+          >
+            {restoreProgressMutation.isPending ? 'Restoring...' : 'Restore Progress'}
+          </Button>
         </div>
       </div>
     );
