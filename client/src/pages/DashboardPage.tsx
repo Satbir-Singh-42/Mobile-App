@@ -46,6 +46,7 @@ export const DashboardPage = (): JSX.Element => {
   const { t } = useTranslation();
   const [user, setUser] = useState<any>(null);
   const [forceRerender, setForceRerender] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // Fetch tasks from database for dashboard
   const { data: tasksData, isLoading: isLoadingTasks } = useQuery({
@@ -68,14 +69,46 @@ export const DashboardPage = (): JSX.Element => {
     const userData = authAPI.getUser();
     setUser(userData);
 
+    // Update time every minute
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+
     // Listen for language changes
     const handleLanguageChange = () => {
       setForceRerender(prev => prev + 1);
     };
     
     window.addEventListener('languageChanged', handleLanguageChange);
-    return () => window.removeEventListener('languageChanged', handleLanguageChange);
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      clearInterval(timeInterval);
+    };
   }, []);
+
+  // Format real current date and time
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: false 
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                   'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    const dayName = days[date.getDay()];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    
+    return { dayName, day, month };
+  };
+
+  const { dayName, day, month } = formatDate(currentTime);
+  const currentTimeStr = formatTime(currentTime);
 
   // Updated SVG Icon Components matching Figma design
   const BudgetingIcon = () => (
@@ -211,9 +244,9 @@ export const DashboardPage = (): JSX.Element => {
     <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
       {/* Figma-style header with built-in status bar */}
       <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white px-6 pt-12 pb-8 rounded-b-[2rem]">
-        {/* Top status bar simulation matching Figma */}
+        {/* Top status bar simulation with real time */}
         <div className="flex items-center justify-between mb-6 text-sm font-medium">
-          <div>9:41</div>
+          <div>{currentTimeStr}</div>
           <div className="flex items-center gap-1">
             <div className="flex gap-1">
               <div className="w-1 h-3 bg-white rounded-full"></div>
@@ -226,22 +259,28 @@ export const DashboardPage = (): JSX.Element => {
           </div>
         </div>
 
-        {/* Profile header matching Figma */}
+        {/* Profile header with real date */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <div className="text-sm opacity-90 mb-1">Monday</div>
-            <div className="text-2xl font-bold font-['Poppins'] mb-2">25 October</div>
+            <div className="text-sm opacity-90 mb-1">{dayName}</div>
+            <div className="text-2xl font-bold font-['Poppins'] mb-2">{day} {month}</div>
             <div className="text-xl font-semibold font-['Poppins'] mb-1">Hi, {user?.username || 'Rahul'}</div>
             <div className="text-sm opacity-90">Welcome to Face2Finance</div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="relative">
+            <button 
+              onClick={() => setLocation("/notifications")}
+              className="relative p-1 hover:bg-white/10 rounded-full transition-colors"
+            >
               <BellIcon className="w-6 h-6 text-white" />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-            </div>
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30">
+            </button>
+            <button
+              onClick={() => setLocation("/profile")}
+              className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30 hover:bg-white/30 transition-colors"
+            >
               <UserIcon className="w-6 h-6 text-white" />
-            </div>
+            </button>
           </div>
         </div>
 
