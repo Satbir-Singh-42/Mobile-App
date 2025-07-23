@@ -1,22 +1,30 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
 import { 
   SearchIcon, 
   BellIcon, 
   UserIcon, 
-  BookOpenIcon, 
-  CreditCardIcon, 
-  ShieldCheckIcon, 
-  TrendingUpIcon, 
-  PlusIcon,
+  HomeIcon,
+  MessageSquareIcon,
+  CreditCardIcon,
+  BookOpenIcon,
+  TrendingUpIcon,
+  ShieldIcon,
+  MoreHorizontalIcon,
   ArrowRightIcon,
-  PlayIcon,
-  CheckCircleIcon,
+  StarIcon,
+  WifiIcon,
+  BatteryIcon,
+  GraduationCapIcon,
+  DollarSignIcon,
+  PiggyBankIcon,
+  CalculatorIcon,
+  MapPinIcon,
+  PieChartIcon,
   TargetIcon,
-  TrophyIcon,
-  CalendarIcon
+  PlayIcon
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { authAPI } from "@/lib/auth";
@@ -46,360 +54,329 @@ export const DashboardPage = (): JSX.Element => {
     return () => window.removeEventListener('languageChanged', handleLanguageChange);
   }, []);
 
-  const handleLogout = () => {
-    authAPI.logout();
-    setLocation("/");
-  };
-
-  const modules = [
+  const categories = [
     {
       id: "budgeting",
-      title: "Budgeting Basics",
-      description: "Master the fundamentals of personal budgeting",
-      icon: CreditCardIcon,
-      progress: userProgress.lessonsCompleted > 0 ? 25 : 0,
-      color: "bg-[#E8F5E8]",
-      iconColor: "text-[#2ECC40]",
-      isUnlocked: true,
-      lessons: 8,
-      duration: "2 weeks"
+      title: "Budgeting",
+      icon: PiggyBankIcon,
+      color: "bg-[#FB7185]"
     },
     {
       id: "saving",
-      title: "Smart Saving",
-      description: "Build wealth through strategic saving",
-      icon: TrendingUpIcon,
-      progress: userProgress.lessonsCompleted > 3 ? 15 : 0,
-      color: "bg-[#E3F2FD]",
-      iconColor: "text-[#2196F3]",
-      isUnlocked: userProgress.lessonsCompleted > 3,
-      lessons: 6,
-      duration: "1.5 weeks"
+      title: "Saving & Investing",
+      icon: DollarSignIcon,
+      color: "bg-[#10B981]"
     },
     {
-      id: "investing", 
-      title: "Investment Basics",
-      description: "Start your investment journey",
-      icon: BookOpenIcon,
-      progress: 0,
-      color: "bg-[#F3E5F5]",
-      iconColor: "text-[#9C27B0]",
-      isUnlocked: userProgress.lessonsCompleted > 8,
-      lessons: 10,
-      duration: "3 weeks"
+      id: "investing",
+      title: "Mutual Fund Types",
+      icon: PieChartIcon,
+      color: "bg-[#3B82F6]"
     },
     {
-      id: "security",
-      title: "Financial Security",
-      description: "Protect your financial future",
-      icon: ShieldCheckIcon,
-      progress: 0,
-      color: "bg-[#FFF3E0]",
-      iconColor: "text-[#FF9800]",
-      isUnlocked: userProgress.lessonsCompleted > 15,
-      lessons: 5,
-      duration: "1 week"
-    }
-  ];
-
-  const todaysTips = [
-    {
-      id: 1,
-      title: "Track your daily expenses",
-      description: "Small purchases add up quickly",
-      category: "Budgeting",
-      isCompleted: false
-    },
-    {
-      id: 2,
-      title: "Review your financial goals",
-      description: "Stay motivated and on track",
-      category: "Planning",
-      isCompleted: false
-    }
-  ];
-
-  const quickActions = [
-    {
-      id: "budget",
-      title: "Create Budget",
-      icon: PlusIcon,
-      color: "bg-[#4157ff]",
-      action: () => {}
-    },
-    {
-      id: "goal",
-      title: "Set Goal", 
+      id: "goals",
+      title: "Goal Money & Projects",
       icon: TargetIcon,
-      color: "bg-[#2ECC40]",
-      action: () => {}
+      color: "bg-[#F59E0B]"
     },
     {
-      id: "track",
-      title: "Track Expense",
-      icon: CalendarIcon,
-      color: "bg-[#FF9800]",
-      action: () => {}
+      id: "calculator",
+      title: "Calculator",
+      icon: CalculatorIcon,
+      color: "bg-[#06B6D4]"
+    },
+    {
+      id: "tax",
+      title: "Tax",
+      icon: BookOpenIcon,
+      color: "bg-[#F97316]"
+    },
+    {
+      id: "quiz",
+      title: "Quiz",
+      icon: GraduationCapIcon,
+      color: "bg-[#10B981]"
+    },
+    {
+      id: "goals-alt",
+      title: "Goals",
+      icon: MapPinIcon,
+      color: "bg-[#EF4444]"
     }
   ];
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
+  const monthlyStats = [
+    {
+      id: "completed",
+      title: "Lessons Completed", 
+      value: "22",
+      color: "bg-[#10B981]"
+    },
+    {
+      id: "progress",
+      title: "Modules in Progress",
+      value: "7", 
+      color: "bg-[#F59E0B]"
+    },
+    {
+      id: "attended",
+      title: "Quizzes Attempted",
+      value: "14",
+      color: "bg-[#06B6D4]"
+    },
+    {
+      id: "tests",
+      title: "Goal Being Tracked",
+      value: "12",
+      color: "bg-[#FB7185]"
+    }
+  ];
 
   return (
-    <div className="bg-gray-50 min-h-screen w-full mobile-status-hidden">
-      {/* Modern Header */}
-      <header className="bg-white shadow-sm">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-[#4157ff] text-white text-lg font-['Poppins'] font-semibold rounded-full flex items-center justify-center">
-                {user?.username ? user.username.charAt(0).toUpperCase() : "U"}
-              </div>
+    <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
+      {/* Top Status Bar */}
+      <div className="flex items-center justify-between px-6 py-3 text-sm font-medium bg-white">
+        <span className="text-[#1F2937]">9:41</span>
+        <div className="flex items-center gap-1">
+          <WifiIcon className="w-4 h-4 text-black" />
+          <div className="flex gap-1 mx-1">
+            <div className="w-1 h-1 bg-black rounded-full"></div>
+            <div className="w-1 h-1 bg-black rounded-full"></div>
+            <div className="w-1 h-1 bg-black rounded-full"></div>
+            <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+          </div>
+          <BatteryIcon className="w-6 h-4 text-black" />
+        </div>
+      </div>
+
+      {/* Header Greeting Card */}
+      <div className="px-6 py-4">
+        <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white relative overflow-hidden">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="font-['Poppins'] text-sm text-gray-600">{getGreeting()}</p>
-                <h1 className="font-['Poppins'] font-semibold text-lg text-[#242424]">
-                  {user?.username || "User"}
-                </h1>
+                <p className="text-sm opacity-90 mb-1">Monday</p>
+                <h1 className="text-2xl font-bold mb-1">25 October</h1>
+                <h2 className="text-xl font-semibold mb-1">Hi, {user?.username || "Rahul"}</h2>
+                <p className="text-sm opacity-90">Welcome to Face2Finance</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setLocation("/search")}
+                  className="p-2 text-white hover:bg-white/20"
+                >
+                  <SearchIcon className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setLocation("/notifications")}
+                  className="p-2 text-white hover:bg-white/20 relative"
+                >
+                  <BellIcon className="h-5 w-5" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                </Button>
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
+            {/* Search Bar */}
+            <div className="mt-4 relative">
+              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search textbooks, brand topics, or financial tips"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border-0 text-gray-700 placeholder-gray-400 text-sm"
                 onClick={() => setLocation("/search")}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                <SearchIcon className="h-6 w-6 text-gray-600" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLocation("/notifications")}
-                className="p-2 hover:bg-gray-100 rounded-full relative"
-              >
-                <BellIcon className="h-6 w-6 text-gray-600" />
-                <div className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center">
-                  <span className="text-xs text-white font-['Poppins']">2</span>
-                </div>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLocation("/profile")}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                <UserIcon className="h-6 w-6 text-gray-600" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="px-4 pb-20">
-        {/* Progress Overview Card */}
-        <Card className="mb-6 bg-gradient-to-r from-[#4157ff] to-[#3146e6] border-0">
-          <CardContent className="p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="font-['Poppins'] font-semibold text-lg">Your Progress</h2>
-                <p className="font-['Poppins'] text-sm opacity-90">Keep up the great work!</p>
-              </div>
-              <TrophyIcon className="h-8 w-8 opacity-90" />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold mb-1">{userProgress.lessonsCompleted}</div>
-                <div className="text-xs opacity-90">Lessons</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold mb-1">{userProgress.currentStreak}</div>
-                <div className="text-xs opacity-90">Day Streak</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold mb-1">{Math.round((userProgress.lessonsCompleted / 29) * 100)}%</div>
-                <div className="text-xs opacity-90">Complete</div>
-              </div>
+              />
             </div>
           </CardContent>
         </Card>
+      </div>
 
-        {/* Quick Actions */}
-        {userProgress.lessonsCompleted > 0 && (
-          <div className="mb-6">
-            <h3 className="font-['Poppins'] font-semibold text-lg text-[#242424] mb-3">Quick Actions</h3>
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {quickActions.map((action) => {
-                const IconComponent = action.icon;
-                return (
-                  <Button
-                    key={action.id}
-                    variant="ghost"
-                    onClick={action.action}
-                    className={`${action.color} text-white hover:opacity-90 min-w-[120px] h-16 flex-col gap-1 flex-shrink-0`}
-                  >
-                    <IconComponent className="h-5 w-5" />
-                    <span className="text-xs font-['Poppins']">{action.title}</span>
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Today's Tips - Only show if user has started learning */}
-        {userProgress.lessonsCompleted > 0 && (
-          <div className="mb-6">
-            <h3 className="font-['Poppins'] font-semibold text-lg text-[#242424] mb-3">Today's Tips</h3>
-            <div className="space-y-3">
-              {todaysTips.map((tip) => (
-                <Card key={tip.id} className="border border-gray-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        tip.isCompleted ? 'bg-[#4157ff] border-[#4157ff]' : 'border-gray-300'
-                      }`}>
-                        {tip.isCompleted && <CheckCircleIcon className="h-3 w-3 text-white" />}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-['Poppins'] font-medium text-[#242424]">{tip.title}</h4>
-                        <p className="font-['Poppins'] text-sm text-gray-600">{tip.description}</p>
-                        <span className="inline-block mt-2 px-2 py-1 bg-gray-100 text-xs font-['Poppins'] text-gray-600 rounded-full">
-                          {tip.category}
-                        </span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Learning Path */}
+      {/* Main Content */}
+      <main className="px-6 pb-32">
+        {/* Top Categories */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-['Poppins'] font-semibold text-lg text-[#242424]">Learning Path</h3>
-            <Button variant="ghost" size="sm" className="font-['Poppins'] text-[#4157ff]">
-              View All
-            </Button>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-['Poppins'] font-semibold text-lg text-[#1F2937]">Top Categories</h3>
           </div>
-          
-          <div className="space-y-4">
-            {modules.map((module, index) => {
-              const IconComponent = module.icon;
-              const isLocked = !module.isUnlocked;
-              
+          <div className="grid grid-cols-4 gap-4">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
               return (
-                <Card key={module.id} className={`border ${isLocked ? 'border-gray-200 opacity-60' : 'border-gray-200 hover:border-[#4157ff]'} transition-all duration-200`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-14 h-14 ${module.color} rounded-xl flex items-center justify-center flex-shrink-0 ${isLocked ? 'grayscale' : ''}`}>
-                        <IconComponent className={`w-7 h-7 ${module.iconColor}`} />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-['Poppins'] font-semibold text-[#242424] truncate">
-                            {module.title}
-                          </h4>
-                          {isLocked && (
-                            <div className="bg-gray-100 px-2 py-1 rounded-full">
-                              <span className="text-xs font-['Poppins'] text-gray-600">Locked</span>
-                            </div>
-                          )}
-                        </div>
-                        <p className="font-['Poppins'] text-sm text-gray-600 mb-2">
-                          {module.description}
-                        </p>
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <span>{module.lessons} lessons</span>
-                          <span>{module.duration}</span>
-                        </div>
-                        
-                        {!isLocked && module.progress > 0 && (
-                          <div className="mt-3">
-                            <div className="flex justify-between items-center mb-1">
-                              <span className="text-xs font-['Poppins'] text-gray-600">Progress</span>
-                              <span className="text-xs font-['Poppins'] text-gray-600">{module.progress}%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1.5">
-                              <div 
-                                className="bg-[#4157ff] h-1.5 rounded-full transition-all duration-300"
-                                style={{ width: `${module.progress}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="flex-shrink-0">
-                        {!isLocked ? (
-                          <Button 
-                            size="sm"
-                            className="bg-[#4157ff] hover:bg-[#3146e6] text-white font-['Poppins'] rounded-lg"
-                          >
-                            {module.progress > 0 ? (
-                              <>
-                                <PlayIcon className="w-4 h-4 mr-1" />
-                                Continue
-                              </>
-                            ) : (
-                              <>
-                                <PlayIcon className="w-4 h-4 mr-1" />
-                                Start
-                              </>
-                            )}
-                          </Button>
-                        ) : (
-                          <Button 
-                            size="sm"
-                            disabled
-                            variant="outline"
-                            className="font-['Poppins'] rounded-lg"
-                          >
-                            {userProgress.lessonsCompleted < 3 ? "Complete Budgeting first" : 
-                             userProgress.lessonsCompleted < 8 ? "Complete more lessons" :
-                             "Unlock soon"}
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div key={category.id} className="flex flex-col items-center">
+                  <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mb-2`}>
+                    <IconComponent className="w-8 h-8 text-white" />
+                  </div>
+                  <span className="text-xs font-['Poppins'] text-center text-gray-700 leading-tight">
+                    {category.title}
+                  </span>
+                </div>
               );
             })}
           </div>
         </div>
 
-        {/* Motivational Message for New Users */}
-        {userProgress.lessonsCompleted === 0 && (
-          <Card className="mb-6 border-[#4157ff] bg-[#4157ff0a]">
-            <CardContent className="p-6 text-center">
-              <TrophyIcon className="h-12 w-12 text-[#4157ff] mx-auto mb-3" />
-              <h3 className="font-['Poppins'] font-semibold text-lg text-[#242424] mb-2">
-                Start Your Financial Journey!
-              </h3>
-              <p className="font-['Poppins'] text-sm text-gray-600 mb-4">
-                Complete your first lesson in Budgeting Basics to unlock new features and track your progress.
-              </p>
-              <Button 
-                className="bg-[#4157ff] hover:bg-[#3146e6] text-white font-['Poppins'] rounded-lg"
-                onClick={() => {}}
-              >
-                Begin Learning
-                <ArrowRightIcon className="w-4 h-4 ml-2" />
+        {/* Progress Section */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-['Poppins'] font-semibold text-lg text-[#1F2937]">Progress</h3>
+            <Button variant="ghost" size="sm" className="text-[#6366F1] font-['Poppins']">
+              More
+            </Button>
+          </div>
+          
+          {/* Design Changes Items */}
+          <div className="space-y-3 mb-4">
+            <Card className="border border-gray-200">
+              <CardContent className="flex items-center gap-4 p-4">
+                <div className="w-12 h-12 bg-[#6366F1] rounded-xl flex items-center justify-center">
+                  <PlayIcon className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-['Poppins'] font-medium text-[#1F2937]">Design Changes</h4>
+                  <p className="text-sm text-gray-500">2 Day Ago</p>
+                </div>
+                <ArrowRightIcon className="w-5 h-5 text-gray-400" />
+              </CardContent>
+            </Card>
+            
+            <Card className="border border-gray-200">
+              <CardContent className="flex items-center gap-4 p-4">
+                <div className="w-12 h-12 bg-[#6366F1] rounded-xl flex items-center justify-center">
+                  <PlayIcon className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-['Poppins'] font-medium text-[#1F2937]">Design Changes</h4>
+                  <p className="text-sm text-gray-500">1 Day Ago</p>
+                </div>
+                <ArrowRightIcon className="w-5 h-5 text-gray-400" />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Monthly Preview */}
+        <div className="mb-6">
+          <h3 className="font-['Poppins'] font-semibold text-lg text-[#1F2937] mb-4">Monthly Preview</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {monthlyStats.map((stat) => (
+              <Card key={stat.id} className={`${stat.color} border-0 text-white`}>
+                <CardContent className="p-6 text-center">
+                  <div className="text-3xl font-bold mb-2">{stat.value}</div>
+                  <div className="text-sm opacity-90">{stat.title}</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Featured Modules Lessons */}
+        <div className="mb-6">
+          <h3 className="font-['Poppins'] font-semibold text-lg text-[#1F2937] mb-4">Featured Modules Lessons</h3>
+          <div className="space-y-4">
+            <Card className="border-0 bg-white shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex gap-4">
+                  <img src="/api/placeholder/60/60" alt="OTG Scam" className="w-15 h-15 rounded-lg object-cover" />
+                  <div className="flex-1">
+                    <h4 className="font-['Poppins'] font-medium text-[#1F2937] mb-1">OTG Scam Explainer</h4>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">Safety</span>
+                      <PlayIcon className="w-5 h-5 text-[#6366F1]" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-0 bg-white shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex gap-4">
+                  <img src="/api/placeholder/60/60" alt="Debit Card" className="w-15 h-15 rounded-lg object-cover" />
+                  <div className="flex-1">
+                    <h4 className="font-['Poppins'] font-medium text-[#1F2937] mb-1">Debit Card Fraud Tips</h4>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">Safety</span>
+                      <PlayIcon className="w-5 h-5 text-[#6366F1]" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Info Cards */}
+        <div className="space-y-4 mb-6">
+          <Card className="bg-[#6366F1] border-0 text-white">
+            <CardContent className="p-4">
+              <h4 className="font-['Poppins'] font-medium mb-2">Never share your OTP—even with someone claiming to be from your bank.</h4>
+              <Button variant="ghost" className="text-white border-white hover:bg-white/20 mt-2">
+                Read more tips
               </Button>
             </CardContent>
           </Card>
-        )}
+          
+          <Card className="bg-[#10B981] border-0 text-white">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-['Poppins'] font-medium mb-1">You're off to a great start!</h4>
+                  <p className="text-sm opacity-90">Let's power on</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm">Start to finish</p>
+                  <Button variant="ghost" className="text-white border-white hover:bg-white/20 mt-1 text-xs">
+                    Take Quiz now
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </main>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+        <div className="flex items-center justify-around py-3">
+          <Button variant="ghost" className="flex flex-col items-center gap-1 p-2">
+            <div className="w-8 h-8 bg-[#6366F1] rounded-lg flex items-center justify-center">
+              <HomeIcon className="w-5 h-5 text-white" />
+            </div>
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            className="flex flex-col items-center gap-1 p-2"
+            onClick={() => setLocation("/search")}
+          >
+            <SearchIcon className="w-6 h-6 text-gray-400" />
+          </Button>
+          
+          <Button variant="ghost" className="flex flex-col items-center gap-1 p-2">
+            <CreditCardIcon className="w-6 h-6 text-gray-400" />
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            className="flex flex-col items-center gap-1 p-2"
+            onClick={() => setLocation("/notifications")}
+          >
+            <MessageSquareIcon className="w-6 h-6 text-gray-400" />
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            className="flex flex-col items-center gap-1 p-2"
+            onClick={() => setLocation("/profile")}
+          >
+            <UserIcon className="w-6 h-6 text-gray-400" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
