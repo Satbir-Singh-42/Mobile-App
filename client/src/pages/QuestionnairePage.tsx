@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, GraduationCapIcon, BookOpenIcon, TrendingUpIcon, BarChart3Icon, CrownIcon } from "lucide-react";
 import { authAPI } from "@/lib/auth";
 
 interface Question {
@@ -12,6 +12,7 @@ interface Question {
   title: string;
   options: string[];
   required: boolean;
+  icons?: JSX.Element[];
 }
 
 export const QuestionnairePage = (): JSX.Element => {
@@ -72,7 +73,14 @@ export const QuestionnairePage = (): JSX.Element => {
         "I'm quite knowledgeable",
         "I'm an expert"
       ],
-      required: true
+      required: true,
+      icons: [
+        <GraduationCapIcon className="h-4 w-4 text-gray-600" />,
+        <BookOpenIcon className="h-4 w-4 text-gray-600" />,
+        <TrendingUpIcon className="h-4 w-4 text-gray-600" />,
+        <BarChart3Icon className="h-4 w-4 text-gray-600" />,
+        <CrownIcon className="h-4 w-4 text-gray-600" />
+      ]
     },
     {
       id: "practice_time",
@@ -151,20 +159,7 @@ export const QuestionnairePage = (): JSX.Element => {
     return ((currentQuestionIndex + 1) / questions.length) * 100;
   };
 
-  const getPracticeTimeColor = (time: string) => {
-    switch (time) {
-      case "5 minutes":
-        return "bg-[#b4ffb2] hover:bg-[#a4efa2]";
-      case "10 minutes":
-        return "bg-[#b2e3ff] hover:bg-[#a2caef]";
-      case "15 minutes":
-        return "bg-[#c6b2ff] hover:bg-[#ada2ef]";
-      case "20 minutes":
-        return "bg-[#ffb2db] hover:bg-[#efa2d0]";
-      default:
-        return "bg-[#f0f0f0] hover:bg-[#e0e0e0]";
-    }
-  };
+  // Removed different colors for consistency
 
   const getKnowledgeVisualization = (level: string, index: number) => {
     const bars = [
@@ -233,10 +228,6 @@ export const QuestionnairePage = (): JSX.Element => {
                       answers[currentQuestion.id] === option
                         ? "border-[#4157ff] bg-[#4157ff0f]"
                         : "border-[#c4c4c4] hover:border-[#4157ff66]"
-                    } ${
-                      currentQuestion.id === "practice_time"
-                        ? getPracticeTimeColor(option)
-                        : ""
                     }`}
                   >
                     <div className="flex items-center space-x-3">
@@ -245,6 +236,11 @@ export const QuestionnairePage = (): JSX.Element => {
                         id={option}
                         className="border-[#4157ff] text-[#4157ff]"
                       />
+                      {currentQuestion.icons && currentQuestion.icons[index] && (
+                        <div className="flex-shrink-0">
+                          {currentQuestion.icons[index]}
+                        </div>
+                      )}
                       <Label
                         htmlFor={option}
                         className="font-['Poppins'] font-medium text-[#090f47] text-base md:text-[20px] cursor-pointer flex-1"
