@@ -221,4 +221,48 @@ Focus on actionable advice. Include security tips frequently like OTP safety, fr
       };
     }
   }
+
+  static async generateQuizQuestion(user: any, questionnaire: any): Promise<any> {
+    const geminiService = new GeminiService();
+    
+    const userLevel = questionnaire?.experience || 'beginner';
+    const userGoals = questionnaire?.goals || 'basic financial knowledge';
+    
+    const prompt = `Create a financial literacy quiz question for a ${userLevel} level user whose goals are: ${userGoals}.
+
+    Return a JSON object with this exact structure:
+    {
+      "question": "Clear, educational question about finance",
+      "options": ["Option A", "Option B", "Option C"],
+      "correctAnswer": "The correct option text",
+      "explanation": "Brief explanation of why this is correct and educational context"
+    }
+
+    Topics to focus on: budgeting, saving, investing basics, debt management, emergency funds, or financial planning.
+    Make sure the question is practical and relevant to daily financial decisions.`;
+
+    try {
+      const response = await geminiService.ai.models.generateContent({
+        model: "gemini-2.5-pro",
+        contents: prompt,
+      });
+      const result = response.text || "";
+      // Try to parse as JSON
+      const cleanResult = result.trim().replace(/```json|```/g, '');
+      return JSON.parse(cleanResult);
+    } catch (error) {
+      console.error('Error generating quiz question:', error);
+      // Return fallback question
+      return {
+        question: "What is the 50/30/20 rule in budgeting?",
+        options: [
+          "50% needs, 30% wants, 20% savings",
+          "50% savings, 30% rent, 20% food", 
+          "50% investment, 30% debt, 20% rent"
+        ],
+        correctAnswer: "50% needs, 30% wants, 20% savings",
+        explanation: "The 50/30/20 rule suggests allocating 50% of income to needs, 30% to wants, and 20% to savings and debt repayment."
+      };
+    }
+  }
 }

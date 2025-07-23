@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   ArrowLeftIcon, 
   CheckIcon,
@@ -12,6 +12,27 @@ import {
   UserIcon,
   StarIcon
 } from "lucide-react";
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+
+// SVG Icon Components
+const LockIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C9.8 2 8 3.8 8 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2h-2V6c0-2.2-1.8-4-4-4zM10 6c0-1.1.9-2 2-2s2 .9 2 2v2h-4V6z"/>
+  </svg>
+);
+
+const QuestionIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+  </svg>
+);
+
+const GiftIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/>
+  </svg>
+);
 
 export const GamingPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
@@ -26,15 +47,45 @@ export const GamingPage = (): JSX.Element => {
     { name: "Goal Setter", points: 200, completed: false, icon: "🎯" },
   ];
 
-  // Quiz data structure
-  const quizData = {
-    question: "What is the 50/30/20 rule in budgeting?",
-    answers: [
-      "50% savings, 30% rent, 20% food",
-      "50% investment, 30% debt, 30% rent",
-      "50% groceries, 30% bills, 20% investment"
-    ],
-    correctAnswer: 0
+  // AI Quiz state
+  const [currentQuizQuestion, setCurrentQuizQuestion] = useState<any>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+
+  // Generate AI quiz question
+  const { data: aiQuestion, refetch: generateQuestion } = useQuery({
+    queryKey: ['/api/ai/quiz-question', currentQuestion],
+    enabled: false,
+  });
+
+  // Submit answer mutation
+  const submitAnswerMutation = useMutation({
+    mutationFn: (answer: string) => 
+      apiRequest('/api/ai/check-answer', 'POST', { 
+        question: currentQuizQuestion?.question,
+        answer,
+        correctAnswer: currentQuizQuestion?.correctAnswer 
+      }),
+    onSuccess: (result) => {
+      setIsCorrect(result.isCorrect);
+      setShowFeedback(true);
+    }
+  });
+
+  // Load question when quiz view opens
+  useEffect(() => {
+    if (currentView === 'quiz' && !currentQuizQuestion) {
+      generateQuestion().then((result) => {
+        if (result.data) {
+          setCurrentQuizQuestion(result.data);
+        }
+      });
+    }
+  }, [currentView]);
+
+  const handleAnswerSubmit = (answer: string) => {
+    setSelectedAnswer(answer);
+    submitAnswerMutation.mutate(answer);
   };
 
   const renderMainView = () => (
@@ -92,16 +143,20 @@ export const GamingPage = (): JSX.Element => {
         <div className="w-10"></div>
       </div>
 
-      {/* Hexagonal Map Layout */}
+      {/* Hexagonal Map Layout with Assets */}
       <div className="flex flex-col items-center space-y-8 mt-16">
         {/* Row 1: Level 4 and Gift */}
         <div className="flex items-center space-x-8">
           <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-            <div className="transform -rotate-45 text-white text-2xl">🎁</div>
+            <div className="transform -rotate-45 text-white">
+              <GiftIcon />
+            </div>
           </div>
           <div className="w-2 h-2 bg-white/30 rounded-full"></div>
           <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-            <div className="transform -rotate-45 text-white text-2xl">🔒</div>
+            <div className="transform -rotate-45 text-white">
+              <LockIcon />
+            </div>
           </div>
         </div>
 
@@ -110,7 +165,9 @@ export const GamingPage = (): JSX.Element => {
 
         {/* Row 2: Level 3 alone */}
         <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-          <div className="transform -rotate-45 text-white text-2xl">🔒</div>
+          <div className="transform -rotate-45 text-white">
+            <LockIcon />
+          </div>
         </div>
 
         {/* Connecting Lines */}
@@ -119,11 +176,15 @@ export const GamingPage = (): JSX.Element => {
         {/* Row 3: Level 2 and Gift */}
         <div className="flex items-center space-x-8">
           <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-            <div className="transform -rotate-45 text-white text-2xl">🔒</div>
+            <div className="transform -rotate-45 text-white">
+              <LockIcon />
+            </div>
           </div>
           <div className="w-2 h-2 bg-white/30 rounded-full"></div>
           <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-            <div className="transform -rotate-45 text-white text-2xl">🎁</div>
+            <div className="transform -rotate-45 text-white">
+              <GiftIcon />
+            </div>
           </div>
         </div>
 
@@ -132,7 +193,12 @@ export const GamingPage = (): JSX.Element => {
 
         {/* Row 4: Level 1 - Active */}
         <Button
-          onClick={() => setCurrentView('quiz')}
+          onClick={() => {
+            setCurrentView('quiz');
+            setCurrentQuizQuestion(null);
+            setSelectedAnswer(null);
+            setShowFeedback(false);
+          }}
           className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
         >
           <div className="transform -rotate-45 text-white font-bold text-xl">1</div>
@@ -170,46 +236,83 @@ export const GamingPage = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Question Card */}
-      <Card className="bg-white text-gray-900 border-0 rounded-3xl shadow-xl mb-6">
-        <CardContent className="p-6">
-          <div className="text-center mb-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <span className="text-white text-4xl font-bold">?</span>
-            </div>
-            <h2 className="text-lg font-bold text-gray-900 leading-tight">{quizData.question}</h2>
+      {currentQuizQuestion ? (
+        <>
+          {/* Question Card */}
+          <Card className="bg-white text-gray-900 border-0 rounded-3xl shadow-xl mb-6">
+            <CardContent className="p-6">
+              <div className="text-center mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <div className="text-white">
+                    <QuestionIcon />
+                  </div>
+                </div>
+                <h2 className="text-lg font-bold text-gray-900 leading-tight">{currentQuizQuestion.question}</h2>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Answer Options */}
+          <div className="space-y-3 mb-8">
+            {currentQuizQuestion.options.map((answer: string, index: number) => (
+              <Button
+                key={index}
+                onClick={() => !showFeedback && handleAnswerSubmit(answer)}
+                disabled={showFeedback}
+                variant="outline"
+                className={`w-full p-4 text-left justify-start rounded-xl border-2 text-sm transition-all ${
+                  selectedAnswer === answer 
+                    ? showFeedback && isCorrect
+                      ? 'bg-green-500 text-white border-green-500' 
+                      : showFeedback && !isCorrect
+                      ? 'bg-red-500 text-white border-red-500'
+                      : 'bg-orange-500 text-white border-orange-500'
+                    : showFeedback && answer === currentQuizQuestion.correctAnswer
+                    ? 'bg-green-400 text-white border-green-400'
+                    : 'bg-purple-100 text-gray-900 border-purple-200 hover:border-purple-300'
+                }`}
+              >
+                {answer}
+              </Button>
+            ))}
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Answer Options */}
-      <div className="space-y-3 mb-8">
-        {quizData.answers.map((answer, index) => (
-          <Button
-            key={index}
-            onClick={() => setSelectedAnswer(answer)}
-            variant="outline"
-            className={`w-full p-4 text-left justify-start rounded-xl border-2 text-sm transition-all ${
-              selectedAnswer === answer 
-                ? 'bg-orange-500 text-white border-orange-500' 
-                : index === 1
-                ? 'bg-orange-400 text-white border-orange-400'
-                : 'bg-purple-100 text-gray-900 border-purple-200 hover:border-purple-300'
-            }`}
-          >
-            {answer}
-          </Button>
-        ))}
-      </div>
+          {/* Feedback */}
+          {showFeedback && (
+            <Card className="bg-white border-0 rounded-2xl shadow-lg mb-6">
+              <CardContent className="p-4">
+                <div className={`text-center ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                  <h3 className="font-bold text-lg mb-2">
+                    {isCorrect ? '🎉 Correct!' : '❌ Incorrect'}
+                  </h3>
+                  <p className="text-sm text-gray-700 mb-2">{currentQuizQuestion.explanation}</p>
+                  {!isCorrect && (
+                    <p className="text-xs text-gray-600">
+                      Correct answer: {currentQuizQuestion.correctAnswer}
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-      {/* Submit Button */}
-      {selectedAnswer && (
-        <Button
-          onClick={() => setCurrentView('success')}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold"
-        >
-          Submit Answer
-        </Button>
+          {/* Next Button */}
+          {showFeedback && (
+            <Button
+              onClick={() => setCurrentView('success')}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold"
+            >
+              Continue
+            </Button>
+          )}
+        </>
+      ) : (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="text-white">Generating your question...</p>
+          </div>
+        </div>
       )}
     </div>
   );

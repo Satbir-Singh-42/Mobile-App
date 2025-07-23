@@ -714,6 +714,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Quiz Question endpoint
+  app.get("/api/ai/quiz-question", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const user = await storage.getUserById(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const questionnaire = await storage.getQuestionnaireByUserId(userId);
+      const response = await GeminiService.generateQuizQuestion(user, questionnaire);
+      
+      res.json(response);
+    } catch (error) {
+      console.error("AI Quiz Question Error:", error);
+      res.status(500).json({ 
+        question: "What is the 50/30/20 rule in budgeting?",
+        options: [
+          "50% needs, 30% wants, 20% savings",
+          "50% savings, 30% rent, 20% food", 
+          "50% investment, 30% debt, 20% rent"
+        ],
+        correctAnswer: "50% needs, 30% wants, 20% savings",
+        explanation: "The 50/30/20 rule suggests allocating 50% of income to needs, 30% to wants, and 20% to savings and debt repayment."
+      });
+    }
+  });
+
+  // AI Check Answer endpoint
+  app.post("/api/ai/check-answer", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const { question, answer, correctAnswer } = req.body;
+      
+      const isCorrect = answer.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+      
+      res.json({ 
+        isCorrect,
+        feedback: isCorrect 
+          ? "Great job! You got it right." 
+          : `Not quite. The correct answer is: ${correctAnswer}`
+      });
+    } catch (error) {
+      console.error("AI Check Answer Error:", error);
+      res.status(500).json({ 
+        isCorrect: false,
+        feedback: "Unable to verify your answer at this time."
+      });
+    }
+  });
+
   // Health check
   app.get("/api/health", (req: Request, res: Response) => {
     res.json({ status: "OK", message: "Face2Finance API is running" });
