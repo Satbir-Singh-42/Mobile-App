@@ -54,54 +54,79 @@ export const DashboardPage = (): JSX.Element => {
     return () => window.removeEventListener('languageChanged', handleLanguageChange);
   }, []);
 
+  // SVG Icon Components
+  const BudgetingIcon = () => (
+    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+    </svg>
+  );
+
+  const SavingIcon = () => (
+    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M7 4V2c0-.55-.45-1-1-1s-1 .45-1 1v2H4c-.55 0-1 .45-1 1s.45 1 1 1h1v2c0 .55.45 1 1 1s1-.45 1-1V6h1c.55 0 1-.45 1-1s-.45-1-1-1H7zM12 9c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h7c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-7zm7 10h-7v-8h7v8z"/>
+    </svg>
+  );
+
+  const CyberIcon = () => (
+    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM15.1 8H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+    </svg>
+  );
+
+  const PrivacyIcon = () => (
+    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11H16.3V16H7.7V11H9.2V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,10V11H13.5V10C13.5,8.7 12.8,8.2 12,8.2Z"/>
+    </svg>
+  );
+
   const categories = [
     {
       id: "budgeting",
       title: "Budgeting",
-      icon: PiggyBankIcon,
-      color: "bg-[#FF8A95]"
+      icon: BudgetingIcon,
+      color: "bg-[#FF6B8A]"
     },
     {
       id: "saving",
       title: "Saving & Investment",
-      icon: TrendingUpIcon,
-      color: "bg-[#52D1B8]"
+      icon: SavingIcon,
+      color: "bg-[#4ECDC4]"
     },
     {
       id: "fraud",
-      title: "Cyber Fraud Types",
-      icon: ShieldIcon,
-      color: "bg-[#6BB6FF]"
+      title: "Cyber Fraud Types", 
+      icon: CyberIcon,
+      color: "bg-[#4FC3F7]"
     },
     {
       id: "privacy",
       title: "Data Privacy & Protection",
-      icon: MoreHorizontalIcon,
-      color: "bg-[#FFB347]"
+      icon: PrivacyIcon,
+      color: "bg-[#FFB74D]"
     },
     {
       id: "calculator",
       title: "Calculator",
       icon: CalculatorIcon,
-      color: "bg-[#A78BFA]"
+      color: "bg-[#BA68C8]"
     },
     {
-      id: "tax",
+      id: "tax", 
       title: "Tax",
       icon: BookOpenIcon,
-      color: "bg-[#FF8A95]"
+      color: "bg-[#FF7043]"
     },
     {
       id: "quiz",
       title: "Quiz",
       icon: Gamepad2Icon,
-      color: "bg-[#52D1B8]"
+      color: "bg-[#66BB6A]"
     },
     {
       id: "goals",
       title: "Goals",
       icon: TargetIcon,
-      color: "bg-[#EF4444]"
+      color: "bg-[#EF5350]"
     }
   ];
 
@@ -110,34 +135,30 @@ export const DashboardPage = (): JSX.Element => {
       id: "completed",
       title: "Lessons Completed", 
       value: "22",
-      color: "bg-[#52D1B8]"
+      color: "bg-[#4ECDC4]"
     },
     {
       id: "progress",
       title: "Modules in Progress",
       value: "7", 
-      color: "bg-[#FFB347]"
+      color: "bg-[#FFB74D]"
     },
     {
       id: "goals",
       title: "Goals Being Tracked",
       value: "12",
-      color: "bg-[#FF8A95]"
+      color: "bg-[#FF6B8A]"
     },
     {
       id: "attempted",
       title: "Quizzes Attempted",
       value: "14",
-      color: "bg-[#6BB6FF]"
+      color: "bg-[#4FC3F7]"
     }
   ];
 
   return (
-    <div className="bg-gradient-to-b from-[#F8F9FF] to-[#E8F4FF] min-h-screen w-full mobile-status-hidden">
-      {/* ✨ NEW FIGMA DESIGN ACTIVE ✨ */}
-      <div className="text-center py-2 bg-green-500 text-white font-bold text-sm">
-        🎨 FIGMA DESIGN LOADED SUCCESSFULLY
-      </div>
+    <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
       {/* Top Status Bar */}
       <div className="flex items-center justify-between px-6 py-3 text-sm font-medium bg-white">
         <span className="text-[#1F2937]">9:41</span>
@@ -155,7 +176,7 @@ export const DashboardPage = (): JSX.Element => {
 
       {/* NEW FIGMA DESIGN: Header Greeting Card */}
       <div className="px-6 py-4">
-        <Card className="bg-gradient-to-r from-[#4A90E2] to-[#6BB6FF] border-0 text-white relative overflow-hidden shadow-xl">
+        <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white relative overflow-hidden shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -206,10 +227,10 @@ export const DashboardPage = (): JSX.Element => {
               const IconComponent = category.icon;
               return (
                 <div key={category.id} className="flex flex-col items-center">
-                  <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mb-2`}>
-                    <IconComponent className="w-8 h-8 text-white" />
+                  <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mb-2 shadow-sm`}>
+                    <IconComponent />
                   </div>
-                  <span className="text-xs font-['Poppins'] text-center text-gray-700 leading-tight">
+                  <span className="text-xs font-['Poppins'] text-center text-gray-700 leading-tight max-w-[60px]">
                     {category.title}
                   </span>
                 </div>
