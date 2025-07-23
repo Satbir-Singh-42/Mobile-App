@@ -324,17 +324,35 @@ export class MongoStorage implements IStorage {
   // Gaming operations implementation
   async getUserProgress(userId: string): Promise<UserProgress | null> {
     try {
-      // For now, return default progress if none exists
+      const { UserProgress } = await import('./models/UserProgress');
+      
+      // Try to find existing progress
+      let progress = await UserProgress.findOne({ userId });
+      
+      // If no progress exists, create default progress
+      if (!progress) {
+        progress = new UserProgress({
+          userId,
+          currentLevel: 1,
+          completedLevels: [],
+          totalScore: 0,
+          totalXP: 0,
+          achievements: [],
+          lastPlayedAt: new Date()
+        });
+        await progress.save();
+      }
+      
       return {
-        _id: `progress_${userId}`,
-        userId,
-        currentLevel: 1,
-        completedLevels: [],
-        totalScore: 0,
-        totalXP: 0,
-        achievements: [],
-        lastPlayedAt: new Date(),
-        createdAt: new Date()
+        _id: progress._id.toString(),
+        userId: progress.userId,
+        currentLevel: progress.currentLevel,
+        completedLevels: progress.completedLevels,
+        totalScore: progress.totalScore,
+        totalXP: progress.totalXP,
+        achievements: progress.achievements,
+        lastPlayedAt: progress.lastPlayedAt,
+        createdAt: progress.createdAt
       };
     } catch (error) {
       console.error('Error getting user progress:', error);
@@ -344,14 +362,33 @@ export class MongoStorage implements IStorage {
 
   async updateUserProgress(userId: string, updates: Partial<UserProgress>): Promise<UserProgress | null> {
     try {
-      // For now, return updated progress
-      const progress = await this.getUserProgress(userId);
-      if (!progress) return null;
+      const { UserProgress } = await import('./models/UserProgress');
+      
+      // Update or create progress
+      const progress = await UserProgress.findOneAndUpdate(
+        { userId },
+        { 
+          ...updates,
+          userId, // Ensure userId is always set
+          lastPlayedAt: new Date() // Update last played time
+        },
+        { 
+          new: true, // Return updated document
+          upsert: true, // Create if doesn't exist
+          setDefaultsOnInsert: true // Set defaults when creating
+        }
+      );
       
       return {
-        ...progress,
-        ...updates,
-        userId
+        _id: progress._id.toString(),
+        userId: progress.userId,
+        currentLevel: progress.currentLevel,
+        completedLevels: progress.completedLevels,
+        totalScore: progress.totalScore,
+        totalXP: progress.totalXP,
+        achievements: progress.achievements,
+        lastPlayedAt: progress.lastPlayedAt,
+        createdAt: progress.createdAt
       };
     } catch (error) {
       console.error('Error updating user progress:', error);

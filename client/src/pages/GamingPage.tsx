@@ -79,19 +79,24 @@ export const GamingPage = (): JSX.Element => {
   // Store correct answers for current quiz session (received from server)
   const [questionAnswers, setQuestionAnswers] = useState<Record<string, string>>({});
 
-  // Load user level from localStorage on component mount
-  useEffect(() => {
-    const savedLevel = localStorage.getItem('userLevel');
-    if (savedLevel) {
-      setUserLevel(parseInt(savedLevel));
-    }
-  }, []);
-
-  // Get user progress
+  // Get user progress from server (persistent across logins)
   const { data: userProgress } = useQuery({
     queryKey: ['/api/gaming/progress'],
-    enabled: currentView === 'map'
+    enabled: true,
+    refetchOnMount: true
   });
+
+  // Sync user level with server progress
+  useEffect(() => {
+    if (userProgress && typeof userProgress === 'object' && userProgress !== null && 'progress' in userProgress) {
+      const progress = (userProgress as any).progress;
+      const serverLevel = progress?.currentLevel || 1;
+      setUserLevel(serverLevel);
+      
+      // Also update localStorage for backup (but server is source of truth)
+      localStorage.setItem('userLevel', serverLevel.toString());
+    }
+  }, [userProgress]);
 
   // Start quiz mutation
   const startQuizMutation = useMutation({
@@ -171,7 +176,10 @@ export const GamingPage = (): JSX.Element => {
         setLevelUnlocked(false);
         setBonusPoints(0);
       }
+      
+      // Refresh progress data from server to ensure consistency
       queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
+      queryClient.refetchQueries({ queryKey: ['/api/gaming/progress'] });
       setCurrentView('success');
     },
     onError: (error) => {
@@ -294,8 +302,12 @@ export const GamingPage = (): JSX.Element => {
   );
 
   const renderMapView = () => {
-    // Use local state for user level progression
-    const currentLevel = userLevel;
+    // Use server progress data as source of truth, fallback to local state
+    const progress = (userProgress as any)?.progress;
+    const serverLevel = progress?.currentLevel || 1;
+    const completedLevels = progress?.completedLevels || [];
+    const totalXP = progress?.totalXP || 0;
+    const currentLevel = Math.max(serverLevel, userLevel); // Use highest level available
     
     return (
       <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-32 relative overflow-hidden">
