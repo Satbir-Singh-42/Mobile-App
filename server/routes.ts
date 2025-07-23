@@ -5,9 +5,7 @@ import { connectDB } from "./database";
 import { 
   generateToken, 
   generateOTP, 
-  sendOTPEmail, 
-  storeOTP, 
-  verifyOTP,
+  sendOTPEmail,
   authenticateToken 
 } from "./auth";
 import { 
@@ -121,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Generate and send OTP
       const otp = generateOTP();
-      const otpStored = await storeOTP(email, otp);
+      const otpStored = await storage.storeOTP(email, otp);
       
       if (!otpStored) {
         return res.status(500).json({ message: "Failed to generate OTP" });
@@ -153,7 +151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { email, otp } = verifyOtpSchema.parse(req.body);
       
-      const isValid = await verifyOTP(email, otp);
+      const isValid = await storage.verifyOTP(email, otp);
       if (!isValid) {
         return res.status(400).json({ message: "Invalid or expired OTP" });
       }

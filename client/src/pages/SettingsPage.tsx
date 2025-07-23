@@ -46,7 +46,7 @@ export const SettingsPage = (): JSX.Element => {
         fingerprintSupported = available;
         faceIdSupported = available;
       } catch (error) {
-        console.log("Biometric check failed:", error);
+
       }
     }
 

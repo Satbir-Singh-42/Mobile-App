@@ -5,7 +5,7 @@ import { User, OTP } from './database';
 import type { Request, Response, NextFunction } from 'express';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
-const JWT_EXPIRES_IN: string = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 // Email configuration
 const createEmailTransporter = () => {
@@ -44,7 +44,7 @@ export const generateOTP = (): string => {
 export const sendOTPEmail = async (email: string, otp: string): Promise<boolean> => {
   try {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.log('Email credentials not configured. OTP would be:', otp);
+      // Email credentials not configured, using development mode
       return true; // For development
     }
 
@@ -85,50 +85,7 @@ export const sendOTPEmail = async (email: string, otp: string): Promise<boolean>
   }
 };
 
-// Store OTP in database
-export const storeOTP = async (email: string, otp: string): Promise<boolean> => {
-  try {
-    // Remove any existing OTPs for this email
-    await OTP.deleteMany({ email });
-    
-    // Create new OTP
-    await OTP.create({
-      email,
-      otp,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
-    });
-    
-    return true;
-  } catch (error) {
-    console.error('Error storing OTP:', error);
-    return false;
-  }
-};
 
-// Verify OTP
-export const verifyOTP = async (email: string, otp: string): Promise<boolean> => {
-  try {
-    const otpRecord = await OTP.findOne({
-      email,
-      otp,
-      used: false,
-      expiresAt: { $gt: new Date() },
-    });
-
-    if (!otpRecord) {
-      return false;
-    }
-
-    // Mark OTP as used
-    otpRecord.used = true;
-    await otpRecord.save();
-
-    return true;
-  } catch (error) {
-    console.error('Error verifying OTP:', error);
-    return false;
-  }
-};
 
 // Middleware to authenticate requests
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {

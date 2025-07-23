@@ -150,7 +150,7 @@ export const connectDB = async (): Promise<void> => {
       serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
       socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
     });
-    console.log('MongoDB connected successfully');
+    // MongoDB connected successfully
   } catch (error) {
     console.error('MongoDB connection error:', error);
     // For development, we'll continue without MongoDB
