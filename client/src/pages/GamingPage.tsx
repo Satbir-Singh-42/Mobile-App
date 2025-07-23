@@ -194,9 +194,9 @@ export const GamingPage = (): JSX.Element => {
     
     const currentQuestion = quizSession.questions[quizSession.currentQuestionIndex];
     
-    // We need to get the correct answer from the server since the frontend doesn't have it
-    // For now, we'll submit the answer and let the server determine correctness
-    setShowFeedback(true);
+    // Don't show feedback until we get server response
+    setShowFeedback(false);
+    setIsCorrect(null);
     
     // Submit answer to backend and get correctness result
     submitAnswerMutation.mutate({
@@ -210,6 +210,7 @@ export const GamingPage = (): JSX.Element => {
       onSuccess: (data) => {
         // Server returns correctness, correct answer, and explanation
         setIsCorrect(data.isCorrect);
+        setShowFeedback(true); // Show feedback only after getting server response
         
         // Store the correct answer for feedback display
         setQuestionAnswers(prev => ({
@@ -231,10 +232,10 @@ export const GamingPage = (): JSX.Element => {
           score: data.isCorrect ? prev.score + 1 : prev.score
         } : null);
 
-        // Auto-advance to next question after 2 seconds
+        // Auto-advance to next question after 5 seconds
         setTimeout(() => {
           handleNextQuestion();
-        }, 2000);
+        }, 5000);
       }
     });
   };
