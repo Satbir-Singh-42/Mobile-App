@@ -95,12 +95,18 @@ export const authAPI = {
   },
 
   async forgotPassword(data: ForgotPasswordData): Promise<{ message: string; email: string }> {
-    const response = await apiRequest('POST', '/api/auth/forgot-password', data);
+    const response = await apiRequest('/api/auth/forgot-password', {
+      method: 'POST',
+      body: data
+    });
     return await response.json();
   },
 
   async verifyOtp(data: VerifyOtpData): Promise<{ message: string; resetToken: string }> {
-    const response = await apiRequest('POST', '/api/auth/verify-otp', data);
+    const response = await apiRequest('/api/auth/verify-otp', {
+      method: 'POST',
+      body: data
+    });
     const result = await response.json();
     
     if (result.resetToken) {
@@ -112,8 +118,12 @@ export const authAPI = {
 
   async resetPassword(data: ResetPasswordData): Promise<{ message: string }> {
     const resetToken = localStorage.getItem('reset_token');
-    const response = await apiRequest('POST', '/api/auth/reset-password', data, {
-      'Authorization': `Bearer ${resetToken}`
+    const response = await apiRequest('/api/auth/reset-password', {
+      method: 'POST',
+      body: data,
+      headers: {
+        'Authorization': `Bearer ${resetToken}`
+      }
     });
     
     localStorage.removeItem('reset_token');

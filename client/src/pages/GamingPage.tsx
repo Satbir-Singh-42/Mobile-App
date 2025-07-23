@@ -98,12 +98,8 @@ export const GamingPage = (): JSX.Element => {
     mutationFn: async (level: number) => {
       const response = await apiRequest('/api/gaming/start-quiz', {
         method: 'POST',
-        body: JSON.stringify({ level })
+        body: { level }
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to start quiz');
-      }
       
       return response.json();
     },
@@ -143,12 +139,8 @@ export const GamingPage = (): JSX.Element => {
     }) => {
       const response = await apiRequest('/api/gaming/submit-answer', {
         method: 'POST',
-        body: JSON.stringify(answerData)
+        body: answerData
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to submit answer');
-      }
       
       return response.json();
     }
@@ -163,12 +155,8 @@ export const GamingPage = (): JSX.Element => {
     }) => {
       const response = await apiRequest('/api/gaming/complete-quiz', {
         method: 'POST',
-        body: JSON.stringify(completionData)
+        body: completionData
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to complete quiz');
-      }
       
       return response.json();  
     },
@@ -400,7 +388,8 @@ export const GamingPage = (): JSX.Element => {
                     currentQuestionIndex: 0,
                     questions: [],
                     answers: [],
-                    score: 0
+                    score: 0,
+                    level: 1
                   });
                 }
               }}
