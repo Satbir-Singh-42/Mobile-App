@@ -15,7 +15,9 @@ import {
   verifyOtpSchema,
   resetPasswordSchema,
   questionnaireSchema,
-  insertTaskSchema 
+  insertTaskSchema,
+  insertUserProgressSchema,
+  insertQuizSessionSchema
 } from "@shared/schema";
 import { GeminiService } from "./gemini";
 
@@ -781,6 +783,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         isCorrect: false,
         feedback: "Unable to verify your answer at this time."
+      });
+    }
+  });
+
+  // Gaming Routes - User Progress and Quiz Sessions
+
+  // Get user progress
+  app.get("/api/gaming/progress", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const progress = await storage.getUserProgress(userId);
+      
+      res.json({ progress });
+    } catch (error: any) {
+      console.error("Get user progress error:", error);
+      res.status(500).json({ 
+        message: "Failed to get user progress", 
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Start quiz session
+  app.post("/api/gaming/start-quiz", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const { level } = req.body;
+      
+      // Create new quiz session
+      const quizSession = await storage.createQuizSession({
+        userId,
+        level: level || 1,
+        questions: [],
+        score: 0,
+        completed: false
+      });
+      
+      res.json({ 
+        message: "Quiz session started",
+        sessionId: quizSession._id,
+        level: quizSession.level
+      });
+    } catch (error: any) {
+      console.error("Start quiz error:", error);
+      res.status(500).json({ 
+        message: "Failed to start quiz", 
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Submit quiz answer
+  app.post("/api/gaming/submit-answer", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const { sessionId, question, selectedAnswer, correctAnswer, isCorrect } = req.body;
+      
+      // Update quiz session with the answer
+      await storage.addQuizAnswer(sessionId, {
+        question,
+        selectedAnswer,
+        correctAnswer,
+        isCorrect
+      });
+      
+      res.json({ 
+        message: "Answer submitted",
+        isCorrect
+      });
+    } catch (error: any) {
+      console.error("Submit answer error:", error);
+      res.status(500).json({ 
+        message: "Failed to submit answer", 
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Complete quiz session
+  app.post("/api/gaming/complete-quiz", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const { sessionId, score } = req.body;
+      
+      // Mark quiz session as completed
+      await storage.completeQuizSession(sessionId, score);
+      
+      // Update user progress if score is passing (3/4 or higher)
+      if (score >= 3) {
+        const progress = await storage.getUserProgress(userId);
+        const currentLevel = progress?.currentLevel || 1;
+        const completedLevels = progress?.completedLevels || [];
+        const totalScore = progress?.totalScore || 0;
+        
+        // Add current level to completed levels if not already there
+        if (!completedLevels.includes(currentLevel)) {
+          completedLevels.push(currentLevel);
+        }
+        
+        // Update progress
+        await storage.updateUserProgress(userId, {
+          currentLevel: currentLevel + 1,
+          completedLevels,
+          totalScore: totalScore + score,
+          lastPlayedAt: new Date()
+        });
+        
+        res.json({ 
+          message: "Quiz completed successfully!",
+          score,
+          levelUnlocked: currentLevel + 1,
+          passed: true
+        });
+      } else {
+        res.json({ 
+          message: "Quiz completed. Try again to unlock the next level.",
+          score,
+          passed: false
+        });
+      }
+    } catch (error: any) {
+      console.error("Complete quiz error:", error);
+      res.status(500).json({ 
+        message: "Failed to complete quiz", 
+        details: "Please try again later"
       });
     }
   });

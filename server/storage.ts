@@ -4,7 +4,11 @@ import type {
   QuestionnaireData, 
   User as UserType,
   Task as TaskType,
-  InsertTask
+  InsertTask,
+  UserProgress,
+  InsertUserProgress,
+  QuizSession,
+  InsertQuizSession
 } from "@shared/schema";
 
 export interface IStorage {
@@ -29,6 +33,13 @@ export interface IStorage {
   getTasksByUserId(userId: string): Promise<TaskType[]>;
   updateTask(id: string, updates: Partial<TaskType>): Promise<TaskType | null>;
   deleteTask(id: string): Promise<boolean>;
+  
+  // Gaming operations
+  getUserProgress(userId: string): Promise<UserProgress | null>;
+  updateUserProgress(userId: string, updates: Partial<UserProgress>): Promise<UserProgress | null>;
+  createQuizSession(session: InsertQuizSession): Promise<QuizSession>;
+  addQuizAnswer(sessionId: string, answer: { question: string; selectedAnswer: string; correctAnswer: string; isCorrect: boolean }): Promise<void>;
+  completeQuizSession(sessionId: string, score: number): Promise<void>;
 }
 
 export class MongoStorage implements IStorage {
@@ -296,6 +307,79 @@ export class MongoStorage implements IStorage {
     } catch (error) {
       console.error('Error getting user for login:', error);
       return null;
+    }
+  }
+
+  // Gaming operations implementation
+  async getUserProgress(userId: string): Promise<UserProgress | null> {
+    try {
+      // For now, return default progress if none exists
+      return {
+        _id: `progress_${userId}`,
+        userId,
+        currentLevel: 1,
+        completedLevels: [],
+        totalScore: 0,
+        achievements: [],
+        lastPlayedAt: new Date(),
+        createdAt: new Date()
+      };
+    } catch (error) {
+      console.error('Error getting user progress:', error);
+      return null;
+    }
+  }
+
+  async updateUserProgress(userId: string, updates: Partial<UserProgress>): Promise<UserProgress | null> {
+    try {
+      // For now, return updated progress
+      const progress = await this.getUserProgress(userId);
+      if (!progress) return null;
+      
+      return {
+        ...progress,
+        ...updates,
+        userId
+      };
+    } catch (error) {
+      console.error('Error updating user progress:', error);
+      return null;
+    }
+  }
+
+  async createQuizSession(session: InsertQuizSession): Promise<QuizSession> {
+    try {
+      // Generate a session ID
+      const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      return {
+        _id: sessionId,
+        ...session,
+        createdAt: new Date()
+      };
+    } catch (error) {
+      console.error('Error creating quiz session:', error);
+      throw error;
+    }
+  }
+
+  async addQuizAnswer(sessionId: string, answer: { question: string; selectedAnswer: string; correctAnswer: string; isCorrect: boolean }): Promise<void> {
+    try {
+      // For now, just log the answer - in a real implementation, this would update the session in the database
+      console.log(`Answer added to session ${sessionId}:`, answer);
+    } catch (error) {
+      console.error('Error adding quiz answer:', error);
+      throw error;
+    }
+  }
+
+  async completeQuizSession(sessionId: string, score: number): Promise<void> {
+    try {
+      // For now, just log completion - in a real implementation, this would mark the session as completed
+      console.log(`Quiz session ${sessionId} completed with score: ${score}`);
+    } catch (error) {
+      console.error('Error completing quiz session:', error);
+      throw error;
     }
   }
 }

@@ -13,10 +13,13 @@ import {
   StarIcon,
   MoreVertical,
   CheckCircle,
-  XCircle
+  XCircle,
+  Gift,
+  Lock,
+  HelpCircle
 } from "lucide-react";
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryClient, apiRequest } from '@/lib/queryClient';
 
 // SVG Icon Components
 const LockIcon = () => (
@@ -37,11 +40,29 @@ const GiftIcon = () => (
   </svg>
 );
 
+interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+}
+
+interface QuizSession {
+  sessionId: string;
+  currentQuestionIndex: number;
+  questions: QuizQuestion[];
+  answers: Array<{question: string; selectedAnswer: string; correctAnswer: string; isCorrect: boolean}>;
+  score: number;
+}
+
 export const GamingPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
   const [currentView, setCurrentView] = useState<'main' | 'map' | 'quiz' | 'success'>('main');
-  const [currentQuestion, setCurrentQuestion] = useState(1);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [quizSession, setQuizSession] = useState<QuizSession | null>(null);
 
   const achievements = [
     { name: "Budget Master", points: 100, completed: true, icon: "💰" },
@@ -50,8 +71,8 @@ export const GamingPage = (): JSX.Element => {
     { name: "Goal Setter", points: 200, completed: false, icon: "🎯" },
   ];
 
-  // Quiz question bank for instant loading
-  const questionBank = [
+  // Quiz question bank - 4 questions per round
+  const questionBank: QuizQuestion[] = [
     {
       question: "What is the 50/30/20 rule in budgeting?",
       options: [
@@ -60,7 +81,7 @@ export const GamingPage = (): JSX.Element => {
         "50% investment, 30% debt, 20% rent"
       ],
       correctAnswer: "50% needs, 30% wants, 20% savings",
-      explanation: "The 50/30/20 rule suggests allocating 50% of income to needs, 30% to wants, and 20% to savings and debt repayment."
+      explanation: "The 50/30/20 rule is a simple budgeting method where you allocate 50% of income to needs, 30% to wants, and 20% to savings and debt repayment. This helps balance between essential expenses, lifestyle spending, and future goals."
     },
     {
       question: "What percentage of your income should ideally go to savings?",
@@ -70,7 +91,7 @@ export const GamingPage = (): JSX.Element => {
         "5% should be sufficient"
       ],
       correctAnswer: "At least 20% of your income",
-      explanation: "Financial experts recommend saving at least 20% of your income for emergencies, retirement, and future goals."
+      explanation: "Financial experts recommend saving at least 20% of your income for emergencies, retirement, and future goals to build long-term financial security."
     },
     {
       question: "How many months of expenses should you keep in an emergency fund?",
@@ -80,7 +101,7 @@ export const GamingPage = (): JSX.Element => {
         "12 months minimum"
       ],
       correctAnswer: "3-6 months of expenses",
-      explanation: "An emergency fund should cover 3-6 months of living expenses to protect you from unexpected financial setbacks."
+      explanation: "An emergency fund should cover 3-6 months of living expenses to protect you from unexpected financial setbacks like job loss or medical emergencies."
     },
     {
       question: "What should you do first when creating a budget?",
@@ -90,31 +111,133 @@ export const GamingPage = (): JSX.Element => {
         "Set up automatic savings transfers"
       ],
       correctAnswer: "Track your current spending for a month",
-      explanation: "Before making changes, you need to understand where your money currently goes by tracking expenses for at least a month."
+      explanation: "Before making changes, you need to understand where your money currently goes by tracking expenses for at least a month to identify spending patterns."
     }
   ];
 
-  // Quiz state
-  const [currentQuizQuestion, setCurrentQuizQuestion] = useState<any>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [showFeedback, setShowFeedback] = useState(false);
+  // Get user progress
+  const { data: userProgress } = useQuery({
+    queryKey: ['/api/gaming/progress'],
+    enabled: currentView === 'map'
+  });
 
-  // Load question instantly when quiz view opens
-  useEffect(() => {
-    if (currentView === 'quiz' && !currentQuizQuestion) {
-      // Pick a random question from the bank for instant loading
-      const randomQuestion = questionBank[Math.floor(Math.random() * questionBank.length)];
-      setCurrentQuizQuestion(randomQuestion);
+  // Start quiz mutation
+  const startQuizMutation = useMutation({
+    mutationFn: async (level: number) => {
+      const response = await fetch('/api/gaming/start-quiz', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ level })
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Create quiz session with 4 random questions
+      const shuffledQuestions = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 4);
+      setQuizSession({
+        sessionId: data.sessionId,
+        currentQuestionIndex: 0,
+        questions: shuffledQuestions,
+        answers: [],
+        score: 0
+      });
+      setCurrentView('quiz');
+      setSelectedAnswer(null);
+      setShowFeedback(false);
+      setIsCorrect(null);
     }
-  }, [currentView]);
+  });
+
+  // Submit answer mutation  
+  const submitAnswerMutation = useMutation({
+    mutationFn: async (answerData: any) => {
+      const response = await fetch('/api/gaming/submit-answer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(answerData)
+      });
+      return response.json();
+    }
+  });
+
+  // Complete quiz mutation
+  const completeQuizMutation = useMutation({
+    mutationFn: async (completionData: any) => {
+      const response = await fetch('/api/gaming/complete-quiz', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(completionData)
+      });
+      return response.json();  
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
+      setCurrentView('success');
+    }
+  });
 
   const handleAnswerSubmit = (answer: string) => {
+    if (!quizSession) return;
+    
     setSelectedAnswer(answer);
     
-    // Check answer locally for instant feedback
-    const correct = answer.trim() === currentQuizQuestion.correctAnswer.trim();
+    const currentQuestion = quizSession.questions[quizSession.currentQuestionIndex];
+    const correct = answer.trim() === currentQuestion.correctAnswer.trim();
     setIsCorrect(correct);
     setShowFeedback(true);
+
+    // Submit answer to backend
+    submitAnswerMutation.mutate({
+      sessionId: quizSession.sessionId,
+      question: currentQuestion.question,
+      selectedAnswer: answer,
+      correctAnswer: currentQuestion.correctAnswer,
+      isCorrect: correct
+    });
+
+    // Add answer to session
+    const newAnswer = {
+      question: currentQuestion.question,
+      selectedAnswer: answer,
+      correctAnswer: currentQuestion.correctAnswer,
+      isCorrect: correct
+    };
+
+    setQuizSession(prev => prev ? {
+      ...prev,
+      answers: [...prev.answers, newAnswer],
+      score: correct ? prev.score + 1 : prev.score
+    } : null);
+  };
+
+  const handleNextQuestion = () => {
+    if (!quizSession) return;
+
+    if (quizSession.currentQuestionIndex < quizSession.questions.length - 1) {
+      // Move to next question
+      setQuizSession(prev => prev ? {
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex + 1
+      } : null);
+      setSelectedAnswer(null);
+      setShowFeedback(false);
+      setIsCorrect(null);
+    } else {
+      // Quiz completed - submit final score
+      completeQuizMutation.mutate({
+        sessionId: quizSession.sessionId,
+        score: quizSession.score
+      });
+    }
   };
 
   const renderMainView = () => (
@@ -222,13 +345,8 @@ export const GamingPage = (): JSX.Element => {
 
         {/* Row 4: Level 1 - Active */}
         <Button
-          onClick={() => {
-            setCurrentView('quiz');
-            setCurrentQuizQuestion(null);
-            setSelectedAnswer(null);
-            setShowFeedback(false);
-            setIsCorrect(null);
-          }}
+          onClick={() => startQuizMutation.mutate(1)}
+          disabled={startQuizMutation.isPending}
           className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
         >
           <div className="transform -rotate-45 text-white font-bold text-xl">1</div>
@@ -244,87 +362,89 @@ export const GamingPage = (): JSX.Element => {
     </div>
   );
 
-  const renderQuizView = () => (
-    <div className="fixed inset-0 bg-gradient-to-b from-[#6366F1] to-[#8B5CF6] text-white flex flex-col">
-      {/* Mobile Status Bar */}
-      <div className="flex items-center justify-between px-4 py-2 text-sm font-medium">
-        <span>19:27</span>
-        <div className="flex items-center space-x-1">
-          <div className="flex space-x-1">
-            <div className="w-1 h-3 bg-white rounded-full"></div>
-            <div className="w-1 h-3 bg-white rounded-full"></div>
-            <div className="w-1 h-3 bg-white rounded-full"></div>
-            <div className="w-1 h-3 bg-white/50 rounded-full"></div>
+  const renderQuizView = () => {
+    if (!quizSession) return null;
+    
+    const currentQuestion = quizSession.questions[quizSession.currentQuestionIndex];
+    const questionNumber = quizSession.currentQuestionIndex + 1;
+    const progressWidth = (questionNumber / quizSession.questions.length) * 100;
+
+    return (
+      <div className="fixed inset-0 bg-gradient-to-b from-[#6366F1] to-[#8B5CF6] text-white flex flex-col">
+        {/* Mobile Status Bar */}
+        <div className="flex items-center justify-between px-4 py-2 text-sm font-medium">
+          <span>19:27</span>
+          <div className="flex items-center space-x-1">
+            <div className="flex space-x-1">
+              <div className="w-1 h-3 bg-white rounded-full"></div>
+              <div className="w-1 h-3 bg-white rounded-full"></div>
+              <div className="w-1 h-3 bg-white rounded-full"></div>
+              <div className="w-1 h-3 bg-white/50 rounded-full"></div>
+            </div>
+            <div className="ml-2">
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
+                <path d="M1 3.5C1 2.12 2.12 1 3.5 1h9C13.88 1 15 2.12 15 3.5v5c0 1.38-1.12 2.5-2.5 2.5h-9C2.12 11 1 9.88 1 8.5v-5z"/>
+              </svg>
+            </div>
+            <div className="w-6 h-3 bg-white rounded-sm"></div>
           </div>
-          <div className="ml-2">
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
-              <path d="M1 3.5C1 2.12 2.12 1 3.5 1h9C13.88 1 15 2.12 15 3.5v5c0 1.38-1.12 2.5-2.5 2.5h-9C2.12 11 1 9.88 1 8.5v-5z"/>
-            </svg>
+        </div>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCurrentView('map')}
+            className="p-2 text-white hover:bg-white/20 rounded-full"
+          >
+            <ArrowLeftIcon className="h-6 w-6" />
+          </Button>
+          <h1 className="text-lg font-bold font-['Poppins']">Question {questionNumber}</h1>
+          <Button variant="ghost" size="icon" className="text-white p-2">
+            <MoreVertical size={20} />
+          </Button>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="px-4 mb-8">
+          <div className="bg-white/20 rounded-full h-2">
+            <div className="bg-orange-400 h-2 rounded-full transition-all duration-300" style={{ width: `${progressWidth}%` }}></div>
           </div>
-          <div className="w-6 h-3 bg-white rounded-sm"></div>
         </div>
-      </div>
 
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setCurrentView('map')}
-          className="p-2 text-white hover:bg-white/20 rounded-full"
-        >
-          <ArrowLeftIcon className="h-6 w-6" />
-        </Button>
-        <h1 className="text-lg font-bold font-['Poppins']">Question 1</h1>
-        <Button variant="ghost" size="icon" className="text-white p-2">
-          <MoreVertical size={20} />
-        </Button>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="px-4 mb-8">
-        <div className="bg-white/20 rounded-full h-2">
-          <div className="bg-orange-400 h-2 rounded-full w-1/4"></div>
-        </div>
-      </div>
-
-      {/* Content Area - Scrollable */}
-      <div className="flex-1 px-4 pb-4 overflow-y-auto">
-
-        {currentQuizQuestion ? (
-          <>
-            {/* Question Card */}
-            <Card className="bg-white text-gray-900 border-0 rounded-3xl shadow-xl mb-6">
-              <CardContent className="p-8">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                    <div className="text-white">
-                      <QuestionIcon />
-                    </div>
+        {/* Content Area - Scrollable */}
+        <div className="flex-1 px-4 pb-4 overflow-y-auto">
+          {/* Question Card */}
+          <Card className="bg-white text-gray-900 border-0 rounded-3xl shadow-xl mb-6">
+            <CardContent className="p-8">
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <div className="text-white">
+                    <QuestionIcon />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900 leading-tight">{currentQuizQuestion.question}</h2>
                 </div>
-              </CardContent>
-            </Card>
+                <h2 className="text-xl font-bold text-gray-900 leading-tight">{currentQuestion.question}</h2>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Answer Options */}
-            <div className="space-y-4 mb-8">
-              {currentQuizQuestion.options.map((answer: string, index: number) => (
-                <Button
-                  key={index}
-                  onClick={() => !showFeedback && handleAnswerSubmit(answer)}
-                  disabled={showFeedback}
-                  className={`w-full p-6 text-left rounded-2xl text-white font-medium transition-all text-base ${
-                    selectedAnswer === answer 
-                      ? showFeedback && isCorrect
-                        ? 'bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 border-2 border-orange-300' 
-                        : showFeedback && !isCorrect
-                        ? 'bg-red-500 hover:bg-red-500'
-                        : 'bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600'
-                      : showFeedback && answer === currentQuizQuestion.correctAnswer
-                      ? 'bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 border-2 border-orange-300'
-                      : 'bg-white/20 hover:bg-white/30 border-2 border-transparent hover:border-white/50'
-                  }`}
+          {/* Answer Options */}
+          <div className="space-y-4 mb-8">
+            {currentQuestion.options.map((answer: string, index: number) => (
+              <Button
+                key={index}
+                onClick={() => !showFeedback && handleAnswerSubmit(answer)}
+                disabled={showFeedback}
+                className={`w-full p-6 text-left rounded-2xl font-medium transition-all text-base ${
+                  selectedAnswer === answer 
+                    ? showFeedback && isCorrect
+                      ? 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700'
+                      : showFeedback && !isCorrect
+                      ? 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700'
+                      : 'bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:from-orange-500 hover:to-orange-600'
+                    : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                }`}
                 >
                   {answer}
                 </Button>
@@ -346,42 +466,34 @@ export const GamingPage = (): JSX.Element => {
                     </span>
                   </div>
                   <p className="text-white/90 leading-relaxed text-base">
-                    {currentQuizQuestion.explanation}
+                    {currentQuestion.explanation}
                   </p>
                 </CardContent>
               </Card>
             )}
 
-            {/* Continue Button */}
-            {showFeedback && (
-              <Button
-                onClick={() => setCurrentView('success')}
-                className="w-full bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg"
-              >
-                Continue
-              </Button>
-            )}
-          </>
-        ) : (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-              <p className="text-white">Loading question...</p>
-            </div>
-          </div>
-        )}
-      </div>
+          {/* Continue Button */}
+          {showFeedback && (
+            <Button
+              onClick={handleNextQuestion}
+              className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg"
+            >
+              {quizSession.currentQuestionIndex < quizSession.questions.length - 1 ? 'Next Stage' : 'Go to Home'}
+            </Button>
+          )}
+        </div>
 
-      {/* Bottom Navigation Dots */}
-      <div className="flex justify-center pb-4">
-        <div className="flex space-x-2">
-          <div className="w-8 h-1 bg-white rounded-full"></div>
-          <div className="w-8 h-1 bg-white/30 rounded-full"></div>
-          <div className="w-8 h-1 bg-white/30 rounded-full"></div>
+        {/* Bottom Navigation Dots */}
+        <div className="flex justify-center pb-4">
+          <div className="flex space-x-2">
+            <div className="w-8 h-1 bg-white rounded-full"></div>
+            <div className="w-8 h-1 bg-white/30 rounded-full"></div>
+            <div className="w-8 h-1 bg-white/30 rounded-full"></div>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderSuccessView = () => (
     <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-6 flex flex-col items-center justify-center">
@@ -483,3 +595,5 @@ export const GamingPage = (): JSX.Element => {
     </>
   );
 };
+
+export default GamingPage;

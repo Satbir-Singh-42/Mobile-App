@@ -60,6 +60,50 @@ export const otpSchema = z.object({
   used: z.boolean().default(false),
 });
 
+// User Progress Schema for Gaming
+export const userProgressSchema = z.object({
+  _id: z.string().optional(),
+  userId: z.string(),
+  currentLevel: z.number().default(1),
+  completedLevels: z.array(z.number()).default([]),
+  totalScore: z.number().default(0),
+  achievements: z.array(z.string()).default([]),
+  lastPlayedAt: z.date().default(() => new Date()),
+  createdAt: z.date().default(() => new Date()),
+});
+
+export const insertUserProgressSchema = userProgressSchema.omit({
+  _id: true,
+  createdAt: true,
+});
+
+export type UserProgress = z.infer<typeof userProgressSchema>;
+export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
+
+// Quiz Session Schema
+export const quizSessionSchema = z.object({
+  _id: z.string().optional(),
+  userId: z.string(),
+  level: z.number(),
+  questions: z.array(z.object({
+    question: z.string(),
+    selectedAnswer: z.string(),
+    correctAnswer: z.string(),
+    isCorrect: z.boolean(),
+  })),
+  score: z.number(),
+  completed: z.boolean().default(false),
+  createdAt: z.date().default(() => new Date()),
+});
+
+export const insertQuizSessionSchema = quizSessionSchema.omit({
+  _id: true,
+  createdAt: true,
+});
+
+export type QuizSession = z.infer<typeof quizSessionSchema>;
+export type InsertQuizSession = z.infer<typeof insertQuizSessionSchema>;
+
 // Task Schema for Planner
 export const taskSchema = z.object({
   _id: z.string().optional(),
