@@ -59,10 +59,16 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
     setIsLoading(true);
 
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           message: inputMessage,

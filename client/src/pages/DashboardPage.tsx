@@ -418,7 +418,21 @@ export const DashboardPage = (): JSX.Element => {
             </CardContent>
           </Card>
         </div>
+        {/* Personalized Tips Section */}
+        <div className="mb-6">
+          <PersonalizedTips 
+            userId={user?._id} 
+            userContext={{
+              username: user?.username,
+              hasCompletedQuestionnaire: !!user
+            }}
+            maxTips={2}
+          />
+        </div>
       </main>
+
+      {/* AI Chat Widget */}
+      <ChatWidget userContext={user} />
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">

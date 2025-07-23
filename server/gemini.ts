@@ -22,14 +22,22 @@ export class GeminiService {
   // Generate personalized financial tips based on user data
   static async generatePersonalizedTips(userData: any): Promise<PersonalizedTip[]> {
     try {
+      const hasQuestionnaireData = userData.age || userData.income || userData.goals || userData.experience;
+      
       const prompt = `Based on this user's financial profile, generate 3 personalized financial tips:
       
 User Profile:
 - Age: ${userData.age || 'Not specified'}
 - Income Level: ${userData.income || 'Not specified'}
-- Financial Goals: ${userData.goals || 'Not specified'}
+- Financial Goals: ${userData.goals?.join(', ') || 'Not specified'}
 - Experience Level: ${userData.experience || 'Beginner'}
 - Learning Time: ${userData.practiceTime || 'Not specified'}
+- Language: ${userData.language || 'English'}
+
+${hasQuestionnaireData ? 
+  'Customize tips based on their specific profile.' : 
+  'Since no questionnaire data is available, provide general financial literacy tips with emphasis on security.'
+}
 
 Generate exactly 3 tips in JSON format with this structure:
 [
@@ -42,7 +50,7 @@ Generate exactly 3 tips in JSON format with this structure:
   }
 ]
 
-Focus on practical, actionable advice. Include security tips like "Never share your OTP—even with someone claiming to be from your bank."`;
+Always include at least one security tip like "Never share your OTP—even with someone claiming to be from your bank." Focus on practical, actionable advice.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-2.5-pro",

@@ -73,10 +73,17 @@ export const PersonalizedTips = ({ userId, userContext, maxTips = 3 }: Personali
   const fetchPersonalizedTips = async () => {
     setIsLoading(true);
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("No auth token found");
+        return;
+      }
+
       const response = await fetch("/api/personalized-tips", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           userId,
@@ -85,13 +92,19 @@ export const PersonalizedTips = ({ userId, userContext, maxTips = 3 }: Personali
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const data = await response.json();
-      if (data.tips) {
+      if (data.tips && Array.isArray(data.tips)) {
         setTips(data.tips.filter((tip: PersonalizedTip) => !dismissedTips.includes(tip.id)));
+      } else {
+        throw new Error("Invalid response format");
       }
     } catch (error) {
       console.error("Error fetching personalized tips:", error);
-      // Fallback tips
+      // Fallback tips with security focus
       setTips([
         {
           id: "security_fallback",
@@ -99,6 +112,13 @@ export const PersonalizedTips = ({ userId, userContext, maxTips = 3 }: Personali
           message: "Never share your OTP—even with someone claiming to be from your bank. Banks will never ask for OTPs over phone or email.",
           category: "security",
           priority: "high"
+        },
+        {
+          id: "budgeting_fallback",
+          title: "Start Your Budget Journey",
+          message: "Begin with the 50/30/20 rule: 50% for needs, 30% for wants, and 20% for savings and debt repayment.",
+          category: "budgeting",
+          priority: "medium"
         }
       ]);
     } finally {
