@@ -73,13 +73,13 @@ export const SignupPage = (): JSX.Element => {
   };
 
   return (
-    <div className="bg-prima-1 min-h-screen w-full flex flex-col px-4 py-8">
+    <div className="bg-prima-1 min-h-screen w-full flex flex-col px-4 py-4 sm:py-8">
       {/* Back Button - Top */}
       <div className="flex justify-start mb-6">
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setLocation("/")}
+          onClick={() => setLocation("/login")}
           className="flex items-center gap-2 p-2 hover:bg-transparent"
         >
           <ArrowLeftIcon className="h-6 w-6 text-[#4157ff]" />
@@ -91,15 +91,15 @@ export const SignupPage = (): JSX.Element => {
         <div className="w-full max-w-[1062px]">
           {/* Header */}
           <div className="text-center mb-8">
-          <h1 className="font-['Anta'] text-[#242424] text-4xl md:text-[121px] tracking-[-4.17px] mb-6">
+          <h1 className="font-['Anta'] text-[#242424] text-3xl sm:text-4xl md:text-[121px] tracking-[-4.17px] mb-4 sm:mb-6">
             Face2Finance
           </h1>
           
-          <div className="mb-6">
-            <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-2xl md:text-[55.8px] leading-[1.6] mb-2">
+          <div className="mb-4 sm:mb-6">
+            <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-xl sm:text-2xl md:text-[55.8px] leading-[1.6] mb-2">
               Create Account
             </h2>
-            <p className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[49.6px]">
+            <p className="font-['Poppins'] font-medium text-[#4157ff] text-base sm:text-lg md:text-[49.6px]">
               Join Face2Finance today
             </p>
           </div>
@@ -108,17 +108,17 @@ export const SignupPage = (): JSX.Element => {
         {/* Signup Form */}
         <Card className="bg-prima-1 border-none shadow-none">
           <CardContent className="p-0">
-            <form onSubmit={handleSignup} className="space-y-6">
+            <form onSubmit={handleSignup} className="space-y-3 sm:space-y-4 md:space-y-6">
               {/* Username Field */}
               <div className="space-y-2">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[32px] block">
+                <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[32px] block">
                   Username
                 </label>
                 <Input
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({...formData, username: e.target.value})}
-                  className="h-12 md:h-[80px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-base md:text-[24px] px-4 md:px-[30px]"
+                  className="h-10 sm:h-12 md:h-14 lg:h-[80px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base md:text-lg lg:text-[24px] px-3 sm:px-4 lg:px-[30px]"
                   placeholder="Choose a username"
                   required
                 />

@@ -41,7 +41,7 @@ export const LoginPage = (): JSX.Element => {
   };
 
   return (
-    <div className="bg-prima-1 min-h-screen w-full flex flex-col px-4 py-8">
+    <div className="bg-prima-1 min-h-screen w-full flex flex-col px-4 py-4 sm:py-8">
       {/* Back Button - Top */}
       <div className="flex justify-start mb-6">
         <Button
@@ -59,15 +59,15 @@ export const LoginPage = (): JSX.Element => {
         <div className="w-full max-w-[1062px]">
           {/* Header */}
           <div className="text-center mb-12">
-          <h1 className="font-['Anta'] text-[#242424] text-4xl md:text-[121px] tracking-[-4.17px] mb-8">
+          <h1 className="font-['Anta'] text-[#242424] text-3xl sm:text-4xl md:text-[121px] tracking-[-4.17px] mb-6 sm:mb-8">
             Face2Finance
           </h1>
           
-          <div className="mb-8">
-            <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-2xl md:text-[55.8px] leading-[1.6] mb-2">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-xl sm:text-2xl md:text-[55.8px] leading-[1.6] mb-2">
               Welcome Back
             </h2>
-            <p className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[49.6px]">
+            <p className="font-['Poppins'] font-medium text-[#4157ff] text-base sm:text-lg md:text-[49.6px]">
               Login to continue
             </p>
           </div>
@@ -76,17 +76,17 @@ export const LoginPage = (): JSX.Element => {
         {/* Login Form */}
         <Card className="bg-prima-1 border-none shadow-none">
           <CardContent className="p-0">
-            <form onSubmit={handleLogin} className="space-y-8">
+            <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6 md:space-y-8">
               {/* Username Field */}
               <div className="space-y-3">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[49.6px] block">
+                <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[49.6px] block">
                   Enter your username or phone number
                 </label>
                 <Input
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({...formData, username: e.target.value})}
-                  className="h-16 md:h-[136px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-lg md:text-[43.4px] px-6 md:px-[59px]"
+                  className="h-12 sm:h-14 md:h-16 lg:h-[136px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base md:text-lg lg:text-[43.4px] px-4 sm:px-6 lg:px-[59px]"
                   placeholder="Enter username or phone"
                   required
                 />
@@ -94,7 +94,7 @@ export const LoginPage = (): JSX.Element => {
 
               {/* Password Field */}
               <div className="space-y-3">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[49.6px] block">
+                <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[49.6px] block">
                   Password
                 </label>
                 <div className="relative">
@@ -102,7 +102,7 @@ export const LoginPage = (): JSX.Element => {
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    className="h-16 md:h-[136px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-lg md:text-[43.4px] px-6 md:px-[59px] pr-20"
+                    className="h-12 sm:h-14 md:h-16 lg:h-[136px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base md:text-lg lg:text-[43.4px] px-4 sm:px-6 lg:px-[59px] pr-12 sm:pr-16 lg:pr-20"
                     placeholder="Enter password"
                     required
                   />
@@ -110,13 +110,13 @@ export const LoginPage = (): JSX.Element => {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                    className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOffIcon className="h-5 w-5 text-[#4157ff]" />
+                      <EyeOffIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#4157ff]" />
                     ) : (
-                      <EyeIcon className="h-5 w-5 text-[#4157ff]" />
+                      <EyeIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#4157ff]" />
                     )}
                   </Button>
                 </div>
@@ -128,7 +128,7 @@ export const LoginPage = (): JSX.Element => {
                   type="button"
                   variant="ghost"
                   onClick={() => setLocation("/forgot-password")}
-                  className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[43.4px] hover:bg-transparent p-0 h-auto"
+                  className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[43.4px] hover:bg-transparent p-0 h-auto"
                 >
                   Forgot Password?
                 </Button>
@@ -138,20 +138,20 @@ export const LoginPage = (): JSX.Element => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#4157ff] hover:bg-[#3146e6] disabled:bg-[#c4c4c4] disabled:cursor-not-allowed text-white font-['Poppins'] font-bold text-lg md:text-[43.4px] h-16 md:h-[136px] rounded-[15.49px]"
+                className="w-full bg-[#4157ff] hover:bg-[#3146e6] disabled:bg-[#c4c4c4] disabled:cursor-not-allowed text-white font-['Poppins'] font-bold text-sm sm:text-base md:text-lg lg:text-[43.4px] h-12 sm:h-14 md:h-16 lg:h-[136px] rounded-[15.49px]"
               >
                 {isLoading ? "Logging in..." : "Login"}
               </Button>
             </form>
 
             {/* Sign up link */}
-            <div className="text-center mt-8">
-              <p className="font-['Poppins'] font-medium text-[#090f47] text-lg md:text-[32px]">
+            <div className="text-center mt-6 sm:mt-8">
+              <p className="font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base md:text-lg lg:text-[32px]">
                 Don't have an account?{" "}
                 <Button
                   variant="ghost"
                   onClick={() => setLocation("/signup")}
-                  className="font-['Poppins'] font-bold text-[#4157ff] text-lg md:text-[32px] hover:bg-transparent p-0 h-auto underline"
+                  className="font-['Poppins'] font-bold text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[32px] hover:bg-transparent p-0 h-auto underline"
                 >
                   Sign Up
                 </Button>

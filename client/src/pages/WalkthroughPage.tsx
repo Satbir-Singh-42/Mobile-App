@@ -32,7 +32,7 @@ export const WalkthroughPage = (): JSX.Element => {
     if (currentStep < walkthroughSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      setLocation("/signup");
+      setLocation("/login");
     }
   };
 
@@ -45,7 +45,7 @@ export const WalkthroughPage = (): JSX.Element => {
   };
 
   const handleSkip = () => {
-    setLocation("/signup");
+    setLocation("/login");
   };
 
   const currentStepData = walkthroughSteps[currentStep];
