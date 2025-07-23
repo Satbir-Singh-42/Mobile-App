@@ -133,7 +133,11 @@ export const DashboardPage = (): JSX.Element => {
   ];
 
   return (
-    <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
+    <div className="bg-gradient-to-b from-[#F8F9FF] to-[#E8F4FF] min-h-screen w-full mobile-status-hidden">
+      {/* ✨ NEW FIGMA DESIGN ACTIVE ✨ */}
+      <div className="text-center py-2 bg-green-500 text-white font-bold text-sm">
+        🎨 FIGMA DESIGN LOADED SUCCESSFULLY
+      </div>
       {/* Top Status Bar */}
       <div className="flex items-center justify-between px-6 py-3 text-sm font-medium bg-white">
         <span className="text-[#1F2937]">9:41</span>
@@ -149,9 +153,9 @@ export const DashboardPage = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Header Greeting Card */}
+      {/* NEW FIGMA DESIGN: Header Greeting Card */}
       <div className="px-6 py-4">
-        <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white relative overflow-hidden">
+        <Card className="bg-gradient-to-r from-[#4A90E2] to-[#6BB6FF] border-0 text-white relative overflow-hidden shadow-xl">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
