@@ -41,9 +41,9 @@ export const LoginPage = (): JSX.Element => {
   };
 
   return (
-    <div className="bg-prima-1 min-h-screen w-full flex flex-col px-4 py-4 sm:py-8">
+    <div className="bg-prima-1 min-h-screen h-screen w-full flex flex-col px-4 py-4 sm:py-8 overflow-y-auto">
       {/* Back Button - Top */}
-      <div className="flex justify-start mb-6">
+      <div className="flex justify-start mb-4 sm:mb-6 flex-shrink-0">
         <Button
           type="button"
           variant="ghost"
@@ -55,111 +55,110 @@ export const LoginPage = (): JSX.Element => {
         </Button>
       </div>
 
-      <div className="flex-1 flex items-center justify-center">
-        <div className="w-full max-w-[1062px]">
+      <div className="flex-1 flex flex-col justify-center px-2 sm:px-4 max-w-full">
+        <div className="w-full max-w-md mx-auto space-y-6 sm:space-y-8">
           {/* Header */}
-          <div className="text-center mb-12">
-          <h1 className="font-['Anta'] text-[#242424] text-3xl sm:text-4xl md:text-[121px] tracking-[-4.17px] mb-6 sm:mb-8">
-            Face2Finance
-          </h1>
-          
-          <div className="mb-6 sm:mb-8">
-            <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-xl sm:text-2xl md:text-[55.8px] leading-[1.6] mb-2">
-              Welcome Back
-            </h2>
-            <p className="font-['Poppins'] font-medium text-[#4157ff] text-base sm:text-lg md:text-[49.6px]">
-              Login to continue
-            </p>
+          <div className="text-center space-y-4 sm:space-y-6">
+            <h1 className="font-['Anta'] text-[#242424] text-2xl sm:text-3xl md:text-4xl tracking-[-2px] sm:tracking-[-4px]">
+              Face2Finance
+            </h1>
+            
+            <div className="space-y-2">
+              <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-lg sm:text-xl md:text-2xl leading-tight">
+                Welcome Back
+              </h2>
+              <p className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base">
+                Login to continue
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Login Form */}
-        <Card className="bg-prima-1 border-none shadow-none">
-          <CardContent className="p-0">
-            <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6 md:space-y-8">
-              {/* Username Field */}
-              <div className="space-y-3">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[49.6px] block">
-                  Enter your username or phone number
-                </label>
-                <Input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => setFormData({...formData, username: e.target.value})}
-                  className="h-12 sm:h-14 md:h-16 lg:h-[136px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base md:text-lg lg:text-[43.4px] px-4 sm:px-6 lg:px-[59px]"
-                  placeholder="Enter username or phone"
-                  required
-                />
-              </div>
-
-              {/* Password Field */}
-              <div className="space-y-3">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[49.6px] block">
-                  Password
-                </label>
-                <div className="relative">
+          {/* Login Form */}
+          <Card className="bg-prima-1 border-none shadow-none">
+            <CardContent className="p-0">
+              <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
+                {/* Username Field */}
+                <div className="space-y-2">
+                  <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base block">
+                    Enter your username or phone number
+                  </label>
                   <Input
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    className="h-12 sm:h-14 md:h-16 lg:h-[136px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base md:text-lg lg:text-[43.4px] px-4 sm:px-6 lg:px-[59px] pr-12 sm:pr-16 lg:pr-20"
-                    placeholder="Enter password"
+                    type="text"
+                    value={formData.username}
+                    onChange={(e) => setFormData({...formData, username: e.target.value})}
+                    className="h-11 sm:h-12 bg-prima-1 rounded-[15.49px] border-[2px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base px-4 w-full"
+                    placeholder="Enter username or phone"
                     required
                   />
+                </div>
+
+                {/* Password Field */}
+                <div className="space-y-2">
+                  <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base block">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={(e) => setFormData({...formData, password: e.target.value})}
+                      className="h-11 sm:h-12 bg-prima-1 rounded-[15.49px] border-[2px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base px-4 pr-12 w-full"
+                      placeholder="Enter password"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOffIcon className="h-4 w-4 text-[#4157ff]" />
+                      ) : (
+                        <EyeIcon className="h-4 w-4 text-[#4157ff]" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Forgot Password */}
+                <div className="text-right">
                   <Button
                     type="button"
                     variant="ghost"
-                    size="sm"
-                    className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={() => setLocation("/forgot-password")}
+                    className="font-['Poppins'] font-medium text-[#4157ff] text-sm hover:bg-transparent p-0 h-auto"
                   >
-                    {showPassword ? (
-                      <EyeOffIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#4157ff]" />
-                    ) : (
-                      <EyeIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#4157ff]" />
-                    )}
+                    Forgot Password?
                   </Button>
                 </div>
-              </div>
 
-              {/* Forgot Password */}
-              <div className="text-right">
+                {/* Login Button */}
                 <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setLocation("/forgot-password")}
-                  className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[43.4px] hover:bg-transparent p-0 h-auto"
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-[#4157ff] hover:bg-[#3146e6] disabled:bg-[#c4c4c4] disabled:cursor-not-allowed text-white font-['Poppins'] font-bold text-sm sm:text-base h-11 sm:h-12 rounded-[15.49px] transition-colors"
                 >
-                  Forgot Password?
+                  {isLoading ? "Logging in..." : "Login"}
                 </Button>
+              </form>
+
+              {/* Sign up link */}
+              <div className="text-center mt-4 sm:mt-6">
+                <p className="font-['Poppins'] font-medium text-[#090f47] text-sm">
+                  Don't have an account?{" "}
+                  <Button
+                    variant="ghost"
+                    onClick={() => setLocation("/signup")}
+                    className="font-['Poppins'] font-bold text-[#4157ff] text-sm hover:bg-transparent p-0 h-auto underline"
+                  >
+                    Sign Up
+                  </Button>
+                </p>
               </div>
-
-              {/* Login Button */}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-[#4157ff] hover:bg-[#3146e6] disabled:bg-[#c4c4c4] disabled:cursor-not-allowed text-white font-['Poppins'] font-bold text-sm sm:text-base md:text-lg lg:text-[43.4px] h-12 sm:h-14 md:h-16 lg:h-[136px] rounded-[15.49px]"
-              >
-                {isLoading ? "Logging in..." : "Login"}
-              </Button>
-            </form>
-
-            {/* Sign up link */}
-            <div className="text-center mt-6 sm:mt-8">
-              <p className="font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base md:text-lg lg:text-[32px]">
-                Don't have an account?{" "}
-                <Button
-                  variant="ghost"
-                  onClick={() => setLocation("/signup")}
-                  className="font-['Poppins'] font-bold text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[32px] hover:bg-transparent p-0 h-auto underline"
-                >
-                  Sign Up
-                </Button>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

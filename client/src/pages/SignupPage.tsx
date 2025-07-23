@@ -73,9 +73,9 @@ export const SignupPage = (): JSX.Element => {
   };
 
   return (
-    <div className="bg-prima-1 min-h-screen w-full flex flex-col px-4 py-4 sm:py-8">
+    <div className="bg-prima-1 min-h-screen h-screen w-full flex flex-col px-4 py-4 sm:py-8 overflow-y-auto">
       {/* Back Button - Top */}
-      <div className="flex justify-start mb-6">
+      <div className="flex justify-start mb-4 sm:mb-6 flex-shrink-0">
         <Button
           type="button"
           variant="ghost"
@@ -87,171 +87,172 @@ export const SignupPage = (): JSX.Element => {
         </Button>
       </div>
 
-      <div className="flex-1 flex items-center justify-center">
-        <div className="w-full max-w-[1062px]">
+      <div className="flex-1 flex flex-col justify-center px-2 sm:px-4 max-w-full">
+        <div className="w-full max-w-md mx-auto space-y-4 sm:space-y-6">
           {/* Header */}
-          <div className="text-center mb-8">
-          <h1 className="font-['Anta'] text-[#242424] text-3xl sm:text-4xl md:text-[121px] tracking-[-4.17px] mb-4 sm:mb-6">
-            Face2Finance
-          </h1>
-          
-          <div className="mb-4 sm:mb-6">
-            <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-xl sm:text-2xl md:text-[55.8px] leading-[1.6] mb-2">
-              Create Account
-            </h2>
-            <p className="font-['Poppins'] font-medium text-[#4157ff] text-base sm:text-lg md:text-[49.6px]">
-              Join Face2Finance today
-            </p>
-          </div>
-        </div>
-
-        {/* Signup Form */}
-        <Card className="bg-prima-1 border-none shadow-none">
-          <CardContent className="p-0">
-            <form onSubmit={handleSignup} className="space-y-3 sm:space-y-4 md:space-y-6">
-              {/* Username Field */}
-              <div className="space-y-2">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base md:text-lg lg:text-[32px] block">
-                  Username
-                </label>
-                <Input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => setFormData({...formData, username: e.target.value})}
-                  className="h-10 sm:h-12 md:h-14 lg:h-[80px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm sm:text-base md:text-lg lg:text-[24px] px-3 sm:px-4 lg:px-[30px]"
-                  placeholder="Choose a username"
-                  required
-                />
-              </div>
-
-              {/* Email Field */}
-              <div className="space-y-2">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[32px] block">
-                  Email Address
-                </label>
-                <Input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="h-12 md:h-[80px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-base md:text-[24px] px-4 md:px-[30px]"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-
-              {/* Phone Number Field */}
-              <div className="space-y-2">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[32px] block">
-                  Phone Number
-                </label>
-                <Input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  className="h-12 md:h-[80px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-base md:text-[24px] px-4 md:px-[30px]"
-                  placeholder="Enter your phone number"
-                  required
-                />
-              </div>
-
-              {/* Password Field */}
-              <div className="space-y-2">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[32px] block">
-                  Password
-                </label>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    className="h-12 md:h-[80px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-base md:text-[24px] px-4 md:px-[30px] pr-16"
-                    placeholder="Create a password"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOffIcon className="h-5 w-5 text-[#4157ff]" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5 text-[#4157ff]" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Confirm Password Field */}
-              <div className="space-y-2">
-                <label className="font-['Poppins'] font-medium text-[#4157ff] text-lg md:text-[32px] block">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Input
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                    className="h-12 md:h-[80px] bg-prima-1 rounded-[15.49px] border-[3.1px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-base md:text-[24px] px-4 md:px-[30px] pr-16"
-                    placeholder="Confirm your password"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOffIcon className="h-5 w-5 text-[#4157ff]" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5 text-[#4157ff]" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Terms and Conditions */}
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  id="terms"
-                  checked={formData.agreeToTerms}
-                  onCheckedChange={(checked) => setFormData({...formData, agreeToTerms: checked as boolean})}
-                  className="border-[#4157ff] data-[state=checked]:bg-[#4157ff] mt-1"
-                />
-                <label htmlFor="terms" className="font-['Poppins'] font-medium text-[#090f47] text-sm md:text-[20px] leading-relaxed">
-                  I agree to the{" "}
-                  <span className="text-[#4157ff] underline cursor-pointer">Terms and Conditions</span>
-                  {" "}and{" "}
-                  <span className="text-[#4157ff] underline cursor-pointer">Privacy Policy</span>
-                </label>
-              </div>
-
-              {/* Signup Button */}
-              <Button
-                type="submit"
-                className="w-full bg-[#4157ff] hover:bg-[#3146e6] text-white font-['Poppins'] font-bold text-lg md:text-[32px] h-12 md:h-[80px] rounded-[15.49px]"
-              >
+          <div className="text-center space-y-3 sm:space-y-4">
+            <h1 className="font-['Anta'] text-[#242424] text-2xl sm:text-3xl md:text-4xl tracking-[-2px] sm:tracking-[-4px]">
+              Face2Finance
+            </h1>
+            
+            <div className="space-y-1 sm:space-y-2">
+              <h2 className="font-['Poppins'] font-bold text-[#4157ff] text-lg sm:text-xl md:text-2xl leading-tight">
                 Create Account
-              </Button>
-            </form>
-
-            {/* Login link */}
-            <div className="text-center mt-6">
-              <p className="font-['Poppins'] font-medium text-[#090f47] text-sm md:text-[24px]">
-                Already have an account?{" "}
-                <Button
-                  variant="ghost"
-                  onClick={() => setLocation("/login")}
-                  className="font-['Poppins'] font-bold text-[#4157ff] text-sm md:text-[24px] hover:bg-transparent p-0 h-auto underline"
-                >
-                  Login
-                </Button>
+              </h2>
+              <p className="font-['Poppins'] font-medium text-[#4157ff] text-sm sm:text-base">
+                Join Face2Finance today
               </p>
             </div>
+          </div>
+
+          {/* Signup Form */}
+          <Card className="bg-prima-1 border-none shadow-none">
+            <CardContent className="p-0">
+              <form onSubmit={handleSignup} className="space-y-3 sm:space-y-4">
+                {/* Username Field */}
+                <div className="space-y-1 sm:space-y-2">
+                  <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm block">
+                    Username
+                  </label>
+                  <Input
+                    type="text"
+                    value={formData.username}
+                    onChange={(e) => setFormData({...formData, username: e.target.value})}
+                    className="h-10 sm:h-11 bg-prima-1 rounded-[15.49px] border-[2px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm px-3 sm:px-4 w-full"
+                    placeholder="Choose a username"
+                    required
+                  />
+                </div>
+
+                {/* Email Field */}
+                <div className="space-y-1 sm:space-y-2">
+                  <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm block">
+                    Email Address
+                  </label>
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    className="h-10 sm:h-11 bg-prima-1 rounded-[15.49px] border-[2px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm px-3 sm:px-4 w-full"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+
+                {/* Phone Number Field */}
+                <div className="space-y-1 sm:space-y-2">
+                  <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm block">
+                    Phone Number
+                  </label>
+                  <Input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    className="h-10 sm:h-11 bg-prima-1 rounded-[15.49px] border-[2px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm px-3 sm:px-4 w-full"
+                    placeholder="Enter your phone number"
+                    required
+                  />
+                </div>
+
+                {/* Password Field */}
+                <div className="space-y-1 sm:space-y-2">
+                  <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm block">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={(e) => setFormData({...formData, password: e.target.value})}
+                      className="h-10 sm:h-11 bg-prima-1 rounded-[15.49px] border-[2px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm px-3 sm:px-4 pr-12 w-full"
+                      placeholder="Create a password"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOffIcon className="h-4 w-4 text-[#4157ff]" />
+                      ) : (
+                        <EyeIcon className="h-4 w-4 text-[#4157ff]" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Confirm Password Field */}
+                <div className="space-y-1 sm:space-y-2">
+                  <label className="font-['Poppins'] font-medium text-[#4157ff] text-sm block">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                      className="h-10 sm:h-11 bg-prima-1 rounded-[15.49px] border-[2px] border-[#4157ff] font-['Poppins'] font-medium text-[#090f47] text-sm px-3 sm:px-4 pr-12 w-full"
+                      placeholder="Confirm your password"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOffIcon className="h-4 w-4 text-[#4157ff]" />
+                      ) : (
+                        <EyeIcon className="h-4 w-4 text-[#4157ff]" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Terms and Conditions */}
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <Checkbox
+                    id="terms"
+                    checked={formData.agreeToTerms}
+                    onCheckedChange={(checked) => setFormData({...formData, agreeToTerms: checked as boolean})}
+                    className="border-[#4157ff] data-[state=checked]:bg-[#4157ff] mt-1 flex-shrink-0"
+                  />
+                  <label htmlFor="terms" className="font-['Poppins'] font-medium text-[#090f47] text-xs sm:text-sm leading-relaxed">
+                    I agree to the{" "}
+                    <span className="text-[#4157ff] underline cursor-pointer">Terms and Conditions</span>
+                    {" "}and{" "}
+                    <span className="text-[#4157ff] underline cursor-pointer">Privacy Policy</span>
+                  </label>
+                </div>
+
+                {/* Signup Button */}
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-[#4157ff] hover:bg-[#3146e6] disabled:bg-[#c4c4c4] disabled:cursor-not-allowed text-white font-['Poppins'] font-bold text-sm sm:text-base h-11 sm:h-12 rounded-[15.49px] transition-colors"
+                >
+                  {isLoading ? "Creating Account..." : "Create Account"}
+                </Button>
+              </form>
+
+              {/* Login link */}
+              <div className="text-center mt-4 sm:mt-6">
+                <p className="font-['Poppins'] font-medium text-[#090f47] text-sm">
+                  Already have an account?{" "}
+                  <Button
+                    variant="ghost"
+                    onClick={() => setLocation("/login")}
+                    className="font-['Poppins'] font-bold text-[#4157ff] text-sm hover:bg-transparent p-0 h-auto underline"
+                  >
+                    Login
+                  </Button>
+                </p>
+              </div>
           </CardContent>
         </Card>
 
