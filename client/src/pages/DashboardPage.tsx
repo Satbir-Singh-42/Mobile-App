@@ -228,12 +228,15 @@ export const DashboardPage = (): JSX.Element => {
           </div>
         </div>
 
-        {/* Search Bar matching Figma */}
+      </div>
+
+      {/* Search Bar positioned between purple section and white content */}
+      <div className="px-6 relative -mt-6 mb-6 z-10">
         <div className="relative">
           <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <button
             onClick={() => setLocation("/search")}
-            className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 shadow-sm text-left"
+            className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl text-gray-900 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-left"
           >
             <span className="text-gray-500">Search tutorials, fraud types, or finance tips...</span>
           </button>
