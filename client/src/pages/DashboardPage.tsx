@@ -40,6 +40,16 @@ import { authAPI } from "@/lib/auth";
 import { ChatWidget } from "@/components/ui/chat-widget";
 import { PersonalizedTips } from "@/components/ui/personalized-tips";
 
+// Import category icons from attached assets
+import calculatorIcon from "@assets/1(1)_1753277841626.png";
+import quizIcon from "@assets/2(1)_1753277841627.png";
+import goalsIcon from "@assets/3(1)_1753277841627.png";
+import tipsIcon from "@assets/4(1)_1753277841627.png";
+import privacyIcon from "@assets/4_1753277841628.png";
+import budgetingIcon from "@assets/5_1753277841628.png";
+import savingIcon from "@assets/6_1753277841628.png";
+import cyberIcon from "@assets/7_1753277841628.png";
+
 
 export const DashboardPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
@@ -110,104 +120,53 @@ export const DashboardPage = (): JSX.Element => {
   const { dayName, day, month } = formatDate(currentTime);
   const currentTimeStr = formatTime(currentTime);
 
-  // Updated SVG Icon Components matching Figma design
-  const BudgetingIcon = () => (
-    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm0-4h-2V7h2v8z"/>
-      <path d="M15 13.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5z"/>
-    </svg>
-  );
-
-  const SavingIcon = () => (
-    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-    </svg>
-  );
-
-  const CyberIcon = () => (
-    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,20V10H6V20H18M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10C4,8.89 4.89,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
-    </svg>
-  );
-
-  const PrivacyIcon = () => (
-    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9L10,17Z"/>
-    </svg>
-  );
-
-  const CalculatorIcon = () => (
-    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M7,2H17A2,2 0 0,1 19,4V20A2,2 0 0,1 17,22H7A2,2 0 0,1 5,20V4A2,2 0 0,1 7,2M7,4V8H17V4H7M7,10V12H9V10H7M11,10V12H13V10H11M15,10V12H17V10H15M7,14V16H9V14H7M11,14V16H13V14H11M15,14V16H17V14H15M7,18V20H9V18H7M11,18V20H13V18H11M15,18V20H17V18H15Z"/>
-    </svg>
-  );
-
-  const TipsIcon = () => (
-    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
-    </svg>
-  );
-
-  const QuizIcon = () => (
-    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12,3C16.97,3 21,7.03 21,12C21,16.97 16.97,21 12,21C7.03,21 3,16.97 3,12C3,7.03 7.03,3 12,3M13,9H11V7H13V9M13,17H11V11H13V17Z"/>
-      <path d="M9,12L11,14L15,10"/>
-    </svg>
-  );
-
-  const GoalsIcon = () => (
-    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
-    </svg>
-  );
-
   const categories = [
     {
       id: "budgeting",
       title: "Budgeting",
-      icon: BudgetingIcon,
+      icon: budgetingIcon,
       color: "bg-[#FF6B8A]"
     },
     {
       id: "saving",
       title: "Saving & Investment",
-      icon: SavingIcon,
+      icon: savingIcon,
       color: "bg-[#4ECDC4]"
     },
     {
       id: "fraud",
       title: "Cyber Fraud Types", 
-      icon: CyberIcon,
+      icon: cyberIcon,
       color: "bg-[#FFB74D]"
     },
     {
       id: "privacy",
       title: "Data Privacy & Protection",
-      icon: PrivacyIcon,
+      icon: privacyIcon,
       color: "bg-[#6366F1]"
     },
     {
       id: "calculators",
       title: "Calculators",
-      icon: CalculatorIcon,
+      icon: calculatorIcon,
       color: "bg-[#60A5FA]"
     },
     {
       id: "tips", 
       title: "Tips",
-      icon: TipsIcon,
+      icon: tipsIcon,
       color: "bg-[#8B5CF6]"
     },
     {
       id: "quiz",
       title: "Quiz",
-      icon: QuizIcon,
+      icon: quizIcon,
       color: "bg-[#34D399]"
     },
     {
       id: "goals",
       title: "Goals",
-      icon: GoalsIcon,
+      icon: goalsIcon,
       color: "bg-[#F472B6]"
     }
   ];
@@ -306,11 +265,14 @@ export const DashboardPage = (): JSX.Element => {
           </div>
           <div className="grid grid-cols-4 gap-4">
             {categories.map((category) => {
-              const IconComponent = category.icon;
               return (
                 <div key={category.id} className="flex flex-col items-center">
                   <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mb-2 shadow-sm`}>
-                    <IconComponent />
+                    <img 
+                      src={category.icon} 
+                      alt={category.title}
+                      className="w-10 h-10 object-contain"
+                    />
                   </div>
                   <span className="text-xs font-['Poppins'] text-center text-gray-700 leading-tight max-w-[60px]">
                     {category.title}
