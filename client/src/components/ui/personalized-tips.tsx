@@ -105,21 +105,29 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
   }
 
   if (!dailyTip) {
-    return null;
+    return (
+      <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white rounded-2xl overflow-hidden">
+        <CardContent className="p-6">
+          <h4 className="font-['Poppins'] font-medium text-lg mb-3 leading-tight">
+            Never share your OTP—even with someone claiming to be from your bank.
+          </h4>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
-    <Card className="border-0 shadow-sm">
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-full bg-blue-100 text-blue-600 flex-shrink-0">
-            <LightbulbIcon className="h-5 w-5" />
+    <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white rounded-2xl overflow-hidden">
+      <CardContent className="p-6">
+        <h4 className="font-['Poppins'] font-medium text-lg mb-3 leading-tight">
+          {dailyTip.message}
+        </h4>
+        <div className="flex items-center justify-between">
+          <div className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-full px-4 py-2 text-sm font-medium">
+            AI Personalized
           </div>
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-gray-800 text-sm mb-2">Daily Financial Tip</h4>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              {dailyTip.message}
-            </p>
+          <div className="text-white/80 hover:text-white text-sm">
+            Now
           </div>
         </div>
       </CardContent>

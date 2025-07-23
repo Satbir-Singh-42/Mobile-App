@@ -38,6 +38,7 @@ import {
 import { useTranslation } from "@/lib/i18n";
 import { authAPI } from "@/lib/auth";
 import { ChatWidget } from "@/components/ui/chat-widget";
+import { PersonalizedTips } from "@/components/ui/personalized-tips";
 
 
 export const DashboardPage = (): JSX.Element => {
@@ -425,29 +426,16 @@ export const DashboardPage = (): JSX.Element => {
           </div>
         </div>
 
-        {/* Security Tip Card - Only tip section */}
+        {/* AI-Powered Personalized Tip Card - Uses questionnaire data */}
         <div className="mb-6">
-          <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white rounded-2xl overflow-hidden">
-            <CardContent className="p-6">
-              <h4 className="font-['Poppins'] font-medium text-lg mb-3 leading-tight">
-                Never share your OTP—even with someone claiming to be from your bank.
-              </h4>
-              <div className="flex items-center justify-between">
-                <Button 
-                  variant="ghost" 
-                  className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-full px-4 py-2 text-sm font-medium"
-                >
-                  Show more tips
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  className="text-white/80 hover:text-white text-sm p-0"
-                >
-                  Now
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <PersonalizedTips 
+            userId={user?._id} 
+            userContext={{
+              username: user?.username,
+              hasCompletedQuestionnaire: !!user,
+              currentPage: "dashboard"
+            }}
+          />
         </div>
       </main>
 
