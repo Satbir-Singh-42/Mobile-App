@@ -55,7 +55,7 @@ export const PlannerPage = (): JSX.Element => {
         description: "",
         startTime: "",
         endTime: "",
-        category: "Design"
+        category: "Budget Planning"
       });
     },
   });
@@ -92,19 +92,33 @@ export const PlannerPage = (): JSX.Element => {
     description: "",
     startTime: "",
     endTime: "",
-    category: "Design"
+    category: "Budget Planning"
   });
 
   const weekDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-  const daysInMonth = [3, 4, 5, 6, 7, 8, 9]; // Oct 2020 calendar partial view
+  // Dynamic calendar based on current date instead of hardcoded Oct 2020
+  const getCurrentWeekDays = () => {
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Start from Monday
+    
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(startOfWeek);
+      day.setDate(startOfWeek.getDate() + i);
+      days.push(day.getDate());
+    }
+    return days;
+  };
+  
+  const daysInMonth = getCurrentWeekDays();
 
   const categories = [
-    { name: "Design", color: "bg-[#6366F1]" },
-    { name: "Meeting", color: "bg-[#10B981]" },
-    { name: "Coding", color: "bg-[#F59E0B]" },
-    { name: "Self", color: "bg-[#EF4444]" },
-    { name: "Testing", color: "bg-[#8B5CF6]" },
-    { name: "Others", color: "bg-[#6B7280]" }
+    { name: "Budget Planning", color: "bg-[#6366F1]" },
+    { name: "Financial Goal", color: "bg-[#10B981]" },
+    { name: "Investment", color: "bg-[#F59E0B]" },
+    { name: "Learning", color: "bg-[#EF4444]" },
+    { name: "Review", color: "bg-[#8B5CF6]" },
+    { name: "Other", color: "bg-[#6B7280]" }
   ];
 
   const toggleTaskCompletion = (taskId: string) => {
@@ -175,7 +189,7 @@ export const PlannerPage = (): JSX.Element => {
                 type="text"
                 value={newTask.title}
                 onChange={(e) => setNewTask(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Design Changes"
+                placeholder="e.g., Review monthly budget"
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366F1]"
               />
             </div>
@@ -220,7 +234,7 @@ export const PlannerPage = (): JSX.Element => {
               <textarea
                 value={newTask.description}
                 onChange={(e) => setNewTask(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Lorem ipsum dolor sit amet, et adipiscing elit, sed dislumod nibh euismod. dolor sit amet, et adipiscing elit, sed dislumod nibh euismod."
+                placeholder="Add details about your financial planning task..."
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366F1] resize-none"
               />
@@ -272,7 +286,7 @@ export const PlannerPage = (): JSX.Element => {
           >
             <ArrowLeftIcon className="h-6 w-6" />
           </Button>
-          <h1 className="text-xl font-semibold text-[#1F2937]">Task calendar</h1>
+          <h1 className="text-xl font-semibold text-[#1F2937]">Financial Planner</h1>
           <Button
             variant="ghost"
             size="sm"
@@ -284,7 +298,9 @@ export const PlannerPage = (): JSX.Element => {
 
         {/* Calendar Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-[#1F2937]">Oct, 2020</h2>
+          <h2 className="text-2xl font-bold text-[#1F2937]">
+            {currentDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+          </h2>
           <Button
             onClick={() => setShowCreateTask(true)}
             className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white px-4 py-2 rounded-lg text-sm font-medium"
@@ -304,7 +320,7 @@ export const PlannerPage = (): JSX.Element => {
             <div
               key={day}
               className={`text-center py-2 text-sm ${
-                day === 24 
+                day === currentDate.getDate() 
                   ? 'bg-[#6366F1] text-white rounded-lg font-semibold' 
                   : 'text-gray-700'
               }`}
@@ -343,10 +359,10 @@ export const PlannerPage = (): JSX.Element => {
                       <div className="flex items-center justify-between mb-1">
                         <div>
                           <h4 className="font-semibold text-[#1F2937] text-sm">
-                            Progress
+                            {task.title}
                           </h4>
                           <p className="text-xs text-gray-500 mt-1">
-                            More
+                            {task.startTime && task.endTime ? `${task.startTime} - ${task.endTime}` : 'No time set'}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">

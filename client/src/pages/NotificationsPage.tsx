@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { authAPI } from "@/lib/auth";
 import { 
   ArrowLeftIcon, 
   BellIcon,
@@ -21,64 +22,37 @@ import {
 
 export const NotificationsPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
+  const [user, setUser] = useState<any>(null);
 
-  const initialNotifications = [
-    {
-      id: 1,
-      title: "Learning Consistency Reminder",
-      message: "For children AND adults—learning is most effective when it is consistent. Keep up your daily financial literacy practice!",
-      time: "2 hours ago",
-      icon: InfoIcon,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100",
-      isRead: false,
-      category: "educational"
-    },
-    {
-      id: 2,
-      title: "New Course Available",
-      message: "The future of professional learning is immersive. Check out our new 'Investment Basics' course now available!",
-      time: "5 hours ago", 
-      icon: GraduationCapIcon,
-      color: "text-green-600",
-      bgColor: "bg-green-100",
-      isRead: false,
-      category: "course"
-    },
-    {
-      id: 3,
-      title: "Blended Learning Update",
-      message: "New interactive modules have been added to your financial planning course. Complete them to earn bonus points!",
-      time: "1 day ago",
-      icon: BookOpenIcon,
-      color: "text-purple-600", 
-      bgColor: "bg-purple-100",
-      isRead: false,
-      category: "update"
-    },
-    {
-      id: 4,
-      title: "Security Alert",
-      message: "Technology should serve, not drive, your financial decisions. Learn about the latest fraud prevention techniques.",
-      time: "2 days ago",
-      icon: ShieldIcon,
-      color: "text-red-600",
-      bgColor: "bg-red-100", 
-      isRead: false,
-      category: "security"
-    },
-    {
-      id: 5,
-      title: "Community Achievement",
-      message: "Peer learning works! You've successfully completed 5 group challenges. Join our next community session.",
-      time: "3 days ago",
-      icon: UserIcon,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100",
-      isRead: false,
-      category: "achievement"
+  useEffect(() => {
+    const userData = authAPI.getUser();
+    setUser(userData);
+  }, []);
+
+  // Dynamic notifications based on user activity
+  const generateNotifications = () => {
+    const notifications = [];
+    const now = new Date();
+    
+    // Welcome notification for new users
+    if (!user?.lastLogin || (now.getTime() - new Date(user.lastLogin).getTime()) > 86400000) {
+      notifications.push({
+        id: 1,
+        title: "Welcome to Face2Finance",
+        message: "Start your financial literacy journey today! Complete your first task to earn points.",
+        time: "Just now",
+        icon: InfoIcon,
+        color: "text-blue-600",
+        bgColor: "bg-blue-100",
+        isRead: false,
+        category: "welcome"
+      });
     }
-  ];
+    
+    return notifications;
+  };
+
+  const initialNotifications = generateNotifications();
 
   const [notifications, setNotifications] = useState(initialNotifications);
   const [showClearConfirm, setShowClearConfirm] = useState(false);

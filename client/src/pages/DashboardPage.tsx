@@ -150,29 +150,30 @@ export const DashboardPage = (): JSX.Element => {
     }
   ];
 
+  // Dynamic stats based on user progress - connected to database
   const monthlyStats = [
     {
       id: "completed",
-      title: "Lessons Completed", 
-      value: "22",
+      title: "Tasks Completed", 
+      value: tasksData?.tasks?.filter(task => task.completed).length.toString() || "0",
       color: "bg-[#4ECDC4]"
     },
     {
       id: "progress",
-      title: "Modules in Progress",
-      value: "7", 
+      title: "Active Tasks",
+      value: tasksData?.tasks?.filter(task => !task.completed).length.toString() || "0", 
       color: "bg-[#FFB74D]"
     },
     {
       id: "goals",
-      title: "Goals Being Tracked",
-      value: "12",
+      title: "Total Tasks",
+      value: tasksData?.tasks?.length.toString() || "0",
       color: "bg-[#FF6B8A]"
     },
     {
       id: "attempted",
-      title: "Quizzes Attempted",
-      value: "14",
+      title: "Categories Used",
+      value: tasksData?.tasks ? Array.from(new Set(tasksData.tasks.map(task => task.category))).length.toString() : "0",
       color: "bg-[#4FC3F7]"
     }
   ];

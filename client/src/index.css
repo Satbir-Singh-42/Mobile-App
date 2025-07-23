@@ -33,17 +33,20 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4157ff 0%, #6366f1 50%, #8b5cf6 100%);
+    padding: 20px;
   }
   
   #root {
     max-width: 375px;
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 40px);
     margin: 0 auto;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
     background: white;
     position: relative;
+    border-radius: 20px;
+    overflow: hidden;
   }
 }
 
@@ -65,7 +68,13 @@
 /* Mobile-first responsive typography */
 @media (max-width: 767px) {
   html {
-    font-size: 14px;
+    font-size: 16px; /* Better readability on mobile */
+  }
+  
+  /* Ensure full width on mobile */
+  body, #root {
+    width: 100%;
+    min-height: 100vh;
   }
 }
 

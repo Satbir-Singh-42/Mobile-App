@@ -11,36 +11,55 @@ export const SearchPage = (): JSX.Element => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const searchResults = [
-    {
-      id: "budgeting",
-      title: "Budgeting Basics",
-      description: "Learn how to create and manage your budget effectively",
-      icon: CreditCardIcon,
-      category: "Financial Planning"
-    },
-    {
-      id: "saving",
-      title: "Smart Saving Strategies",
-      description: "Discover ways to save money and build wealth",
-      icon: TrendingUpIcon,
-      category: "Savings"
-    },
-    {
-      id: "investing",
-      title: "Investment Fundamentals",
-      description: "Get started with investing and grow your money",
-      icon: BookOpenIcon,
-      category: "Investment"
-    },
-    {
-      id: "security",
-      title: "Financial Security Tips",
-      description: "Protect yourself from scams and frauds",
-      icon: ShieldCheckIcon,
-      category: "Security"
-    }
-  ];
+  // Dynamic search results based on query and user progress
+  const getSearchResults = (query: string) => {
+    const allTopics = [
+      {
+        id: "budgeting",
+        title: "Budgeting Basics",
+        description: "Learn how to create and manage your budget effectively",
+        icon: CreditCardIcon,
+        category: "Financial Planning",
+        keywords: ["budget", "money", "plan", "expense"]
+      },
+      {
+        id: "saving", 
+        title: "Smart Saving Strategies",
+        description: "Discover ways to save money and build wealth",
+        icon: TrendingUpIcon,
+        category: "Savings",
+        keywords: ["save", "invest", "wealth", "growth"]
+      },
+      {
+        id: "investing",
+        title: "Investment Fundamentals", 
+        description: "Get started with investing and grow your money",
+        icon: BookOpenIcon,
+        category: "Investment",
+        keywords: ["invest", "stocks", "portfolio", "returns"]
+      },
+      {
+        id: "security",
+        title: "Financial Security Tips",
+        description: "Protect yourself from scams and frauds",
+        icon: ShieldCheckIcon,
+        category: "Security",
+        keywords: ["security", "fraud", "scam", "protection"]
+      }
+    ];
+
+    if (!query.trim()) return allTopics;
+    
+    const lowerQuery = query.toLowerCase();
+    return allTopics.filter(topic => 
+      topic.title.toLowerCase().includes(lowerQuery) ||
+      topic.description.toLowerCase().includes(lowerQuery) ||
+      topic.category.toLowerCase().includes(lowerQuery) ||
+      topic.keywords.some(keyword => keyword.includes(lowerQuery))
+    );
+  };
+
+  const searchResults = getSearchResults(searchQuery);
 
   const filteredResults = searchResults.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
