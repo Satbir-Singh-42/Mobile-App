@@ -242,14 +242,25 @@ Focus on actionable advice. Include security tips frequently like OTP safety, fr
     Make sure the question is practical and relevant to daily financial decisions.`;
 
     try {
-      const response = await geminiService.ai.models.generateContent({
+      const response = await ai.models.generateContent({
         model: "gemini-2.5-pro",
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "object",
+            properties: {
+              question: { type: "string" },
+              options: { type: "array", items: { type: "string" } },
+              correctAnswer: { type: "string" },
+              explanation: { type: "string" }
+            },
+            required: ["question", "options", "correctAnswer", "explanation"]
+          }
+        },
         contents: prompt,
       });
-      const result = response.text || "";
-      // Try to parse as JSON
-      const cleanResult = result.trim().replace(/```json|```/g, '');
-      return JSON.parse(cleanResult);
+      
+      return JSON.parse(response.text || "{}");
     } catch (error) {
       console.error('Error generating quiz question:', error);
       // Return fallback question

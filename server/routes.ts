@@ -724,13 +724,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "User not found" });
       }
 
+      // Set a timeout for AI generation (5 seconds max)
       const questionnaire = await storage.getQuestionnaireByUserId(userId);
-      const response = await GeminiService.generateQuizQuestion(user, questionnaire);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("AI timeout")), 5000)
+      );
       
-      res.json(response);
+      const aiPromise = GeminiService.generateQuizQuestion(user, questionnaire);
+      
+      try {
+        const response = await Promise.race([aiPromise, timeoutPromise]);
+        res.json(response);
+      } catch (timeoutError) {
+        // Return fallback immediately if AI is slow
+        res.json({ 
+          question: "What percentage of your income should ideally go to savings?",
+          options: [
+            "At least 20% of your income",
+            "10% is more than enough", 
+            "5% should be sufficient"
+          ],
+          correctAnswer: "At least 20% of your income",
+          explanation: "Financial experts recommend saving at least 20% of your income for emergencies, retirement, and future goals."
+        });
+      }
     } catch (error) {
       console.error("AI Quiz Question Error:", error);
-      res.status(500).json({ 
+      res.json({ 
         question: "What is the 50/30/20 rule in budgeting?",
         options: [
           "50% needs, 30% wants, 20% savings",
