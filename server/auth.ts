@@ -42,7 +42,7 @@ export const verifyToken = (token: string): { userId: string } | null => {
     }) as { userId: string };
     return decoded;
   } catch (error) {
-    console.error('JWT verification error:', error);
+    console.error('JWT verification error:', error?.message || error);
     return null;
   }
 };

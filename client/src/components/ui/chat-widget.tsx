@@ -109,7 +109,7 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-24 right-4 z-50">
         <Button
           onClick={() => setIsOpen(true)}
           className="bg-gradient-to-r from-[#4157ff] to-[#6366f1] text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
@@ -121,7 +121,7 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-24 right-4 z-50">
       <Card className={`w-80 shadow-2xl border-0 transition-all duration-200 ${
         isMinimized ? 'h-14' : 'h-96'
       }`}>
