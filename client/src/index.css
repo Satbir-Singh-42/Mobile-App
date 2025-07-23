@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind components;
 @tailwind utilities;
 
@@ -8,16 +10,16 @@
 }
 
 :root {
-  --black: rgba(0, 0, 0, 1);
-  --branda: rgba(73, 27, 109, 1);
-  --dark-black: rgba(3, 15, 54, 1);
-  --label-colorlightprimary: rgba(0, 0, 0, 1);
-  --m3syslighton-surface: rgba(29, 27, 32, 1);
-  --prima-1: rgba(255, 255, 255, 1);
-  --prima-2: rgba(0, 0, 0, 1);
-  --secona-1: rgba(75, 75, 75, 1);
-  --secona-3: rgba(230, 230, 230, 1);
-  --systemorange-light: rgba(255, 149, 0, 1);
+  --primary-blue: #4A90E2;
+  --secondary-blue: #6BB6FF;
+  --accent-green: #52D1B8;
+  --accent-orange: #FFB347;
+  --accent-pink: #FF8A95;
+  --accent-purple: #A78BFA;
+  --background-gray: #F8FAFB;
+  --text-dark: #1A2332;
+  --text-gray: #6B7280;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 @tailwind base;

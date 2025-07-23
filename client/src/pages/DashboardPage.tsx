@@ -24,7 +24,13 @@ import {
   MapPinIcon,
   PieChartIcon,
   TargetIcon,
-  PlayIcon
+  PlayIcon,
+  ChevronRightIcon,
+  GiftIcon,
+  RefreshCwIcon,
+  Gamepad2Icon,
+  TrophyIcon,
+  Clock3Icon
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { authAPI } from "@/lib/auth";
@@ -34,12 +40,6 @@ export const DashboardPage = (): JSX.Element => {
   const { t } = useTranslation();
   const [user, setUser] = useState<any>(null);
   const [forceRerender, setForceRerender] = useState(0);
-  const [userProgress, setUserProgress] = useState({
-    lessonsCompleted: 0,
-    hoursLearned: 0,
-    currentStreak: 0,
-    totalModules: 4
-  });
 
   useEffect(() => {
     const userData = authAPI.getUser();
@@ -59,48 +59,48 @@ export const DashboardPage = (): JSX.Element => {
       id: "budgeting",
       title: "Budgeting",
       icon: PiggyBankIcon,
-      color: "bg-[#FB7185]"
+      color: "bg-[#FF8A95]"
     },
     {
       id: "saving",
-      title: "Saving & Investing",
-      icon: DollarSignIcon,
-      color: "bg-[#10B981]"
+      title: "Saving & Investment",
+      icon: TrendingUpIcon,
+      color: "bg-[#52D1B8]"
     },
     {
-      id: "investing",
-      title: "Mutual Fund Types",
-      icon: PieChartIcon,
-      color: "bg-[#3B82F6]"
+      id: "fraud",
+      title: "Cyber Fraud Types",
+      icon: ShieldIcon,
+      color: "bg-[#6BB6FF]"
     },
     {
-      id: "goals",
-      title: "Goal Money & Projects",
-      icon: TargetIcon,
-      color: "bg-[#F59E0B]"
+      id: "privacy",
+      title: "Data Privacy & Protection",
+      icon: MoreHorizontalIcon,
+      color: "bg-[#FFB347]"
     },
     {
       id: "calculator",
       title: "Calculator",
       icon: CalculatorIcon,
-      color: "bg-[#06B6D4]"
+      color: "bg-[#A78BFA]"
     },
     {
       id: "tax",
       title: "Tax",
       icon: BookOpenIcon,
-      color: "bg-[#F97316]"
+      color: "bg-[#FF8A95]"
     },
     {
       id: "quiz",
       title: "Quiz",
-      icon: GraduationCapIcon,
-      color: "bg-[#10B981]"
+      icon: Gamepad2Icon,
+      color: "bg-[#52D1B8]"
     },
     {
-      id: "goals-alt",
+      id: "goals",
       title: "Goals",
-      icon: MapPinIcon,
+      icon: TargetIcon,
       color: "bg-[#EF4444]"
     }
   ];
@@ -110,25 +110,25 @@ export const DashboardPage = (): JSX.Element => {
       id: "completed",
       title: "Lessons Completed", 
       value: "22",
-      color: "bg-[#10B981]"
+      color: "bg-[#52D1B8]"
     },
     {
       id: "progress",
       title: "Modules in Progress",
       value: "7", 
-      color: "bg-[#F59E0B]"
+      color: "bg-[#FFB347]"
     },
     {
-      id: "attended",
+      id: "goals",
+      title: "Goals Being Tracked",
+      value: "12",
+      color: "bg-[#FF8A95]"
+    },
+    {
+      id: "attempted",
       title: "Quizzes Attempted",
       value: "14",
-      color: "bg-[#06B6D4]"
-    },
-    {
-      id: "tests",
-      title: "Goal Being Tracked",
-      value: "12",
-      color: "bg-[#FB7185]"
+      color: "bg-[#6BB6FF]"
     }
   ];
 
@@ -164,20 +164,15 @@ export const DashboardPage = (): JSX.Element => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setLocation("/search")}
-                  className="p-2 text-white hover:bg-white/20"
-                >
-                  <SearchIcon className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
                   onClick={() => setLocation("/notifications")}
                   className="p-2 text-white hover:bg-white/20 relative"
                 >
                   <BellIcon className="h-5 w-5" />
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
                 </Button>
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <UserIcon className="h-6 w-6 text-white" />
+                </div>
               </div>
             </div>
             
@@ -186,7 +181,7 @@ export const DashboardPage = (): JSX.Element => {
               <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search textbooks, brand topics, or financial tips"
+                placeholder="Search tutorials, fraud types, or finance tips"
                 className="w-full pl-10 pr-4 py-3 rounded-xl border-0 text-gray-700 placeholder-gray-400 text-sm"
                 onClick={() => setLocation("/search")}
               />
@@ -276,33 +271,37 @@ export const DashboardPage = (): JSX.Element => {
         {/* Featured Modules Lessons */}
         <div className="mb-6">
           <h3 className="font-['Poppins'] font-semibold text-lg text-[#1F2937] mb-4">Featured Modules Lessons</h3>
-          <div className="space-y-4">
-            <Card className="border-0 bg-white shadow-sm">
-              <CardContent className="p-4">
-                <div className="flex gap-4">
-                  <img src="/api/placeholder/60/60" alt="OTG Scam" className="w-15 h-15 rounded-lg object-cover" />
-                  <div className="flex-1">
-                    <h4 className="font-['Poppins'] font-medium text-[#1F2937] mb-1">OTG Scam Explainer</h4>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">Safety</span>
-                      <PlayIcon className="w-5 h-5 text-[#6366F1]" />
-                    </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Card className="border-0 bg-white shadow-sm relative overflow-hidden">
+              <CardContent className="p-0">
+                <div className="relative">
+                  <div className="w-full h-24 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <PlayIcon className="w-8 h-8 text-white" />
                   </div>
+                  <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1 flex items-center gap-1">
+                    <StarIcon className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                    <span className="text-xs text-white">4.5</span>
+                  </div>
+                </div>
+                <div className="p-3">
+                  <h4 className="font-['Poppins'] font-medium text-[#1F2937] text-sm leading-tight">OTP Scam Explainer</h4>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="border-0 bg-white shadow-sm">
-              <CardContent className="p-4">
-                <div className="flex gap-4">
-                  <img src="/api/placeholder/60/60" alt="Debit Card" className="w-15 h-15 rounded-lg object-cover" />
-                  <div className="flex-1">
-                    <h4 className="font-['Poppins'] font-medium text-[#1F2937] mb-1">Debit Card Fraud Tips</h4>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">Safety</span>
-                      <PlayIcon className="w-5 h-5 text-[#6366F1]" />
-                    </div>
+            <Card className="border-0 bg-white shadow-sm relative overflow-hidden">
+              <CardContent className="p-0">
+                <div className="relative">
+                  <div className="w-full h-24 bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center">
+                    <PlayIcon className="w-8 h-8 text-white" />
                   </div>
+                  <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1 flex items-center gap-1">
+                    <StarIcon className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                    <span className="text-xs text-white">4.5</span>
+                  </div>
+                </div>
+                <div className="p-3">
+                  <h4 className="font-['Poppins'] font-medium text-[#1F2937] text-sm leading-tight">Debit Card Fraud Tips</h4>
                 </div>
               </CardContent>
             </Card>
