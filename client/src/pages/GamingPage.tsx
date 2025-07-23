@@ -64,6 +64,8 @@ export const GamingPage = (): JSX.Element => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [quizSession, setQuizSession] = useState<QuizSession | null>(null);
   const [userLevel, setUserLevel] = useState<number>(1);
+  const [bonusPoints, setBonusPoints] = useState<number>(0);
+  const [levelUnlocked, setLevelUnlocked] = useState<boolean>(false);
 
   const achievements = [
     { name: "Budget Master", points: 100, completed: true, icon: "💰" },
@@ -189,11 +191,16 @@ export const GamingPage = (): JSX.Element => {
       return response.json();  
     },
     onSuccess: (data) => {
-      // Unlock next level if quiz was completed successfully
-      if (quizSession && quizSession.score >= 2) { // Need at least 2 correct answers
-        const nextLevel = Math.min(userLevel + 1, 4);
+      // Check if next level should be unlocked
+      if (quizSession && quizSession.score >= 2 && userLevel < 4) { // Need at least 2 correct answers
+        const nextLevel = userLevel + 1;
         setUserLevel(nextLevel);
         localStorage.setItem('userLevel', nextLevel.toString());
+        setLevelUnlocked(true);
+        setBonusPoints(100); // 100 bonus points for unlocking new level
+      } else {
+        setLevelUnlocked(false);
+        setBonusPoints(0);
       }
       queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
       setCurrentView('success');
@@ -385,11 +392,32 @@ export const GamingPage = (): JSX.Element => {
               </div>
             )}
             <div className="w-2 h-2 bg-white/30 rounded-full"></div>
-            <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+            <Button
+              onClick={() => {
+                // Gift box gives bonus XP when clicked (only if level 2+ is unlocked)
+                if (currentLevel >= 2) {
+                  setBonusPoints(50);
+                  setCurrentView('success');
+                  setQuizSession({
+                    sessionId: 'gift',
+                    currentQuestionIndex: 0,
+                    questions: [],
+                    answers: [],
+                    score: 0
+                  });
+                }
+              }}
+              disabled={currentLevel < 2}
+              className={`w-16 h-16 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg transition-all duration-300 ${
+                currentLevel >= 2 
+                  ? 'bg-gradient-to-br from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 hover:scale-110 cursor-pointer' 
+                  : 'bg-gradient-to-br from-teal-400/60 to-teal-500/60'
+              }`}
+            >
               <div className="transform -rotate-45 text-white">
                 <GiftIcon />
               </div>
-            </div>
+            </Button>
           </div>
 
           {/* Connecting Lines */}
@@ -551,10 +579,45 @@ export const GamingPage = (): JSX.Element => {
   const renderSuccessView = () => {
     if (!quizSession) return null;
     
-    // Calculate stars based on score (out of 4 questions)
+    const isGiftBox = quizSession.sessionId === 'gift';
+    
+    if (isGiftBox) {
+      // Special success view for gift box rewards
+      return (
+        <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-6 flex flex-col items-center justify-center">
+          <div className="text-center">
+            <div className="w-24 h-24 bg-gradient-to-br from-teal-400 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <GiftIcon />
+            </div>
+            
+            <h1 className="text-3xl font-bold mb-4">Gift Claimed!</h1>
+            <p className="text-lg mb-6">You found a hidden treasure!</p>
+            
+            <div className="bg-gradient-to-r from-teal-500/20 to-green-500/20 rounded-lg p-4 mb-8">
+              <p className="text-2xl font-bold text-teal-300">+{bonusPoints} Bonus Points!</p>
+            </div>
+            
+            <Button
+              onClick={() => {
+                setCurrentView('map');
+                setBonusPoints(0);
+                setLevelUnlocked(false);
+                queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
+              }}
+              className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-3 rounded-full font-semibold"
+            >
+              Back to Map
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    
+    // Regular quiz completion view
     const scorePercentage = (quizSession.score / quizSession.questions.length) * 100;
     const stars = scorePercentage >= 75 ? 3 : scorePercentage >= 50 ? 2 : 1;
-    const points = quizSession.score * 25; // 25 points per correct answer
+    const basePoints = quizSession.score * 25; // 25 points per correct answer
+    const totalPoints = basePoints + bonusPoints;
     
     return (
       <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-6 flex flex-col items-center justify-center">
@@ -563,7 +626,9 @@ export const GamingPage = (): JSX.Element => {
             <CheckIcon className="h-12 w-12 text-white" />
           </div>
           
-          <h1 className="text-3xl font-bold mb-4">Nice Work!</h1>
+          <h1 className="text-3xl font-bold mb-4">
+            {levelUnlocked ? 'Level Unlocked!' : 'Nice Work!'}
+          </h1>
           <p className="text-lg mb-6">You got {quizSession.score} out of {quizSession.questions.length} correct</p>
           
           <div className="flex items-center justify-center space-x-2 mb-6">
@@ -575,11 +640,24 @@ export const GamingPage = (): JSX.Element => {
             ))}
           </div>
           
-          <p className="text-lg mb-8">You Earned {points} pts</p>
+          {/* Points breakdown */}
+          <div className="space-y-2 mb-8">
+            <p className="text-lg">Quiz Points: {basePoints} pts</p>
+            {levelUnlocked && (
+              <div className="bg-gradient-to-r from-green-500/20 to-teal-500/20 rounded-lg p-3 mb-4">
+                <p className="text-lg font-bold text-green-300">🎉 New Level Unlocked!</p>
+                <p className="text-base text-green-200">Bonus: +{bonusPoints} pts</p>
+              </div>
+            )}
+            <p className="text-xl font-bold">Total: {totalPoints} pts</p>
+          </div>
           
           <Button
             onClick={() => {
               setCurrentView('map');
+              // Reset bonus state
+              setBonusPoints(0);
+              setLevelUnlocked(false);
               // Invalidate progress to refresh the map with new progress
               queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
             }}
