@@ -13,6 +13,7 @@ import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage";
 import { QuestionnairePage } from "@/pages/QuestionnairePage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { SettingsPage } from "@/pages/SettingsPage";
+import { ProfilePage } from "@/pages/ProfilePage";
 
 function Router() {
   return (
@@ -26,6 +27,7 @@ function Router() {
       <Route path="/questionnaire" component={QuestionnairePage} />
       <Route path="/dashboard" component={DashboardPage} />
       <Route path="/settings" component={SettingsPage} />
+      <Route path="/profile" component={ProfilePage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

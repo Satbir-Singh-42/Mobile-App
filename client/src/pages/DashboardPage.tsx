@@ -58,6 +58,7 @@ export const DashboardPage = (): JSX.Element => {
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
+              onClick={() => setLocation("/profile")}
               className="font-['Poppins'] text-[#4157ff] hover:bg-[#4157ff0f] flex items-center gap-2"
             >
               <UserIcon className="w-5 h-5" />

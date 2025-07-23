@@ -5,9 +5,10 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, FingerprintIcon, ShieldCheckIcon, KeyIcon, UserIcon, EditIcon } from "lucide-react";
+import { ArrowLeftIcon, FingerprintIcon, ShieldCheckIcon, KeyIcon, UserIcon, EditIcon, LanguagesIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { authAPI } from "@/lib/auth";
+// Using native select for language dropdown
 
 interface BiometricSettings {
   fingerprintEnabled: boolean;
@@ -50,6 +51,10 @@ export const SettingsPage = (): JSX.Element => {
   });
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
+  // Language preference state
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('English');
+  const availableLanguages = ['English', 'Hindi (हिंदी)', 'Punjabi (ਪੰਜਾਬੀ)'];
+
   useEffect(() => {
     // Check for biometric support
     checkBiometricSupport();
@@ -65,6 +70,12 @@ export const SettingsPage = (): JSX.Element => {
         email: user.email || '',
         phone: user.phone || ''
       });
+    }
+    
+    // Load saved language preference
+    const savedLanguage = localStorage.getItem('userLanguage');
+    if (savedLanguage) {
+      setSelectedLanguage(savedLanguage);
     }
   };
 
@@ -283,6 +294,15 @@ export const SettingsPage = (): JSX.Element => {
     }
   };
 
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+    localStorage.setItem('userLanguage', language);
+    toast({
+      title: "Language Updated",
+      description: `Language preference changed to ${language}`,
+    });
+  };
+
   return (
     <div className="bg-prima-1 min-h-screen w-full mobile-status-hidden">
       {/* Header */}
@@ -471,6 +491,35 @@ export const SettingsPage = (): JSX.Element => {
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Language Preferences Card */}
+        <Card className="border-2 border-gray-100 shadow-sm">
+          <CardHeader>
+            <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
+              <LanguagesIcon className="h-6 w-6 text-[#4157ff]" />
+              Language Preferences
+            </CardTitle>
+            <CardDescription className="font-['Poppins'] text-sm text-gray-600">
+              Choose your preferred language for the app interface and content.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <Label className="font-['Poppins'] text-sm font-medium">App Language</Label>
+              <select 
+                value={selectedLanguage} 
+                onChange={(e) => handleLanguageChange(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg font-['Poppins'] bg-white focus:border-[#4157ff] focus:ring-1 focus:ring-[#4157ff] outline-none"
+              >
+                {availableLanguages.map((language) => (
+                  <option key={language} value={language}>
+                    {language}
+                  </option>
+                ))}
+              </select>
+            </div>
           </CardContent>
         </Card>
 

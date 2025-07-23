@@ -100,11 +100,7 @@ export const QuestionnairePage = (): JSX.Element => {
       options: [
         "English",
         "Hindi (हिंदी)",
-        "Punjabi (ਪੰਜਾਬੀ)",
-        "Tamil (தமிழ்)",
-        "Telugu (తెలుగు)",
-        "Bengali (বাংলা)",
-        "Marathi (मराठी)"
+        "Punjabi (ਪੰਜਾਬੀ)"
       ],
       required: true
     }
