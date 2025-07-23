@@ -140,15 +140,10 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
   }
 
   return (
-    <>
-      {/* Background Overlay */}
-      <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-40" onClick={() => setIsOpen(false)} />
-      
-      {/* Chat Widget */}
-      <div ref={chatWidgetRef} className="fixed bottom-24 right-4 z-50">
-        <Card className={`w-80 shadow-2xl border-0 transition-all duration-200 rounded-2xl overflow-hidden ${
-          isMinimized ? 'h-14' : 'h-96'
-        }`}>
+    <div ref={chatWidgetRef} className="fixed bottom-24 right-4 z-50">
+      <Card className={`w-80 shadow-2xl border-0 transition-all duration-200 rounded-2xl overflow-hidden bg-white ${
+        isMinimized ? 'h-14' : 'h-96'
+      }`}>
         {/* Header */}
         <div className="bg-gradient-to-r from-[#4157ff] to-[#6366f1] text-white p-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -246,7 +241,6 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
           </CardContent>
         )}
       </Card>
-      </div>
-    </>
+    </div>
   );
 };
