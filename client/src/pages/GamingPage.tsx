@@ -232,10 +232,12 @@ export const GamingPage = (): JSX.Element => {
           score: data.isCorrect ? prev.score + 1 : prev.score
         } : null);
 
-        // Auto-advance to next question after 5 seconds
-        setTimeout(() => {
-          handleNextQuestion();
-        }, 5000);
+        // Auto-advance to next question after 5 seconds - only if not on last question
+        if (quizSession.currentQuestionIndex < quizSession.questions.length - 1) {
+          setTimeout(() => {
+            handleNextQuestion();
+          }, 5000);
+        }
       }
     });
   };
@@ -329,11 +331,26 @@ export const GamingPage = (): JSX.Element => {
         <div className="flex flex-col items-center space-y-8 mt-16">
           {/* Row 1: Level 4 and Gift */}
           <div className="flex items-center space-x-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+            <Button
+              onClick={() => {
+                // Gift box clicked - give bonus points
+                setBonusPoints(100);
+                setQuizSession({
+                  sessionId: 'gift',
+                  currentQuestionIndex: 0,
+                  questions: [],
+                  answers: [],
+                  score: 0,
+                  level: 1
+                });
+                setCurrentView('success');
+              }}
+              className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
+            >
               <div className="transform -rotate-45 text-white">
                 <GiftIcon />
               </div>
-            </div>
+            </Button>
             <div className="w-2 h-2 bg-white/30 rounded-full"></div>
             {/* Level 4 */}
             {currentLevel >= 4 ? (
@@ -565,7 +582,7 @@ export const GamingPage = (): JSX.Element => {
               onClick={handleNextQuestion}
               className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-4 rounded-2xl shadow-lg text-lg"
             >
-              {quizSession.currentQuestionIndex < quizSession.questions.length - 1 ? 'Next Stage' : 'Go to Home'}
+              {quizSession.currentQuestionIndex < quizSession.questions.length - 1 ? 'Next Stage' : 'Complete Quiz'}
             </Button>
           )}
         </div>
