@@ -35,7 +35,17 @@ export const PlannerPage = (): JSX.Element => {
     queryFn: () => taskAPI.getTasks(),
   });
 
-  const tasks = tasksData?.tasks || [];
+  // Sort tasks by deadline and show only latest 2 closest to deadline
+  const allTasks = tasksData?.tasks || [];
+  const tasks = allTasks
+    .filter(task => !task.completed) // Only show incomplete tasks
+    .sort((a, b) => {
+      // Sort by date and time for closest deadline
+      const dateA = new Date(`${a.date} ${a.startTime}`);
+      const dateB = new Date(`${b.date} ${b.startTime}`);
+      return dateA.getTime() - dateB.getTime();
+    })
+    .slice(0, 2); // Show only latest 2 tasks
 
   // Create task mutation
   const createTaskMutation = useMutation({
@@ -100,28 +110,25 @@ export const PlannerPage = (): JSX.Element => {
     { name: "Others", color: "bg-[#6B7280]" }
   ];
 
-  const toggleTaskCompletion = (taskId: number) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
+  const toggleTaskCompletion = (taskId: string) => {
+    const task = allTasks.find(t => t._id === taskId);
+    if (task) {
+      toggleTaskMutation.mutate({ id: taskId, completed: !task.completed });
+    }
   };
 
-  const deleteTask = (taskId: number) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
+  const deleteTask = (taskId: string) => {
+    deleteTaskMutation.mutate(taskId);
   };
 
   const createTask = () => {
     if (!newTask.title.trim()) return;
     
-    const task: Task = {
-      id: Date.now(),
+    const taskData: InsertTask = {
+      userId: "", // This will be set by the server
       title: newTask.title,
       description: newTask.description,
-      date: currentDate.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
-        year: 'numeric' 
-      }),
+      date: "Oct 24, 2020",
       startTime: newTask.startTime,
       endTime: newTask.endTime,
       category: newTask.category,
@@ -129,15 +136,7 @@ export const PlannerPage = (): JSX.Element => {
       color: categories.find(cat => cat.name === newTask.category)?.color || "bg-[#6366F1]"
     };
 
-    setTasks(prev => [...prev, task]);
-    setNewTask({
-      title: "",
-      description: "",
-      startTime: "",
-      endTime: "",
-      category: "Design"
-    });
-    setShowCreateTask(false);
+    createTaskMutation.mutate(taskData);
   };
 
   if (showCreateTask) {
@@ -322,74 +321,73 @@ export const PlannerPage = (): JSX.Element => {
         </div>
 
         <div className="space-y-3">
-          {tasks.map((task) => (
-            <Card 
-              key={task.id} 
-              className={`border-0 shadow-sm hover:shadow-md transition-shadow ${
-                task.completed ? 'bg-gray-50' : 'bg-white'
-              }`}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  <div className={`w-3 h-16 ${task.color} rounded-full flex-shrink-0`}></div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className={`font-semibold ${
-                        task.completed ? 'text-gray-500 line-through' : 'text-[#1F2937]'
-                      }`}>
+          {isLoading ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Loading tasks...</p>
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No upcoming tasks. Create your first task!</p>
+            </div>
+          ) : (
+            tasks.map((task, index) => (
+              <Card 
+                key={task._id} 
+                className="border-0 shadow-sm hover:shadow-md transition-shadow bg-white"
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-4">
+                    <div className={`w-3 h-16 ${task.color} rounded-full flex-shrink-0`}></div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <div>
+                          <h4 className="font-semibold text-[#1F2937] text-sm">
+                            Progress
+                          </h4>
+                          <p className="text-xs text-gray-500 mt-1">
+                            More
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => toggleTaskCompletion(task._id!)}
+                            className="p-1 h-6 w-6"
+                            disabled={toggleTaskMutation.isPending}
+                          >
+                            {task.completed ? (
+                              <CheckIcon className="h-4 w-4 text-green-600" />
+                            ) : (
+                              <div className="h-4 w-4 border-2 border-gray-300 rounded"></div>
+                            )}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteTask(task._id!)}
+                            className="p-1 h-6 w-6"
+                            disabled={deleteTaskMutation.isPending}
+                          >
+                            <TrashIcon className="h-4 w-4 text-red-600" />
+                          </Button>
+                        </div>
+                      </div>
+                      <h3 className="font-medium text-[#1F2937] mb-1">
+                        Design Changes
+                      </h3>
+                      <p className="text-xs text-gray-400 mb-2">
+                        2 Day Ago
+                      </p>
+                      <p className="text-xs text-gray-500">
                         {task.title}
-                      </h4>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleTaskCompletion(task.id)}
-                          className={`p-1 h-6 w-6 ${
-                            task.completed 
-                              ? 'text-green-600 hover:text-green-700'
-                              : 'text-gray-400 hover:text-green-600'
-                          }`}
-                        >
-                          <CheckIcon className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedTask(task)}
-                          className="p-1 text-gray-400 hover:text-blue-600 h-6 w-6"
-                        >
-                          <EditIcon className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteTask(task.id)}
-                          className="p-1 text-gray-400 hover:text-red-600 h-6 w-6"
-                        >
-                          <TrashIcon className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    <p className={`text-xs mb-2 ${
-                      task.completed ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      {task.description}
-                    </p>
-                    <div className="flex items-center gap-4 text-xs text-gray-400">
-                      <div className="flex items-center gap-1">
-                        <ClockIcon className="w-3 h-3" />
-                        <span>{task.startTime} - {task.endTime}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <CalendarIcon className="w-3 h-3" />
-                        <span>{task.date}</span>
-                      </div>
+                      </p>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         {tasks.length === 0 && (
