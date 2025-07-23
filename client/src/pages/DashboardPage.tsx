@@ -351,15 +351,33 @@ export const DashboardPage = (): JSX.Element => {
         <div className="mb-6">
           <h3 className="font-['Poppins'] font-semibold text-lg text-[#1F2937] mb-4">Featured Modules Lessons</h3>
           <div className="grid grid-cols-2 gap-4">
-            <Card className="border-0 bg-white shadow-sm relative overflow-hidden">
+            {/* OTP Scam Explainer */}
+            <Card className="border-0 bg-white shadow-sm rounded-2xl overflow-hidden">
               <CardContent className="p-0">
                 <div className="relative">
-                  <div className="w-full h-24 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                    <PlayIcon className="w-8 h-8 text-white" />
+                  <div className="w-full h-24 bg-gradient-to-br from-gray-600 to-black flex items-center justify-center relative">
+                    {/* Phone mockup with security icon */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-900"></div>
+                    <div className="relative z-10 flex items-center justify-center">
+                      <div className="w-12 h-20 bg-gray-800 rounded-lg border border-gray-600 flex flex-col items-center justify-center">
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full mb-1"></div>
+                        <div className="w-6 h-6 text-white flex items-center justify-center">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Play button overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center">
+                        <PlayIcon className="w-5 h-5 text-gray-800 ml-1" />
+                      </div>
+                    </div>
                   </div>
-                  <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1 flex items-center gap-1">
-                    <StarIcon className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                    <span className="text-xs text-white">4.5</span>
+                  <div className="absolute top-2 right-2 bg-yellow-400 rounded-full px-2 py-1 flex items-center gap-1">
+                    <StarIcon className="w-3 h-3 text-white fill-white" />
+                    <span className="text-xs font-medium text-white">4.2</span>
                   </div>
                 </div>
                 <div className="p-3">
@@ -368,15 +386,35 @@ export const DashboardPage = (): JSX.Element => {
               </CardContent>
             </Card>
             
-            <Card className="border-0 bg-white shadow-sm relative overflow-hidden">
+            {/* Debit Card Fraud Tips */}
+            <Card className="border-0 bg-white shadow-sm rounded-2xl overflow-hidden">
               <CardContent className="p-0">
                 <div className="relative">
-                  <div className="w-full h-24 bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center">
-                    <PlayIcon className="w-8 h-8 text-white" />
+                  <div className="w-full h-24 bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center relative">
+                    {/* Laptop/computer mockup with financial charts */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-700 to-blue-900"></div>
+                    <div className="relative z-10 flex items-center justify-center">
+                      <div className="w-16 h-10 bg-gray-800 rounded border border-gray-600 flex items-center justify-center">
+                        <div className="grid grid-cols-3 gap-1 w-8 h-6">
+                          <div className="bg-green-400 rounded-sm h-1"></div>
+                          <div className="bg-green-400 rounded-sm h-2"></div>
+                          <div className="bg-green-400 rounded-sm h-3"></div>
+                          <div className="bg-blue-400 rounded-sm h-2"></div>
+                          <div className="bg-blue-400 rounded-sm h-3"></div>
+                          <div className="bg-blue-400 rounded-sm h-1"></div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Play button overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center">
+                        <PlayIcon className="w-5 h-5 text-gray-800 ml-1" />
+                      </div>
+                    </div>
                   </div>
-                  <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1 flex items-center gap-1">
-                    <StarIcon className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                    <span className="text-xs text-white">4.5</span>
+                  <div className="absolute top-2 right-2 bg-yellow-400 rounded-full px-2 py-1 flex items-center gap-1">
+                    <StarIcon className="w-3 h-3 text-white fill-white" />
+                    <span className="text-xs font-medium text-white">4.2</span>
                   </div>
                 </div>
                 <div className="p-3">
@@ -399,21 +437,26 @@ export const DashboardPage = (): JSX.Element => {
           />
         </div>
 
-        {/* Info Cards */}
-        <div className="space-y-4 mb-6">
-          <Card className="bg-[#10B981] border-0 text-white">
-            <CardContent className="p-4">
+        {/* Security Tip Card - matching design */}
+        <div className="mb-6">
+          <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white rounded-2xl overflow-hidden">
+            <CardContent className="p-6">
+              <h4 className="font-['Poppins'] font-medium text-lg mb-3 leading-tight">
+                Never share your OTP—even with someone claiming to be from your bank.
+              </h4>
               <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-['Poppins'] font-medium mb-1">You're off to a great start!</h4>
-                  <p className="text-sm opacity-90">Keep building your financial knowledge</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm">Progress</p>
-                  <Button variant="ghost" className="text-white border-white hover:bg-white/20 mt-1 text-xs">
-                    Continue Learning
-                  </Button>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-full px-4 py-2 text-sm font-medium"
+                >
+                  Show more tips
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="text-white/80 hover:text-white text-sm p-0"
+                >
+                  Now
+                </Button>
               </div>
             </CardContent>
           </Card>
