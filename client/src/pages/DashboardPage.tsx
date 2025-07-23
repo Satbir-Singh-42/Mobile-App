@@ -201,29 +201,14 @@ export const DashboardPage = (): JSX.Element => {
 
   return (
     <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
-      {/* Figma-style header with built-in status bar */}
-      <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white px-6 pt-12 pb-8 rounded-b-[2rem]">
-        {/* Top status bar simulation with real time */}
-        <div className="flex items-center justify-between mb-6 text-sm font-medium">
-          <div>{currentTimeStr}</div>
-          <div className="flex items-center gap-1">
-            <div className="flex gap-1">
-              <div className="w-1 h-3 bg-white rounded-full"></div>
-              <div className="w-1 h-3 bg-white rounded-full"></div>
-              <div className="w-1 h-3 bg-white rounded-full"></div>
-              <div className="w-1 h-3 bg-white/60 rounded-full"></div>
-            </div>
-            <WifiIcon className="w-4 h-4 ml-2" />
-            <BatteryIcon className="w-5 h-3 ml-1" />
-          </div>
-        </div>
-
+      {/* Clean header without status bar */}
+      <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white px-6 pt-8 pb-8 rounded-b-[2rem]">
         {/* Profile header with real date */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <div className="text-sm opacity-90 mb-1">{dayName}</div>
             <div className="text-2xl font-bold font-['Poppins'] mb-2">{day} {month}</div>
-            <div className="text-xl font-semibold font-['Poppins'] mb-1">Hi, {user?.username || 'Rahul'}</div>
+            <div className="text-xl font-semibold font-['Poppins'] mb-1">Hi, {user?.username || 'Sushil Singh'}</div>
             <div className="text-sm opacity-90">Welcome to Face2Finance</div>
           </div>
           <div className="flex items-center gap-3">
