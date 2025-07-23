@@ -5,6 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { authAPI } from "@/lib/auth";
 
 interface Question {
   id: string;
@@ -115,9 +116,19 @@ export const QuestionnairePage = (): JSX.Element => {
   const handleNext = async () => {
     if (isLastQuestion) {
       try {
-        await authAPI.saveQuestionnaire(answers);
+        // Map answers to match schema
+        const questionnaireData = {
+          age: answers.age,
+          income: answers.income,
+          goals: answers.goals,
+          experience: answers.experience,
+          practiceTime: answers.practice_time,
+          language: answers.language
+        };
+        
+        await authAPI.saveQuestionnaire(questionnaireData);
         console.log("Questionnaire submitted successfully");
-        setLocation("/dashboard"); // Redirect to main app
+        setLocation("/dashboard");
       } catch (error) {
         console.error("Failed to save questionnaire:", error);
         // Still redirect to dashboard even if questionnaire fails

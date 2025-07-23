@@ -351,6 +351,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update user profile
+  app.put("/api/auth/profile", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const { username, email, phone } = req.body;
+      
+      // Check if username/email already exists for other users
+      if (username) {
+        const existingUser = await storage.getUserByUsername(username);
+        if (existingUser && existingUser._id !== userId) {
+          return res.status(409).json({ 
+            message: "Username already taken", 
+            details: "Please choose a different username"
+          });
+        }
+      }
+      
+      if (email) {
+        const existingUser = await storage.getUserByEmail(email);
+        if (existingUser && existingUser._id !== userId) {
+          return res.status(409).json({ 
+            message: "Email already in use", 
+            details: "Please use a different email address"
+          });
+        }
+      }
+      
+      const updateData: any = {};
+      if (username) updateData.username = username;
+      if (email) updateData.email = email;
+      if (phone) updateData.phone = phone;
+      
+      const updatedUser = await storage.updateUser(userId, updateData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ 
+          message: "User not found", 
+          details: "Profile could not be updated"
+        });
+      }
+      
+      res.json({
+        message: "Profile updated successfully",
+        user: {
+          id: updatedUser._id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          phone: updatedUser.phone
+        }
+      });
+    } catch (error: any) {
+      console.error("Profile update error:", error);
+      res.status(500).json({ 
+        message: "Profile update failed", 
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Change password
+  app.put("/api/auth/change-password", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const { currentPassword, newPassword } = req.body;
+      
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ 
+          message: "Missing required fields", 
+          details: "Both current and new password are required"
+        });
+      }
+      
+      // Get user with password for verification
+      const user = await storage.getUserForLogin((req as any).user.username);
+      if (!user) {
+        return res.status(404).json({ 
+          message: "User not found", 
+          details: "Password could not be changed"
+        });
+      }
+      
+      // Verify current password
+      const isMatch = await user.comparePassword(currentPassword);
+      if (!isMatch) {
+        return res.status(401).json({ 
+          message: "Current password is incorrect", 
+          details: "Please enter your current password correctly"
+        });
+      }
+      
+      // Hash new password
+      const bcrypt = require('bcryptjs');
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      
+      await storage.updateUser(userId, { password: hashedPassword });
+      
+      res.json({ 
+        message: "Password changed successfully",
+        details: "Your password has been updated"
+      });
+    } catch (error: any) {
+      console.error("Password change error:", error);
+      res.status(500).json({ 
+        message: "Password change failed", 
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Update questionnaire
+  app.put("/api/questionnaire", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user._id.toString();
+      const questionnaireData = questionnaireSchema.parse({
+        ...req.body,
+        userId
+      });
+
+      await storage.saveQuestionnaire(questionnaireData);
+
+      res.json({ message: "Questionnaire updated successfully" });
+    } catch (error: any) {
+      console.error("Questionnaire update error:", error);
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ 
+          message: "Invalid questionnaire data", 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: "Failed to update questionnaire" });
+    }
+  });
+
   // Health check
   app.get("/api/health", (req: Request, res: Response) => {
     res.json({ status: "OK", message: "Face2Finance API is running" });

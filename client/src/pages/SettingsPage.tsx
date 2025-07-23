@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, FingerprintIcon, ShieldCheckIcon, KeyIcon } from "lucide-react";
+import { ArrowLeftIcon, FingerprintIcon, ShieldCheckIcon, KeyIcon, UserIcon, EditIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { authAPI } from "@/lib/auth";
 
 interface BiometricSettings {
   fingerprintEnabled: boolean;
@@ -29,11 +32,41 @@ export const SettingsPage = (): JSX.Element => {
     },
   });
 
+  // Profile editing state
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileData, setProfileData] = useState({
+    username: '',
+    email: '',
+    phone: ''
+  });
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+
+  // Password change state
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
   useEffect(() => {
     // Check for biometric support
     checkBiometricSupport();
     loadSettings();
+    loadUserProfile();
   }, []);
+
+  const loadUserProfile = () => {
+    const user = authAPI.getUser();
+    if (user) {
+      setProfileData({
+        username: user.username || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      });
+    }
+  };
 
   const checkBiometricSupport = async () => {
     let fingerprintSupported = false;
@@ -188,6 +221,68 @@ export const SettingsPage = (): JSX.Element => {
     });
   };
 
+  const handleProfileUpdate = async () => {
+    setIsUpdatingProfile(true);
+    try {
+      const result = await authAPI.updateProfile(profileData);
+      toast({
+        title: "Profile Updated",
+        description: result.message || "Your profile has been updated successfully.",
+      });
+      setIsEditingProfile(false);
+    } catch (error: any) {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "New password and confirmation don't match.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      toast({
+        title: "Password Too Short",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      const result = await authAPI.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+      toast({
+        title: "Password Changed",
+        description: result.message || "Your password has been changed successfully.",
+      });
+      setIsChangingPassword(false);
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error: any) {
+      toast({
+        title: "Password Change Failed",
+        description: error.message || "Failed to change password. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
   return (
     <div className="bg-prima-1 min-h-screen w-full mobile-status-hidden">
       {/* Header */}
@@ -200,12 +295,185 @@ export const SettingsPage = (): JSX.Element => {
         >
           <ArrowLeftIcon className="h-6 w-6 text-[#4157ff]" />
         </Button>
-        <h1 className="font-['Poppins'] font-semibold text-xl text-[#242424]">Security Settings</h1>
+        <h1 className="font-['Poppins'] font-semibold text-xl text-[#242424]">Settings</h1>
         <div className="w-10" />
       </div>
 
       {/* Content */}
       <div className="p-6 space-y-6">
+        {/* Profile Settings Card */}
+        <Card className="border-2 border-gray-100 shadow-sm">
+          <CardHeader>
+            <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
+              <UserIcon className="h-6 w-6 text-[#4157ff]" />
+              Profile Settings
+            </CardTitle>
+            <CardDescription className="font-['Poppins'] text-sm text-gray-600">
+              Manage your account information and personal details.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!isEditingProfile ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-gray-50 rounded-xl">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-['Poppins'] text-sm font-medium text-gray-600">Username</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsEditingProfile(true)}
+                        className="p-1 h-8 w-8"
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <p className="font-['Poppins'] text-[#242424]">{profileData.username}</p>
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-xl">
+                  <div className="space-y-2">
+                    <span className="font-['Poppins'] text-sm font-medium text-gray-600">Email</span>
+                    <p className="font-['Poppins'] text-[#242424]">{profileData.email}</p>
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-xl">
+                  <div className="space-y-2">
+                    <span className="font-['Poppins'] text-sm font-medium text-gray-600">Phone</span>
+                    <p className="font-['Poppins'] text-[#242424]">{profileData.phone || 'Not provided'}</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username" className="font-['Poppins'] text-sm font-medium">Username</Label>
+                  <Input
+                    id="username"
+                    value={profileData.username}
+                    onChange={(e) => setProfileData({ ...profileData, username: e.target.value })}
+                    className="font-['Poppins']"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="font-['Poppins'] text-sm font-medium">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={profileData.email}
+                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                    className="font-['Poppins']"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="font-['Poppins'] text-sm font-medium">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={profileData.phone}
+                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                    className="font-['Poppins']"
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    onClick={handleProfileUpdate}
+                    disabled={isUpdatingProfile}
+                    className="flex-1 bg-[#4157ff] hover:bg-[#3146e6] font-['Poppins']"
+                  >
+                    {isUpdatingProfile ? 'Updating...' : 'Save Changes'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditingProfile(false);
+                      loadUserProfile();
+                    }}
+                    className="flex-1 font-['Poppins']"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Password Change Card */}
+        <Card className="border-2 border-gray-100 shadow-sm">
+          <CardHeader>
+            <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
+              <KeyIcon className="h-6 w-6 text-[#4157ff]" />
+              Change Password
+            </CardTitle>
+            <CardDescription className="font-['Poppins'] text-sm text-gray-600">
+              Update your account password for enhanced security.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!isChangingPassword ? (
+              <Button
+                onClick={() => setIsChangingPassword(true)}
+                variant="outline"
+                className="w-full font-['Poppins']"
+              >
+                Change Password
+              </Button>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword" className="font-['Poppins'] text-sm font-medium">Current Password</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                    className="font-['Poppins']"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword" className="font-['Poppins'] text-sm font-medium">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                    className="font-['Poppins']"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="font-['Poppins'] text-sm font-medium">Confirm New Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                    className="font-['Poppins']"
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    onClick={handlePasswordChange}
+                    disabled={isUpdatingPassword || !passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword}
+                    className="flex-1 bg-[#4157ff] hover:bg-[#3146e6] font-['Poppins']"
+                  >
+                    {isUpdatingPassword ? 'Changing...' : 'Change Password'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsChangingPassword(false);
+                      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                    }}
+                    className="flex-1 font-['Poppins']"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Two-Factor Authentication Card */}
         <Card className="border-2 border-gray-100 shadow-sm">
           <CardHeader>

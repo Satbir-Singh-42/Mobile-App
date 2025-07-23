@@ -121,11 +121,126 @@ export const authAPI = {
   },
 
   async saveQuestionnaire(data: any): Promise<{ message: string }> {
-    const token = localStorage.getItem('auth_token');
-    const response = await apiRequest('POST', '/api/questionnaire', data, {
-      'Authorization': `Bearer ${token}`
-    });
-    return await response.json();
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/questionnaire', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.details || result.message || 'Failed to save questionnaire');
+      }
+      
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message || 'Failed to save questionnaire');
+    }
+  },
+
+  async updateProfile(data: { username?: string; email?: string; phone?: string }): Promise<{ message: string; user: User }> {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.details || result.message || 'Profile update failed');
+      }
+      
+      // Update local storage with new user data
+      if (result.user) {
+        localStorage.setItem('user', JSON.stringify(result.user));
+      }
+      
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message || 'Profile update failed');
+    }
+  },
+
+  async changePassword(data: { currentPassword: string; newPassword: string }): Promise<{ message: string }> {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/auth/change-password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.details || result.message || 'Password change failed');
+      }
+      
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message || 'Password change failed');
+    }
+  },
+
+  async getQuestionnaire(): Promise<any> {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/questionnaire', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.details || result.message || 'Failed to get questionnaire');
+      }
+      
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message || 'Failed to get questionnaire');
+    }
+  },
+
+  async updateQuestionnaire(data: any): Promise<{ message: string }> {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/questionnaire', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.details || result.message || 'Failed to update questionnaire');
+      }
+      
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message || 'Failed to update questionnaire');
+    }
   },
 
   logout(): void {
