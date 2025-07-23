@@ -38,7 +38,7 @@ import {
 import { useTranslation } from "@/lib/i18n";
 import { authAPI } from "@/lib/auth";
 import { ChatWidget } from "@/components/ui/chat-widget";
-import { PersonalizedTips } from "@/components/ui/personalized-tips";
+
 
 export const DashboardPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
@@ -425,19 +425,7 @@ export const DashboardPage = (): JSX.Element => {
           </div>
         </div>
 
-        {/* Personalized Tips Section */}
-        <div className="mb-6">
-          <PersonalizedTips 
-            userId={user?._id} 
-            userContext={{
-              username: user?.username,
-              hasCompletedQuestionnaire: !!user
-            }}
-            maxTips={2}
-          />
-        </div>
-
-        {/* Security Tip Card - matching design */}
+        {/* Security Tip Card - Only tip section */}
         <div className="mb-6">
           <Card className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-0 text-white rounded-2xl overflow-hidden">
             <CardContent className="p-6">
@@ -460,17 +448,6 @@ export const DashboardPage = (): JSX.Element => {
               </div>
             </CardContent>
           </Card>
-        </div>
-        {/* Personalized Tips Section */}
-        <div className="mb-6">
-          <PersonalizedTips 
-            userId={user?._id} 
-            userContext={{
-              username: user?.username,
-              hasCompletedQuestionnaire: !!user
-            }}
-            maxTips={2}
-          />
         </div>
       </main>
 

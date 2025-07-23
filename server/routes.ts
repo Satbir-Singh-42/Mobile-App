@@ -650,10 +650,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Personalized Tips API
-  app.post("/api/personalized-tips", authenticateToken, async (req: Request, res: Response) => {
+  // Daily Tip API
+  app.post("/api/daily-tip", authenticateToken, async (req: Request, res: Response) => {
     try {
-      const { maxTips = 3 } = req.body;
+      const { date } = req.body;
       const userId = (req as any).user._id.toString();
       
       // Get user data and questionnaire for personalization
@@ -678,17 +678,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         language: questionnaire?.language
       };
 
-      const tips = await GeminiService.generatePersonalizedTips(userData);
+      const tip = await GeminiService.generateDailyTip(userData, date);
       
       res.json({ 
-        tips: tips.slice(0, maxTips),
+        tip,
         generated: new Date().toISOString(),
         userId
       });
     } catch (error: any) {
-      console.error("Personalized tips API error:", error);
+      console.error("Daily tip API error:", error);
       res.status(500).json({ 
-        message: "Tips service temporarily unavailable",
+        message: "Daily tip service temporarily unavailable",
         details: "Please try again later"
       });
     }

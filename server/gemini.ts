@@ -11,6 +11,12 @@ export interface PersonalizedTip {
   priority: "high" | "medium" | "low";
 }
 
+export interface DailyTip {
+  id: string;
+  message: string;
+  date: string;
+}
+
 export interface ChatMessage {
   id: string;
   message: string;
@@ -151,6 +157,68 @@ Respond helpfully to the user's financial question.`;
     } catch (error) {
       console.error("Error generating security alert:", error);
       return "Never share your OTP—even with someone claiming to be from your bank.";
+    }
+  }
+
+  // Generate daily tip based on user questionnaire data
+  static async generateDailyTip(userData: any, date: string): Promise<DailyTip> {
+    try {
+      const hasQuestionnaireData = userData.age || userData.income || userData.goals || userData.experience;
+      
+      const prompt = `Generate a single daily financial tip based on this user's profile for ${date}:
+
+User Profile:
+- Age: ${userData.age || 'Not specified'}
+- Income Level: ${userData.income || 'Not specified'}
+- Financial Goals: ${userData.goals?.join(', ') || 'Not specified'}
+- Experience Level: ${userData.experience || 'Beginner'}
+- Learning Time: ${userData.practiceTime || 'Not specified'}
+- Language: ${userData.language || 'English'}
+
+${hasQuestionnaireData ? 
+  'Create a personalized tip based on their specific profile.' : 
+  'Provide a general financial literacy tip with emphasis on security.'
+}
+
+Generate exactly one tip in JSON format:
+{
+  "id": "daily_tip_" + "${date}",
+  "message": "Single practical financial tip (40-60 words)"
+}
+
+Focus on actionable advice. Include security tips frequently like OTP safety, fraud prevention, or safe banking practices.`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-pro",
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              message: { type: "string" }
+            },
+            required: ["id", "message"]
+          }
+        },
+        contents: prompt,
+      });
+
+      const tipData = JSON.parse(response.text || "{}");
+      
+      return {
+        id: tipData.id || `daily_${Date.now()}`,
+        message: tipData.message || "Never share your OTP—even with someone claiming to be from your bank.",
+        date
+      };
+    } catch (error) {
+      console.error("Error generating daily tip:", error);
+      // Fallback daily tip
+      return {
+        id: `daily_fallback_${Date.now()}`,
+        message: "Never share your OTP—even with someone claiming to be from your bank.",
+        date
+      };
     }
   }
 }
