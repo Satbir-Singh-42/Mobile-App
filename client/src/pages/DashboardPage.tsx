@@ -202,7 +202,7 @@ export const DashboardPage = (): JSX.Element => {
   return (
     <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
       {/* Clean header without status bar */}
-      <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white px-6 pt-8 pb-8 rounded-b-[2rem]">
+      <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white px-6 pt-6 pb-8 rounded-b-[2rem]">
         {/* Profile header with real date */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -231,13 +231,12 @@ export const DashboardPage = (): JSX.Element => {
         {/* Search Bar matching Figma */}
         <div className="relative">
           <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search tutorials, fraud types, or finance tips..."
-            className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 shadow-sm"
+          <button
             onClick={() => setLocation("/search")}
-            readOnly
-          />
+            className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 shadow-sm text-left"
+          >
+            <span className="text-gray-500">Search tutorials, fraud types, or finance tips...</span>
+          </button>
         </div>
       </div>
 
