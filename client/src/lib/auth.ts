@@ -44,6 +44,10 @@ export const authAPI = {
     const response = await apiRequest('POST', '/api/auth/login', data);
     const result = await response.json();
     
+    if (!response.ok) {
+      throw new Error(result.details || result.message || 'Login failed');
+    }
+    
     if (result.token) {
       localStorage.setItem('auth_token', result.token);
       localStorage.setItem('user', JSON.stringify(result.user));
@@ -55,6 +59,10 @@ export const authAPI = {
   async register(data: RegisterData): Promise<AuthResponse> {
     const response = await apiRequest('POST', '/api/auth/register', data);
     const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.details || result.message || 'Registration failed');
+    }
     
     if (result.token) {
       localStorage.setItem('auth_token', result.token);

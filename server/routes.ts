@@ -96,8 +96,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const existingUserByEmail = await storage.getUserByEmail(validatedData.email);
 
       if (existingUserByUsername || existingUserByEmail) {
-        return res.status(400).json({ 
-          message: "User with this username or email already exists" 
+        return res.status(409).json({ 
+          message: "Account already exists", 
+          details: "An account with this username or email is already registered. Please try logging in instead."
         });
       }
 
@@ -106,7 +107,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const token = generateToken(user._id!);
 
       res.status(201).json({
-        message: "User registered successfully",
+        message: "Account created successfully",
+        details: "Welcome to Face2Finance! You are now logged in.",
         user: {
           id: user._id,
           username: user.username,
@@ -119,11 +121,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Registration error:", error);
       if (error.name === 'ZodError') {
         return res.status(400).json({ 
-          message: "Invalid input data", 
+          message: "Invalid registration data", 
+          details: "Please check all required fields are filled correctly",
           errors: error.errors 
         });
       }
-      res.status(500).json({ message: "Registration failed" });
+      res.status(500).json({ 
+        message: "Registration service unavailable", 
+        details: "Please try again in a moment"
+      });
     }
   });
 
@@ -136,19 +142,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUserForLogin(username);
 
       if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ 
+          message: "Invalid username or password", 
+          details: "Please check your credentials and try again"
+        });
       }
 
       // Check password using the model's comparePassword method
       const isMatch = await user.comparePassword(password);
       if (!isMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ 
+          message: "Invalid username or password", 
+          details: "Please check your credentials and try again"
+        });
       }
 
       const token = generateToken(user._id);
 
       res.json({
         message: "Login successful",
+        details: `Welcome back, ${user.username}!`,
         user: {
           id: user._id,
           username: user.username,
@@ -161,11 +174,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Login error:", error);
       if (error.name === 'ZodError') {
         return res.status(400).json({ 
-          message: "Invalid input data", 
+          message: "Invalid input format", 
+          details: "Please check your username and password format",
           errors: error.errors 
         });
       }
-      res.status(500).json({ message: "Login failed" });
+      res.status(500).json({ 
+        message: "Login service unavailable", 
+        details: "Please try again in a moment"
+      });
     }
   });
 
