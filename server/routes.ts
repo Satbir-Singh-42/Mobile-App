@@ -17,6 +17,7 @@ import {
   questionnaireSchema,
   insertTaskSchema 
 } from "@shared/schema";
+import { GeminiService } from "./gemini";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Connect to MongoDB (non-blocking)
@@ -604,6 +605,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         message: "Failed to delete task", 
         details: "Please try again later"
+      });
+    }
+  });
+
+  // AI Chat API
+  app.post("/api/chat", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const { message, userContext } = req.body;
+      const userId = (req as any).user._id.toString();
+      
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ 
+          message: "Message is required",
+          details: "Please provide a valid message"
+        });
+      }
+
+      // Get user data for context
+      const user = await storage.getUserById(userId);
+      const questionnaire = await storage.getQuestionnaireByUserId(userId);
+      
+      const contextData = {
+        user: user ? {
+          username: user.username,
+          email: user.email
+        } : null,
+        questionnaire,
+        ...userContext
+      };
+
+      const response = await GeminiService.handleChatMessage(message, contextData);
+      
+      res.json({ 
+        response,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error("Chat API error:", error);
+      res.status(500).json({ 
+        message: "Chat service temporarily unavailable",
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Personalized Tips API
+  app.post("/api/personalized-tips", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const { maxTips = 3 } = req.body;
+      const userId = (req as any).user._id.toString();
+      
+      // Get user data and questionnaire for personalization
+      const user = await storage.getUserById(userId);
+      const questionnaire = await storage.getQuestionnaireByUserId(userId);
+      
+      if (!user) {
+        return res.status(404).json({ 
+          message: "User not found",
+          details: "Please log in again"
+        });
+      }
+
+      const userData = {
+        username: user.username,
+        email: user.email,
+        age: questionnaire?.age,
+        income: questionnaire?.income,
+        goals: questionnaire?.goals,
+        experience: questionnaire?.experience,
+        practiceTime: questionnaire?.practiceTime,
+        language: questionnaire?.language
+      };
+
+      const tips = await GeminiService.generatePersonalizedTips(userData);
+      
+      res.json({ 
+        tips: tips.slice(0, maxTips),
+        generated: new Date().toISOString(),
+        userId
+      });
+    } catch (error: any) {
+      console.error("Personalized tips API error:", error);
+      res.status(500).json({ 
+        message: "Tips service temporarily unavailable",
+        details: "Please try again later"
+      });
+    }
+  });
+
+  // Security Alert API
+  app.get("/api/security-alert", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const alert = await GeminiService.generateSecurityAlert();
+      
+      res.json({ 
+        alert,
+        type: "security",
+        priority: "high",
+        generated: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error("Security alert API error:", error);
+      res.status(500).json({ 
+        message: "Security alert service temporarily unavailable",
+        alert: "Never share your OTP—even with someone claiming to be from your bank."
       });
     }
   });

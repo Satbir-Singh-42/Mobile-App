@@ -37,6 +37,8 @@ import {
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { authAPI } from "@/lib/auth";
+import { ChatWidget } from "@/components/ui/chat-widget";
+import { PersonalizedTips } from "@/components/ui/personalized-tips";
 
 export const DashboardPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
@@ -385,28 +387,31 @@ export const DashboardPage = (): JSX.Element => {
           </div>
         </div>
 
+        {/* Personalized Tips Section */}
+        <div className="mb-6">
+          <PersonalizedTips 
+            userId={user?._id} 
+            userContext={{
+              username: user?.username,
+              hasCompletedQuestionnaire: !!user
+            }}
+            maxTips={2}
+          />
+        </div>
+
         {/* Info Cards */}
         <div className="space-y-4 mb-6">
-          <Card className="bg-[#6366F1] border-0 text-white">
-            <CardContent className="p-4">
-              <h4 className="font-['Poppins'] font-medium mb-2">Never share your OTP—even with someone claiming to be from your bank.</h4>
-              <Button variant="ghost" className="text-white border-white hover:bg-white/20 mt-2">
-                Read more tips
-              </Button>
-            </CardContent>
-          </Card>
-          
           <Card className="bg-[#10B981] border-0 text-white">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-['Poppins'] font-medium mb-1">You're off to a great start!</h4>
-                  <p className="text-sm opacity-90">Let's power on</p>
+                  <p className="text-sm opacity-90">Keep building your financial knowledge</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm">Start to finish</p>
+                  <p className="text-sm">Progress</p>
                   <Button variant="ghost" className="text-white border-white hover:bg-white/20 mt-1 text-xs">
-                    Take Quiz now
+                    Continue Learning
                   </Button>
                 </div>
               </div>
@@ -457,6 +462,15 @@ export const DashboardPage = (): JSX.Element => {
           </Button>
         </div>
       </div>
+
+      {/* AI Chat Widget */}
+      <ChatWidget 
+        userContext={{
+          username: user?.username,
+          hasCompletedQuestionnaire: !!user,
+          currentPage: "dashboard"
+        }}
+      />
     </div>
   );
 };
