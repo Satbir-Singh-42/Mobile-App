@@ -41,35 +41,57 @@ interface ResetPasswordData {
 // Auth API functions
 export const authAPI = {
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await apiRequest('POST', '/api/auth/login', data);
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.details || result.message || 'Login failed');
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.details || result.message || 'Login failed');
+      }
+      
+      if (result.token) {
+        localStorage.setItem('auth_token', result.token);
+        localStorage.setItem('user', JSON.stringify(result.user));
+      }
+      
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message || 'Login failed');
     }
-    
-    if (result.token) {
-      localStorage.setItem('auth_token', result.token);
-      localStorage.setItem('user', JSON.stringify(result.user));
-    }
-    
-    return result;
   },
 
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await apiRequest('POST', '/api/auth/register', data);
-    const result = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(result.details || result.message || 'Registration failed');
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.details || result.message || 'Registration failed');
+      }
+      
+      if (result.token) {
+        localStorage.setItem('auth_token', result.token);
+        localStorage.setItem('user', JSON.stringify(result.user));
+      }
+      
+      return result;
+    } catch (error: any) {
+      throw new Error(error.message || 'Registration failed');
     }
-    
-    if (result.token) {
-      localStorage.setItem('auth_token', result.token);
-      localStorage.setItem('user', JSON.stringify(result.user));
-    }
-    
-    return result;
   },
 
   async forgotPassword(data: ForgotPasswordData): Promise<{ message: string; email: string }> {
