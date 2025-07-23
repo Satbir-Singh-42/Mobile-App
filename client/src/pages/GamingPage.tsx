@@ -24,9 +24,9 @@ export const GamingPage = (): JSX.Element => {
   ];
 
   const challenges = [
-    { title: "Weekly Budget Challenge", reward: "50 points", difficulty: "Easy" },
-    { title: "Investment Quiz Marathon", reward: "100 points", difficulty: "Medium" },
-    { title: "Financial Goal Master", reward: "200 points", difficulty: "Hard" },
+    { title: "Financial Knowledge Quiz", reward: "100 points", difficulty: "Medium", route: "/quiz" },
+    { title: "Weekly Budget Challenge", reward: "50 points", difficulty: "Easy", route: null },
+    { title: "Investment Quiz Marathon", reward: "150 points", difficulty: "Hard", route: null },
   ];
 
   return (
@@ -78,6 +78,7 @@ export const GamingPage = (): JSX.Element => {
                     <Button 
                       size="sm" 
                       className="bg-[#6366F1] hover:bg-[#5856EB] text-white"
+                      onClick={() => challenge.route ? setLocation(challenge.route) : null}
                     >
                       Start
                     </Button>

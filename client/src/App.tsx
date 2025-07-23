@@ -18,6 +18,7 @@ import { SearchPage } from "@/pages/SearchPage";
 import { NotificationsPage } from "@/pages/NotificationsPage";
 import { PlannerPage } from "@/pages/PlannerPage";
 import { GamingPage } from "@/pages/GamingPage";
+import { QuizPage } from "@/pages/QuizPage";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/notifications" component={NotificationsPage} />
       <Route path="/planner" component={PlannerPage} />
       <Route path="/gaming" component={GamingPage} />
+      <Route path="/quiz" component={QuizPage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
