@@ -30,7 +30,8 @@ import {
   RefreshCwIcon,
   Gamepad2Icon,
   TrophyIcon,
-  Clock3Icon
+  Clock3Icon,
+  CalendarIcon
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { authAPI } from "@/lib/auth";
@@ -193,7 +194,9 @@ export const DashboardPage = (): JSX.Element => {
                   className="p-2 text-white hover:bg-white/20 relative"
                 >
                   <BellIcon className="h-5 w-5" />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-xs text-white font-medium">5</span>
+                  </div>
                 </Button>
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
                   <UserIcon className="h-6 w-6 text-white" />
@@ -380,8 +383,12 @@ export const DashboardPage = (): JSX.Element => {
             <SearchIcon className="w-6 h-6 text-gray-400" />
           </Button>
           
-          <Button variant="ghost" className="flex flex-col items-center gap-1 p-2">
-            <CreditCardIcon className="w-6 h-6 text-gray-400" />
+          <Button 
+            variant="ghost" 
+            className="flex flex-col items-center gap-1 p-2"
+            onClick={() => setLocation("/planner")}
+          >
+            <CalendarIcon className="w-6 h-6 text-gray-400" />
           </Button>
           
           <Button 
