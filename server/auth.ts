@@ -41,7 +41,7 @@ export const verifyToken = (token: string): { userId: string } | null => {
       audience: 'face2finance-users'
     }) as { userId: string };
     return decoded;
-  } catch (error) {
+  } catch (error: any) {
     console.error('JWT verification error:', error?.message || error);
     return null;
   }

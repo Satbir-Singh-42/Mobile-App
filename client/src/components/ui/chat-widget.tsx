@@ -35,6 +35,7 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatWidgetRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,6 +44,24 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Handle outside click to close widget
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (isOpen && chatWidgetRef.current && !chatWidgetRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+        setIsMinimized(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isOpen]);
 
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
@@ -112,7 +131,7 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
       <div className="fixed bottom-24 right-4 z-50">
         <Button
           onClick={() => setIsOpen(true)}
-          className="bg-gradient-to-r from-[#4157ff] to-[#6366f1] text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+          className="bg-gradient-to-r from-[#4157ff] to-[#6366f1] text-white rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 flex items-center justify-center"
         >
           <MessageCircleIcon className="h-6 w-6" />
         </Button>
@@ -121,12 +140,17 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
   }
 
   return (
-    <div className="fixed bottom-24 right-4 z-50">
-      <Card className={`w-80 shadow-2xl border-0 transition-all duration-200 ${
-        isMinimized ? 'h-14' : 'h-96'
-      }`}>
+    <>
+      {/* Background Overlay */}
+      <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setIsOpen(false)} />
+      
+      {/* Chat Widget */}
+      <div ref={chatWidgetRef} className="fixed bottom-24 right-4 z-50">
+        <Card className={`w-80 shadow-2xl border-0 transition-all duration-200 rounded-2xl overflow-hidden ${
+          isMinimized ? 'h-14' : 'h-96'
+        }`}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#4157ff] to-[#6366f1] text-white p-3 rounded-t-lg flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#4157ff] to-[#6366f1] text-white p-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BotIcon className="h-5 w-5" />
             <span className="font-semibold text-sm">Face2Finance AI</span>
@@ -222,6 +246,7 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
           </CardContent>
         )}
       </Card>
-    </div>
+      </div>
+    </>
   );
 };
