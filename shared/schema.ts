@@ -21,43 +21,38 @@ export const insertUserSchema = userSchema.omit({
   updatedAt: true,
 });
 
-export const loginSchema = z.object({
-  username: z.string(),
-  password: z.string(),
+// Quiz Question Schema for MongoDB
+export const quizQuestionSchema = z.object({
+  _id: z.string().optional(),
+  level: z.number(),
+  question: z.string(),
+  options: z.array(z.string()),
+  correctAnswer: z.string(),
+  explanation: z.string(),
+  category: z.string().default("financial_literacy"),
+  difficulty: z.string().default("medium"),
+  isActive: z.boolean().default(true),
+  createdAt: z.date().default(() => new Date()),
 });
 
-export const forgotPasswordSchema = z.object({
-  email: z.string().email(),
+export const insertQuizQuestionSchema = quizQuestionSchema.omit({
+  _id: true,
+  createdAt: true,
 });
 
-export const resetPasswordSchema = z.object({
-  token: z.string(),
-  newPassword: z.string().min(6),
-});
-
-export const verifyOtpSchema = z.object({
-  email: z.string().email(),
-  otp: z.string().length(6),
-});
-
-// Questionnaire Schema
-export const questionnaireSchema = z.object({
+// User Answered Questions Schema (to prevent repetition)
+export const userAnsweredQuestionSchema = z.object({
+  _id: z.string().optional(),
   userId: z.string(),
-  age: z.string(),
-  income: z.string(),
-  goals: z.string(),
-  experience: z.string(),
-  practiceTime: z.string(),
-  language: z.string(),
-  completedAt: z.date().default(() => new Date()),
+  questionId: z.string(),
+  level: z.number(),
+  isCorrect: z.boolean(),
+  answeredAt: z.date().default(() => new Date()),
 });
 
-// OTP Schema
-export const otpSchema = z.object({
-  email: z.string().email(),
-  otp: z.string().length(6),
-  expiresAt: z.date(),
-  used: z.boolean().default(false),
+export const insertUserAnsweredQuestionSchema = userAnsweredQuestionSchema.omit({
+  _id: true,
+  answeredAt: true,
 });
 
 // User Progress Schema for Gaming
@@ -67,6 +62,7 @@ export const userProgressSchema = z.object({
   currentLevel: z.number().default(1),
   completedLevels: z.array(z.number()).default([]),
   totalScore: z.number().default(0),
+  totalXP: z.number().default(0),
   achievements: z.array(z.string()).default([]),
   lastPlayedAt: z.date().default(() => new Date()),
   createdAt: z.date().default(() => new Date()),
@@ -77,22 +73,22 @@ export const insertUserProgressSchema = userProgressSchema.omit({
   createdAt: true,
 });
 
-export type UserProgress = z.infer<typeof userProgressSchema>;
-export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
-
 // Quiz Session Schema
 export const quizSessionSchema = z.object({
   _id: z.string().optional(),
+  sessionId: z.string(),
   userId: z.string(),
   level: z.number(),
-  questions: z.array(z.object({
-    question: z.string(),
+  questionIds: z.array(z.string()),
+  answers: z.array(z.object({
+    questionId: z.string(),
     selectedAnswer: z.string(),
     correctAnswer: z.string(),
     isCorrect: z.boolean(),
-  })),
-  score: z.number(),
+  })).default([]),
+  score: z.number().default(0),
   completed: z.boolean().default(false),
+  completedAt: z.date().optional(),
   createdAt: z.date().default(() => new Date()),
 });
 
@@ -100,9 +96,6 @@ export const insertQuizSessionSchema = quizSessionSchema.omit({
   _id: true,
   createdAt: true,
 });
-
-export type QuizSession = z.infer<typeof quizSessionSchema>;
-export type InsertQuizSession = z.infer<typeof insertQuizSessionSchema>;
 
 // Task Schema for Planner
 export const taskSchema = z.object({
@@ -126,13 +119,64 @@ export const insertTaskSchema = taskSchema.omit({
   updatedAt: true,
 });
 
+// Questionnaire Schema
+export const questionnaireSchema = z.object({
+  userId: z.string(),
+  age: z.string(),
+  income: z.string(),
+  goals: z.string(),
+  experience: z.string(),
+  practiceTime: z.string(),
+  language: z.string(),
+  completedAt: z.date().default(() => new Date()),
+});
+
+// OTP Schema
+export const otpSchema = z.object({
+  email: z.string().email(),
+  otp: z.string().length(6),
+  expiresAt: z.date(),
+  used: z.boolean().default(false),
+});
+
+// Type exports
 export type User = z.infer<typeof userSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type QuizQuestion = z.infer<typeof quizQuestionSchema>;
+export type InsertQuizQuestion = z.infer<typeof insertQuizQuestionSchema>;
+export type UserAnsweredQuestion = z.infer<typeof userAnsweredQuestionSchema>;
+export type InsertUserAnsweredQuestion = z.infer<typeof insertUserAnsweredQuestionSchema>;
+export type UserProgress = z.infer<typeof userProgressSchema>;
+export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
+export type QuizSession = z.infer<typeof quizSessionSchema>;
+export type InsertQuizSession = z.infer<typeof insertQuizSessionSchema>;
+export type Task = z.infer<typeof taskSchema>;
+export type InsertTask = z.infer<typeof insertTaskSchema>;
+
+// Additional validation schemas
+export const loginSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string(),
+  newPassword: z.string().min(6),
+});
+
+export const verifyOtpSchema = z.object({
+  email: z.string().email(),
+  otp: z.string().length(6),
+});
+
+// Additional type exports
 export type LoginData = z.infer<typeof loginSchema>;
 export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
 export type VerifyOtpData = z.infer<typeof verifyOtpSchema>;
 export type QuestionnaireData = z.infer<typeof questionnaireSchema>;
 export type OtpData = z.infer<typeof otpSchema>;
-export type Task = z.infer<typeof taskSchema>;
-export type InsertTask = z.infer<typeof insertTaskSchema>;

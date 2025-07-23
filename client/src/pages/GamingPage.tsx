@@ -41,9 +41,10 @@ const GiftIcon = () => (
 );
 
 interface QuizQuestion {
+  id: string;
   question: string;
   options: string[];
-  correctAnswer: string;
+  correctAnswer?: string; // Only available during feedback
   explanation: string;
 }
 
@@ -51,8 +52,9 @@ interface QuizSession {
   sessionId: string;
   currentQuestionIndex: number;
   questions: QuizQuestion[];
-  answers: Array<{question: string; selectedAnswer: string; correctAnswer: string; isCorrect: boolean}>;
+  answers: Array<{questionId: string; selectedAnswer: string; correctAnswer: string; isCorrect: boolean}>;
   score: number;
+  level: number;
 }
 
 export const GamingPage = (): JSX.Element => {
@@ -74,49 +76,8 @@ export const GamingPage = (): JSX.Element => {
     { name: "Goal Setter", points: 200, completed: false, icon: "🎯" },
   ];
 
-  // Quiz question bank - 4 questions per round
-  const questionBank: QuizQuestion[] = [
-    {
-      question: "What is the 50/30/20 rule in budgeting?",
-      options: [
-        "50% needs, 30% wants, 20% savings",
-        "50% savings, 30% rent, 20% food", 
-        "50% investment, 30% debt, 20% rent"
-      ],
-      correctAnswer: "50% needs, 30% wants, 20% savings",
-      explanation: "The 50/30/20 rule is a simple budgeting method where you allocate 50% of income to needs, 30% to wants, and 20% to savings and debt repayment. This helps balance between essential expenses, lifestyle spending, and future goals."
-    },
-    {
-      question: "What percentage of your income should ideally go to savings?",
-      options: [
-        "At least 20% of your income",
-        "10% is more than enough", 
-        "5% should be sufficient"
-      ],
-      correctAnswer: "At least 20% of your income",
-      explanation: "Financial experts recommend saving at least 20% of your income for emergencies, retirement, and future goals to build long-term financial security."
-    },
-    {
-      question: "How many months of expenses should you keep in an emergency fund?",
-      options: [
-        "3-6 months of expenses",
-        "1 month is enough", 
-        "12 months minimum"
-      ],
-      correctAnswer: "3-6 months of expenses",
-      explanation: "An emergency fund should cover 3-6 months of living expenses to protect you from unexpected financial setbacks like job loss or medical emergencies."
-    },
-    {
-      question: "What should you do first when creating a budget?",
-      options: [
-        "Track your current spending for a month",
-        "Cut all unnecessary expenses immediately", 
-        "Set up automatic savings transfers"
-      ],
-      correctAnswer: "Track your current spending for a month",
-      explanation: "Before making changes, you need to understand where your money currently goes by tracking expenses for at least a month to identify spending patterns."
-    }
-  ];
+  // Store correct answers for current quiz session (received from server)
+  const [questionAnswers, setQuestionAnswers] = useState<Record<string, string>>({});
 
   // Load user level from localStorage on component mount
   useEffect(() => {
@@ -135,75 +96,98 @@ export const GamingPage = (): JSX.Element => {
   // Start quiz mutation
   const startQuizMutation = useMutation({
     mutationFn: async (level: number) => {
-      const response = await fetch('/api/gaming/start-quiz', {
+      const response = await apiRequest('/api/gaming/start-quiz', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: JSON.stringify({ level })
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to start quiz');
+      }
+      
       return response.json();
     },
     onSuccess: (data) => {
-      // Create quiz session with 4 random questions
-      const shuffledQuestions = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 4);
-      setQuizSession({
-        sessionId: data.sessionId,
-        currentQuestionIndex: 0,
-        questions: shuffledQuestions,
-        answers: [],
-        score: 0
-      });
-      setCurrentView('quiz');
-      setSelectedAnswer(null);
-      setShowFeedback(false);
-      setIsCorrect(null);
+      if (data.questions && data.questions.length > 0) {
+        setQuizSession({
+          sessionId: data.sessionId,
+          currentQuestionIndex: 0,
+          questions: data.questions,
+          answers: [],
+          score: 0,
+          level: data.level
+        });
+        setCurrentView('quiz');
+        setSelectedAnswer(null);
+        setShowFeedback(false);
+        setIsCorrect(null);
+        setQuestionAnswers({});
+      } else {
+        console.error('No questions received from server');
+      }
+    },
+    onError: (error) => {
+      console.error('Failed to start quiz:', error);
     }
   });
 
   // Submit answer mutation  
   const submitAnswerMutation = useMutation({
-    mutationFn: async (answerData: any) => {
-      const response = await fetch('/api/gaming/submit-answer', {
+    mutationFn: async (answerData: {
+      sessionId: string;
+      questionId: string;
+      selectedAnswer: string;
+      correctAnswer: string;
+      isCorrect: boolean;
+      level: number;
+    }) => {
+      const response = await apiRequest('/api/gaming/submit-answer', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: JSON.stringify(answerData)
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit answer');
+      }
+      
       return response.json();
     }
   });
 
   // Complete quiz mutation
   const completeQuizMutation = useMutation({
-    mutationFn: async (completionData: any) => {
-      const response = await fetch('/api/gaming/complete-quiz', {
+    mutationFn: async (completionData: {
+      sessionId: string;
+      score: number;
+      level: number;
+    }) => {
+      const response = await apiRequest('/api/gaming/complete-quiz', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: JSON.stringify(completionData)
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to complete quiz');
+      }
+      
       return response.json();  
     },
     onSuccess: (data) => {
-      // Check if next level should be unlocked
-      if (quizSession && quizSession.score >= 2 && userLevel < 4) { // Need at least 2 correct answers
-        const nextLevel = userLevel + 1;
-        setUserLevel(nextLevel);
-        localStorage.setItem('userLevel', nextLevel.toString());
-        setLevelUnlocked(true);
-        setBonusPoints(100); // 100 bonus points for unlocking new level
+      // Update user level and bonus points from server response
+      if (data.passed && data.levelUnlocked) {
+        setUserLevel(data.levelUnlocked);
+        localStorage.setItem('userLevel', data.levelUnlocked.toString());
+        setLevelUnlocked(data.bonusUnlocked || false);
+        setBonusPoints(data.bonusUnlocked ? 100 : 0);
       } else {
         setLevelUnlocked(false);
         setBonusPoints(0);
       }
       queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
       setCurrentView('success');
+    },
+    onError: (error) => {
+      console.error('Failed to complete quiz:', error);
     }
   });
 
@@ -213,32 +197,45 @@ export const GamingPage = (): JSX.Element => {
     setSelectedAnswer(answer);
     
     const currentQuestion = quizSession.questions[quizSession.currentQuestionIndex];
-    const correct = answer.trim() === currentQuestion.correctAnswer.trim();
-    setIsCorrect(correct);
+    
+    // We need to get the correct answer from the server since the frontend doesn't have it
+    // For now, we'll submit the answer and let the server determine correctness
     setShowFeedback(true);
-
-    // Submit answer to backend
+    
+    // Submit answer to backend and get correctness result
     submitAnswerMutation.mutate({
       sessionId: quizSession.sessionId,
-      question: currentQuestion.question,
+      questionId: currentQuestion.id,
       selectedAnswer: answer,
-      correctAnswer: currentQuestion.correctAnswer,
-      isCorrect: correct
+      correctAnswer: answer, // Server will use the stored correct answer
+      isCorrect: false, // Server will determine this
+      level: quizSession.level
+    }, {
+      onSuccess: (data) => {
+        // Server returns correctness, correct answer, and explanation
+        setIsCorrect(data.isCorrect);
+        
+        // Store the correct answer for feedback display
+        setQuestionAnswers(prev => ({
+          ...prev,
+          [currentQuestion.id]: data.correctAnswer
+        }));
+        
+        // Add answer to session
+        const newAnswer = {
+          questionId: currentQuestion.id,
+          selectedAnswer: answer,
+          correctAnswer: data.correctAnswer,
+          isCorrect: data.isCorrect
+        };
+
+        setQuizSession(prev => prev ? {
+          ...prev,
+          answers: [...prev.answers, newAnswer],
+          score: data.isCorrect ? prev.score + 1 : prev.score
+        } : null);
+      }
     });
-
-    // Add answer to session
-    const newAnswer = {
-      question: currentQuestion.question,
-      selectedAnswer: answer,
-      correctAnswer: currentQuestion.correctAnswer,
-      isCorrect: correct
-    };
-
-    setQuizSession(prev => prev ? {
-      ...prev,
-      answers: [...prev.answers, newAnswer],
-      score: correct ? prev.score + 1 : prev.score
-    } : null);
   };
 
   const handleNextQuestion = () => {
@@ -258,7 +255,7 @@ export const GamingPage = (): JSX.Element => {
       completeQuizMutation.mutate({
         sessionId: quizSession.sessionId,
         score: quizSession.score,
-        level: 1
+        level: quizSession.level
       });
     }
   };

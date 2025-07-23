@@ -22,8 +22,10 @@ import {
 import { GeminiService } from "./gemini";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Connect to MongoDB (non-blocking)
-  connectDB().catch(console.error);
+  // Connect to MongoDB and seed questions
+  connectDB().then(async () => {
+    await storage.seedQuizQuestions();
+  }).catch(console.error);
 
   // Database test endpoint
   app.get("/api/test-db", async (req: Request, res: Response) => {
@@ -810,12 +812,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = (req as any).user._id.toString();
       const { level } = req.body;
+      const currentLevel = level || 1;
       
-      // Create new quiz session
+      // Get available questions for this level (4 questions per round)
+      const questions = await storage.getAvailableQuestions(userId, currentLevel, 4);
+      
+      if (questions.length === 0) {
+        return res.status(404).json({ 
+          message: "No questions available for this level", 
+          details: "Please try again later"
+        });
+      }
+
+      // Generate session ID
+      const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Create new quiz session with question IDs
       const quizSession = await storage.createQuizSession({
+        sessionId,
         userId,
-        level: level || 1,
-        questions: [],
+        level: currentLevel,
+        questionIds: questions.map(q => q._id!),
+        answers: [],
         score: 0,
         completed: false
       });
@@ -823,7 +841,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         message: "Quiz session started",
         sessionId: quizSession._id,
-        level: quizSession.level
+        level: quizSession.level,
+        questions: questions.map(q => ({
+          id: q._id,
+          question: q.question,
+          options: q.options,
+          explanation: q.explanation
+        }))
       });
     } catch (error: any) {
       console.error("Start quiz error:", error);
@@ -838,25 +862,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/gaming/submit-answer", authenticateToken, async (req: Request, res: Response) => {
     try {
       const userId = (req as any).user._id.toString();
-      const { sessionId, question, selectedAnswer, correctAnswer, isCorrect } = req.body;
+      const { sessionId, questionId, selectedAnswer, level } = req.body;
+      
+      // Get the correct answer from the database
+      const { QuizQuestion } = await import('./models/QuizQuestion');
+      const question = await QuizQuestion.findById(questionId);
+      
+      if (!question) {
+        return res.status(404).json({ 
+          message: "Question not found",
+          isCorrect: false
+        });
+      }
+      
+      // Check if the answer is correct
+      const isCorrect = selectedAnswer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
+      
+      // Mark question as answered to prevent repetition
+      await storage.markQuestionAsAnswered(userId, questionId, level, isCorrect);
       
       // Update quiz session with the answer
       await storage.addQuizAnswer(sessionId, {
-        question,
+        questionId,
         selectedAnswer,
-        correctAnswer,
+        correctAnswer: question.correctAnswer,
         isCorrect
       });
       
       res.json({ 
         message: "Answer submitted",
-        isCorrect
+        isCorrect,
+        correctAnswer: question.correctAnswer, // Send correct answer for feedback
+        explanation: question.explanation
       });
     } catch (error: any) {
       console.error("Submit answer error:", error);
       res.status(500).json({ 
         message: "Failed to submit answer", 
-        details: "Please try again later"
+        details: "Please try again later",
+        isCorrect: false
       });
     }
   });
@@ -865,7 +909,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/gaming/complete-quiz", authenticateToken, async (req: Request, res: Response) => {
     try {
       const userId = (req as any).user._id.toString();
-      const { sessionId, score } = req.body;
+      const { sessionId, score, level } = req.body;
       
       // Mark quiz session as completed
       await storage.completeQuizSession(sessionId, score);
@@ -876,30 +920,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const currentLevel = progress?.currentLevel || 1;
         const completedLevels = progress?.completedLevels || [];
         const totalScore = progress?.totalScore || 0;
+        const totalXP = progress?.totalXP || 0;
+        
+        // Calculate XP based on score (base XP + bonus for perfect score)
+        let earnedXP = score * 25; // 25 XP per correct answer
+        if (score === 4) earnedXP += 50; // Perfect score bonus
         
         // Add current level to completed levels if not already there
         if (!completedLevels.includes(currentLevel)) {
           completedLevels.push(currentLevel);
+          earnedXP += 100; // Level completion bonus
         }
         
-        // Update progress
+        // Update progress with XP system
         await storage.updateUserProgress(userId, {
-          currentLevel: currentLevel + 1,
+          currentLevel: Math.min(currentLevel + 1, 4), // Max level is 4
           completedLevels,
           totalScore: totalScore + score,
+          totalXP: totalXP + earnedXP,
           lastPlayedAt: new Date()
         });
         
         res.json({ 
           message: "Quiz completed successfully!",
           score,
-          levelUnlocked: currentLevel + 1,
-          passed: true
+          earnedXP,
+          totalXP: totalXP + earnedXP,
+          levelUnlocked: Math.min(currentLevel + 1, 4),
+          passed: true,
+          bonusUnlocked: !completedLevels.includes(currentLevel)
         });
       } else {
         res.json({ 
           message: "Quiz completed. Try again to unlock the next level.",
           score,
+          earnedXP: score * 25,
           passed: false
         });
       }
