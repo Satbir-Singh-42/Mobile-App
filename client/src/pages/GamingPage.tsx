@@ -63,6 +63,7 @@ export const GamingPage = (): JSX.Element => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [quizSession, setQuizSession] = useState<QuizSession | null>(null);
+  const [userLevel, setUserLevel] = useState<number>(1);
 
   const achievements = [
     { name: "Budget Master", points: 100, completed: true, icon: "💰" },
@@ -114,6 +115,14 @@ export const GamingPage = (): JSX.Element => {
       explanation: "Before making changes, you need to understand where your money currently goes by tracking expenses for at least a month to identify spending patterns."
     }
   ];
+
+  // Load user level from localStorage on component mount
+  useEffect(() => {
+    const savedLevel = localStorage.getItem('userLevel');
+    if (savedLevel) {
+      setUserLevel(parseInt(savedLevel));
+    }
+  }, []);
 
   // Get user progress
   const { data: userProgress } = useQuery({
@@ -180,6 +189,12 @@ export const GamingPage = (): JSX.Element => {
       return response.json();  
     },
     onSuccess: (data) => {
+      // Unlock next level if quiz was completed successfully
+      if (quizSession && quizSession.score >= 2) { // Need at least 2 correct answers
+        const nextLevel = Math.min(userLevel + 1, 4);
+        setUserLevel(nextLevel);
+        localStorage.setItem('userLevel', nextLevel.toString());
+      }
       queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
       setCurrentView('success');
     }
@@ -232,10 +247,11 @@ export const GamingPage = (): JSX.Element => {
       setShowFeedback(false);
       setIsCorrect(null);
     } else {
-      // Quiz completed - submit final score
+      // Quiz completed - submit final score and show success
       completeQuizMutation.mutate({
         sessionId: quizSession.sessionId,
-        score: quizSession.score
+        score: quizSession.score,
+        level: 1
       });
     }
   };
@@ -280,87 +296,124 @@ export const GamingPage = (): JSX.Element => {
     </div>
   );
 
-  const renderMapView = () => (
-    <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-32 relative overflow-hidden">
-      <div className="flex items-center justify-between mb-12">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setCurrentView('main')}
-          className="p-2 text-white hover:bg-white/20 rounded-full"
-        >
-          <ArrowLeftIcon className="h-6 w-6" />
-        </Button>
-        <h1 className="text-xl font-bold font-['Poppins']">Map 1</h1>
-        <div className="w-10"></div>
+  const renderMapView = () => {
+    // Use local state for user level progression
+    const currentLevel = userLevel;
+    
+    return (
+      <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-32 relative overflow-hidden">
+        <div className="flex items-center justify-between mb-12">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCurrentView('main')}
+            className="p-2 text-white hover:bg-white/20 rounded-full"
+          >
+            <ArrowLeftIcon className="h-6 w-6" />
+          </Button>
+          <h1 className="text-xl font-bold font-['Poppins']">Map 1</h1>
+          <div className="w-10"></div>
+        </div>
+
+        {/* Hexagonal Map Layout with Assets */}
+        <div className="flex flex-col items-center space-y-8 mt-16">
+          {/* Row 1: Level 4 and Gift */}
+          <div className="flex items-center space-x-8">
+            <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+              <div className="transform -rotate-45 text-white">
+                <GiftIcon />
+              </div>
+            </div>
+            <div className="w-2 h-2 bg-white/30 rounded-full"></div>
+            {/* Level 4 */}
+            {currentLevel >= 4 ? (
+              <Button
+                onClick={() => startQuizMutation.mutate(4)}
+                disabled={startQuizMutation.isPending}
+                className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
+              >
+                <div className="transform -rotate-45 text-white font-bold text-xl">4</div>
+              </Button>
+            ) : (
+              <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+                <div className="transform -rotate-45 text-white">
+                  <LockIcon />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Connecting Lines */}
+          <div className={`w-1 h-12 rounded-full ${currentLevel >= 3 ? 'bg-teal-400' : 'bg-white/30'}`}></div>
+
+          {/* Row 2: Level 3 alone */}
+          {currentLevel >= 3 ? (
+            <Button
+              onClick={() => startQuizMutation.mutate(3)}
+              disabled={startQuizMutation.isPending}
+              className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
+            >
+              <div className="transform -rotate-45 text-white font-bold text-xl">3</div>
+            </Button>
+          ) : (
+            <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+              <div className="transform -rotate-45 text-white">
+                <LockIcon />
+              </div>
+            </div>
+          )}
+
+          {/* Connecting Lines */}
+          <div className={`w-1 h-12 rounded-full ${currentLevel >= 2 ? 'bg-teal-400' : 'bg-white/30'}`}></div>
+
+          {/* Row 3: Level 2 and Gift */}
+          <div className="flex items-center space-x-8">
+            {/* Level 2 */}
+            {currentLevel >= 2 ? (
+              <Button
+                onClick={() => startQuizMutation.mutate(2)}
+                disabled={startQuizMutation.isPending}
+                className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
+              >
+                <div className="transform -rotate-45 text-white font-bold text-xl">2</div>
+              </Button>
+            ) : (
+              <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+                <div className="transform -rotate-45 text-white">
+                  <LockIcon />
+                </div>
+              </div>
+            )}
+            <div className="w-2 h-2 bg-white/30 rounded-full"></div>
+            <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
+              <div className="transform -rotate-45 text-white">
+                <GiftIcon />
+              </div>
+            </div>
+          </div>
+
+          {/* Connecting Lines */}
+          <div className="w-1 h-12 bg-teal-400 rounded-full shadow-lg"></div>
+
+          {/* Row 4: Level 1 - Always available */}
+          <Button
+            onClick={() => startQuizMutation.mutate(1)}
+            disabled={startQuizMutation.isPending}
+            className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
+          >
+            <div className="transform -rotate-45 text-white font-bold text-xl">1</div>
+          </Button>
+        </div>
+
+        {/* Bottom Progress Bar */}
+        <div className="fixed bottom-20 left-6 right-6">
+          <div className="bg-white/10 rounded-full h-2 mb-4">
+            <div className="bg-orange-400 h-2 rounded-full transition-all duration-300" style={{ width: `${(currentLevel / 4) * 100}%` }}></div>
+          </div>
+        </div>
       </div>
-
-      {/* Hexagonal Map Layout with Assets */}
-      <div className="flex flex-col items-center space-y-8 mt-16">
-        {/* Row 1: Level 4 and Gift */}
-        <div className="flex items-center space-x-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-            <div className="transform -rotate-45 text-white">
-              <GiftIcon />
-            </div>
-          </div>
-          <div className="w-2 h-2 bg-white/30 rounded-full"></div>
-          <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-            <div className="transform -rotate-45 text-white">
-              <LockIcon />
-            </div>
-          </div>
-        </div>
-
-        {/* Connecting Lines */}
-        <div className="w-1 h-12 bg-white/30 rounded-full"></div>
-
-        {/* Row 2: Level 3 alone */}
-        <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-          <div className="transform -rotate-45 text-white">
-            <LockIcon />
-          </div>
-        </div>
-
-        {/* Connecting Lines */}
-        <div className="w-1 h-12 bg-white/30 rounded-full"></div>
-
-        {/* Row 3: Level 2 and Gift */}
-        <div className="flex items-center space-x-8">
-          <div className="w-16 h-16 bg-gray-500/60 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-            <div className="transform -rotate-45 text-white">
-              <LockIcon />
-            </div>
-          </div>
-          <div className="w-2 h-2 bg-white/30 rounded-full"></div>
-          <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-500 transform rotate-45 rounded-lg flex items-center justify-center shadow-lg">
-            <div className="transform -rotate-45 text-white">
-              <GiftIcon />
-            </div>
-          </div>
-        </div>
-
-        {/* Connecting Lines */}
-        <div className="w-1 h-12 bg-teal-400 rounded-full shadow-lg"></div>
-
-        {/* Row 4: Level 1 - Active */}
-        <Button
-          onClick={() => startQuizMutation.mutate(1)}
-          disabled={startQuizMutation.isPending}
-          className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
-        >
-          <div className="transform -rotate-45 text-white font-bold text-xl">1</div>
-        </Button>
-      </div>
-
-      {/* Bottom Progress Bar */}
-      <div className="fixed bottom-20 left-6 right-6">
-        <div className="bg-white/10 rounded-full h-2 mb-4">
-          <div className="bg-orange-400 h-2 rounded-full w-1/4"></div>
-        </div>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderQuizView = () => {
     if (!quizSession) return null;
@@ -495,32 +548,49 @@ export const GamingPage = (): JSX.Element => {
     );
   };
 
-  const renderSuccessView = () => (
-    <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-6 flex flex-col items-center justify-center">
-      <div className="text-center">
-        <div className="w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckIcon className="h-12 w-12 text-white" />
+  const renderSuccessView = () => {
+    if (!quizSession) return null;
+    
+    // Calculate stars based on score (out of 4 questions)
+    const scorePercentage = (quizSession.score / quizSession.questions.length) * 100;
+    const stars = scorePercentage >= 75 ? 3 : scorePercentage >= 50 ? 2 : 1;
+    const points = quizSession.score * 25; // 25 points per correct answer
+    
+    return (
+      <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-6 flex flex-col items-center justify-center">
+        <div className="text-center">
+          <div className="w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckIcon className="h-12 w-12 text-white" />
+          </div>
+          
+          <h1 className="text-3xl font-bold mb-4">Nice Work!</h1>
+          <p className="text-lg mb-6">You got {quizSession.score} out of {quizSession.questions.length} correct</p>
+          
+          <div className="flex items-center justify-center space-x-2 mb-6">
+            {[1, 2, 3].map((starNum) => (
+              <StarIcon 
+                key={starNum}
+                className={`h-8 w-8 ${starNum <= stars ? 'text-yellow-400 fill-current' : 'text-gray-400'}`} 
+              />
+            ))}
+          </div>
+          
+          <p className="text-lg mb-8">You Earned {points} pts</p>
+          
+          <Button
+            onClick={() => {
+              setCurrentView('map');
+              // Invalidate progress to refresh the map with new progress
+              queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
+            }}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-semibold mb-4"
+          >
+            Continue to Map
+          </Button>
         </div>
-        
-        <h1 className="text-3xl font-bold mb-4">Nice Work</h1>
-        
-        <div className="flex items-center justify-center space-x-2 mb-6">
-          <StarIcon className="h-6 w-6 text-yellow-400 fill-current" />
-          <StarIcon className="h-6 w-6 text-yellow-400 fill-current" />
-          <StarIcon className="h-6 w-6 text-gray-400" />
-        </div>
-        
-        <p className="text-lg mb-8">You Earned 50 pts</p>
-        
-        <Button
-          onClick={() => setCurrentView('main')}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-semibold mb-4"
-        >
-          Next Stage
-        </Button>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     switch (currentView) {
