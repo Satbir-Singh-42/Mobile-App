@@ -142,7 +142,7 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
   return (
     <>
       {/* Background Overlay */}
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setIsOpen(false)} />
+      <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-40" onClick={() => setIsOpen(false)} />
       
       {/* Chat Widget */}
       <div ref={chatWidgetRef} className="fixed bottom-24 right-4 z-50">
