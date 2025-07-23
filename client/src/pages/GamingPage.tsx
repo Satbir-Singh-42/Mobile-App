@@ -453,19 +453,19 @@ export const GamingPage = (): JSX.Element => {
 
             {/* Feedback */}
             {showFeedback && (
-              <Card className="bg-white/10 border-0 rounded-2xl mb-6">
+              <Card className="bg-white border-0 rounded-2xl mb-6 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3 mb-3">
                     {isCorrect ? (
-                      <CheckCircle className="text-green-400" size={24} />
+                      <CheckCircle className="text-green-500" size={24} />
                     ) : (
-                      <XCircle className="text-red-400" size={24} />
+                      <XCircle className="text-red-500" size={24} />
                     )}
-                    <span className="font-bold text-lg">
+                    <span className="font-bold text-lg text-gray-900">
                       {isCorrect ? 'Correct!' : 'Not quite right'}
                     </span>
                   </div>
-                  <p className="text-white/90 leading-relaxed text-base">
+                  <p className="text-gray-700 leading-relaxed text-base">
                     {currentQuestion.explanation}
                   </p>
                 </CardContent>
