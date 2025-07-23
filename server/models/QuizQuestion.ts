@@ -7,6 +7,12 @@ const quizQuestionSchema = new mongoose.Schema({
     min: 1,
     max: 4
   },
+  mapNumber: {
+    type: Number,
+    required: true,
+    default: 1,
+    min: 1
+  },
   question: {
     type: String,
     required: true

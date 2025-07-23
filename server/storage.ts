@@ -335,11 +335,16 @@ export class MongoStorage implements IStorage {
         progress = new UserProgress({
           userId,
           currentLevel: 1,
+          currentMap: 1,
           completedLevels: [],
+          completedMaps: [],
+          mapProgress: new Map(),
           totalScore: 0,
           totalXP: 0,
           achievements: [],
-          lastPlayedAt: new Date()
+          lastPlayedAt: new Date(),
+          streakDays: 0,
+          isReturningUser: false
         });
         await progress.save();
       }
@@ -348,11 +353,17 @@ export class MongoStorage implements IStorage {
         _id: progress._id.toString(),
         userId: progress.userId,
         currentLevel: progress.currentLevel,
+        currentMap: progress.currentMap || 1,
         completedLevels: progress.completedLevels,
+        completedMaps: progress.completedMaps || [],
+        mapProgress: Object.fromEntries(progress.mapProgress || new Map()),
         totalScore: progress.totalScore,
         totalXP: progress.totalXP,
         achievements: progress.achievements,
         lastPlayedAt: progress.lastPlayedAt,
+        lastNotificationDate: progress.lastNotificationDate,
+        streakDays: progress.streakDays || 0,
+        isReturningUser: progress.isReturningUser || false,
         createdAt: progress.createdAt
       };
     } catch (error) {
@@ -384,11 +395,17 @@ export class MongoStorage implements IStorage {
         _id: progress._id.toString(),
         userId: progress.userId,
         currentLevel: progress.currentLevel,
+        currentMap: progress.currentMap || 1,
         completedLevels: progress.completedLevels,
+        completedMaps: progress.completedMaps || [],
+        mapProgress: Object.fromEntries(progress.mapProgress || new Map()),
         totalScore: progress.totalScore,
         totalXP: progress.totalXP,
         achievements: progress.achievements,
         lastPlayedAt: progress.lastPlayedAt,
+        lastNotificationDate: progress.lastNotificationDate,
+        streakDays: progress.streakDays || 0,
+        isReturningUser: progress.isReturningUser || false,
         createdAt: progress.createdAt
       };
     } catch (error) {
@@ -435,7 +452,13 @@ export class MongoStorage implements IStorage {
 
   async getAvailableQuestions(userId: string, level: number, count: number): Promise<QuizQuestionType[]> {
     try {
-      // Get questions that the user hasn't answered yet for this level
+      const { UserProgress } = await import('./models/UserProgress');
+      
+      // Get user's current map
+      const userProgress = await UserProgress.findOne({ userId }) || { currentMap: 1 };
+      const currentMap = userProgress.currentMap || 1;
+      
+      // Get questions that the user hasn't answered yet for this level and map
       const answeredQuestions = await UserAnsweredQuestion.find({ 
         userId, 
         level 
@@ -443,20 +466,20 @@ export class MongoStorage implements IStorage {
       
       const answeredQuestionIds = answeredQuestions.map(aq => aq.questionId.toString());
       
-      // Get available questions (not answered by user)
+      // Get available questions for current map (not answered by user)
       const questions = await QuizQuestion.find({
         level,
+        mapNumber: currentMap,
         isActive: true,
         _id: { $nin: answeredQuestionIds }
       }).limit(count);
 
-      // If we don't have enough unanswered questions, get some answered ones
+      // If we don't have enough unanswered questions for this map, get random ones from the same level/map
       if (questions.length < count) {
-        const additionalQuestions = await QuizQuestion.find({
-          level,
-          isActive: true,
-          _id: { $in: answeredQuestionIds }
-        }).limit(count - questions.length);
+        const additionalQuestions = await QuizQuestion.aggregate([
+          { $match: { level, mapNumber: currentMap, isActive: true } },
+          { $sample: { size: count - questions.length } }
+        ]);
         
         questions.push(...additionalQuestions);
       }
@@ -464,6 +487,7 @@ export class MongoStorage implements IStorage {
       return questions.map(q => ({
         _id: q._id.toString(),
         level: q.level,
+        mapNumber: q.mapNumber || currentMap,
         question: q.question,
         options: q.options,
         correctAnswer: q.correctAnswer,
@@ -509,8 +533,10 @@ export class MongoStorage implements IStorage {
 
       const questionsToSeed = [
         // Level 1 Questions
+        // Map 1 Questions
         {
           level: 1,
+          mapNumber: 1,
           question: "What is the 50/30/20 rule in budgeting?",
           options: [
             "50% needs, 30% wants, 20% savings",
@@ -698,7 +724,7 @@ export class MongoStorage implements IStorage {
     }
   }
 
-  // Daily Gaming Notification System
+  // Daily Gaming Notification System with Map Progression
   async checkDailyGamingNotification(userId: string): Promise<{ shouldNotify: boolean; notificationType: string; message: string } | null> {
     try {
       const { UserProgress } = await import('./models/UserProgress');
@@ -725,26 +751,45 @@ export class MongoStorage implements IStorage {
       let shouldNotify = false;
 
       if (hoursAway >= 24) {
-        // Mark as returning user and update notification date
-        await UserProgress.findOneAndUpdate(
-          { userId },
-          { 
-            isReturningUser: true,
-            lastNotificationDate: now
-          }
-        );
+        // Check if user completed previous map (all 4 levels)
+        const currentMapProgress = progress.mapProgress?.get(progress.currentMap.toString()) || { completed: false, levelsCompleted: [], pointsEarned: false };
+        const hasCompletedCurrentMap = currentMapProgress.completed && currentMapProgress.levelsCompleted.length === 4;
 
-        shouldNotify = true;
-
-        if (hoursAway >= 168) { // 1 week
+        // Update user progress based on map completion
+        if (hasCompletedCurrentMap && hoursAway >= 24) {
+          // User completed previous map - unlock new map
+          await UserProgress.findOneAndUpdate(
+            { userId },
+            { 
+              currentMap: progress.currentMap + 1,
+              currentLevel: 1, // Start new map from level 1
+              isReturningUser: true,
+              lastNotificationDate: now
+            }
+          );
+          
           notificationType = 'map_discovered';
-          message = `New gaming map discovered with exciting challenges! Your progress from Level ${progress.currentLevel} is safely saved!`;
-        } else if (hoursAway >= 72) { // 3 days
-          notificationType = 'progression_reminder';
-          message = `Your gaming journey continues! Resume from Level ${progress.currentLevel} and earn more XP. You have ${progress.totalXP} points so far!`;
-        } else if (hoursAway >= 24) { // 1 day
+          message = `🗺️ New Map ${progress.currentMap + 1} discovered! You completed Map ${progress.currentMap} and unlocked new challenges with fresh rewards!`;
+          shouldNotify = true;
+        } else if (!hasCompletedCurrentMap && hoursAway >= 24) {
+          // User didn't complete previous map - restart from level 1 (no points awarded for repeat levels)
+          await UserProgress.findOneAndUpdate(
+            { userId },
+            { 
+              currentLevel: 1, // Restart map from level 1
+              isReturningUser: true,
+              lastNotificationDate: now
+            }
+          );
+          
+          notificationType = 'progression_restart';
+          message = `🔄 Map ${progress.currentMap} progression restarted from Level 1. Complete all 4 levels to unlock the next map! (No bonus points for repeat levels)`;
+          shouldNotify = true;
+        } else {
+          // Regular daily reminder
           notificationType = 'daily_challenge';
-          message = `Daily challenge available! Complete Level ${progress.currentLevel} quizzes to unlock new achievements and earn bonus XP!`;
+          message = `🎯 Daily challenge available! Continue Map ${progress.currentMap}, Level ${progress.currentLevel} to earn XP and unlock new achievements!`;
+          shouldNotify = true;
         }
       }
 

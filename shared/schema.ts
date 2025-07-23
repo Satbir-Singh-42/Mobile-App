@@ -60,7 +60,14 @@ export const userProgressSchema = z.object({
   _id: z.string().optional(),
   userId: z.string(),
   currentLevel: z.number().default(1),
+  currentMap: z.number().default(1),
   completedLevels: z.array(z.number()).default([]),
+  completedMaps: z.array(z.number()).default([]),
+  mapProgress: z.record(z.object({
+    completed: z.boolean().default(false),
+    levelsCompleted: z.array(z.number()).default([]),
+    pointsEarned: z.boolean().default(false)
+  })).default({}),
   totalScore: z.number().default(0),
   totalXP: z.number().default(0),
   achievements: z.array(z.string()).default([]),

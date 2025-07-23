@@ -308,9 +308,15 @@ export const GamingPage = (): JSX.Element => {
     // Use server progress data as source of truth, fallback to local state
     const progress = (userProgress as any)?.progress;
     const serverLevel = progress?.currentLevel || 1;
+    const currentMap = progress?.currentMap || 1;
     const completedLevels = progress?.completedLevels || [];
+    const completedMaps = progress?.completedMaps || [];
+    const mapProgress = progress?.mapProgress || {};
     const totalXP = progress?.totalXP || 0;
     const currentLevel = Math.max(serverLevel, userLevel); // Use highest level available
+
+    // Get current map progress
+    const currentMapProgress = mapProgress[currentMap.toString()] || { completed: false, levelsCompleted: [], pointsEarned: false };
     
     return (
       <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] min-h-screen text-white px-6 pt-12 pb-32 relative overflow-hidden">
@@ -323,7 +329,7 @@ export const GamingPage = (): JSX.Element => {
           >
             <ArrowLeftIcon className="h-6 w-6" />
           </Button>
-          <h1 className="text-xl font-bold font-['Poppins']">Map 1</h1>
+          <h1 className="text-xl font-bold font-['Poppins']">Map {currentMap}</h1>
           <div className="w-10"></div>
         </div>
 

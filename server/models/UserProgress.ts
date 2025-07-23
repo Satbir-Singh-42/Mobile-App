@@ -13,9 +13,27 @@ const userProgressSchema = new mongoose.Schema({
     default: 1,
     min: 1
   },
+  currentMap: {
+    type: Number,
+    default: 1,
+    min: 1
+  },
   completedLevels: {
     type: [Number],
     default: []
+  },
+  completedMaps: {
+    type: [Number],
+    default: []
+  },
+  mapProgress: {
+    type: Map,
+    of: {
+      completed: Boolean,
+      levelsCompleted: [Number],
+      pointsEarned: Boolean
+    },
+    default: new Map()
   },
   totalScore: {
     type: Number,
@@ -62,7 +80,10 @@ export interface IUserProgress extends mongoose.Document {
   _id: mongoose.Types.ObjectId;
   userId: string;
   currentLevel: number;
+  currentMap: number;
   completedLevels: number[];
+  completedMaps: number[];
+  mapProgress: Map<string, { completed: boolean; levelsCompleted: number[]; pointsEarned: boolean }>;
   totalScore: number;
   totalXP: number;
   achievements: string[];

@@ -921,7 +921,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Complete quiz session
+  // Complete quiz session with map-based progression
   app.post("/api/gaming/complete-quiz", authenticateToken, async (req: Request, res: Response) => {
     try {
       const userId = (req as any).user._id.toString();
@@ -930,48 +930,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Mark quiz session as completed
       await storage.completeQuizSession(sessionId, score);
       
+      // Get current progress
+      const progress = await storage.getUserProgress(userId);
+      if (!progress) {
+        return res.status(404).json({
+          message: "User progress not found",
+          details: "Unable to find gaming progress for user"
+        });
+      }
+
+      const currentMap = progress.currentMap || 1;
+      const mapKey = currentMap.toString();
+      const mapProgress = progress.mapProgress[mapKey] || { completed: false, levelsCompleted: [], pointsEarned: false };
+
+      // Check if this level was already completed in this map (no points for repeat)
+      const isRepeatLevel = mapProgress.levelsCompleted.includes(level);
+      
       // Update user progress if score is passing (2/4 or higher for progression)
       if (score >= 2) {
-        const progress = await storage.getUserProgress(userId);
-        const currentLevel = progress?.currentLevel || 1;
-        const completedLevels = progress?.completedLevels || [];
-        const totalScore = progress?.totalScore || 0;
-        const totalXP = progress?.totalXP || 0;
-        
-        // Calculate XP based on score (base XP + bonus for perfect score)
-        let earnedXP = score * 25; // 25 XP per correct answer
-        if (score === 4) earnedXP += 50; // Perfect score bonus
-        
-        // Add current level to completed levels if not already there
-        if (!completedLevels.includes(currentLevel)) {
-          completedLevels.push(currentLevel);
-          earnedXP += 100; // Level completion bonus
+        // Calculate XP only for new levels
+        let earnedXP = isRepeatLevel ? 0 : (score * 25); // 25 XP per correct answer
+        if (score === 4 && !isRepeatLevel) earnedXP += 50; // Perfect score bonus
+        if (!isRepeatLevel) earnedXP += 100; // Level completion bonus
+
+        // Update map progress
+        const updatedLevelsCompleted = [...mapProgress.levelsCompleted];
+        if (!updatedLevelsCompleted.includes(level)) {
+          updatedLevelsCompleted.push(level);
         }
+
+        // Check if map is completed (all 4 levels done)
+        const isMapCompleted = updatedLevelsCompleted.length === 4;
         
-        // Update progress with XP system
+        // Determine next level (restart from 1 if map not completed daily, or stay at 4 if completed)
+        const nextLevel = isMapCompleted ? 4 : Math.min(level + 1, 4);
+
+        // Update map progress
+        const newMapProgress = {
+          ...progress.mapProgress,
+          [mapKey]: {
+            completed: isMapCompleted,
+            levelsCompleted: updatedLevelsCompleted,
+            pointsEarned: !isRepeatLevel || mapProgress.pointsEarned
+          }
+        };
+
+        // Update overall progress
+        const completedLevels = [...progress.completedLevels];
+        if (!completedLevels.includes(level)) {
+          completedLevels.push(level);
+        }
+
+        const completedMaps = [...(progress.completedMaps || [])];
+        if (isMapCompleted && !completedMaps.includes(currentMap)) {
+          completedMaps.push(currentMap);
+        }
+
+        // Update progress in database
         await storage.updateUserProgress(userId, {
-          currentLevel: Math.min(currentLevel + 1, 4), // Max level is 4
+          currentLevel: nextLevel,
+          currentMap,
           completedLevels,
-          totalScore: totalScore + score,
-          totalXP: totalXP + earnedXP,
+          completedMaps,
+          mapProgress: newMapProgress,
+          totalScore: progress.totalScore + score,
+          totalXP: progress.totalXP + earnedXP,
           lastPlayedAt: new Date()
         });
         
         res.json({ 
-          message: "Quiz completed successfully!",
+          message: isRepeatLevel ? "Level replayed (no bonus XP)" : "Quiz completed successfully!",
           score,
           earnedXP,
-          totalXP: totalXP + earnedXP,
-          levelUnlocked: Math.min(currentLevel + 1, 4),
+          totalXP: progress.totalXP + earnedXP,
+          levelUnlocked: nextLevel,
+          currentMap,
+          isMapCompleted,
+          isRepeatLevel,
           passed: true,
-          bonusUnlocked: !completedLevels.includes(currentLevel)
+          mapStatus: isMapCompleted ? `Map ${currentMap} completed! New map unlocks daily.` : `Map ${currentMap} - Level ${nextLevel} unlocked`,
+          bonusUnlocked: !isRepeatLevel
         });
       } else {
         res.json({ 
           message: "Quiz completed. Try again to unlock the next level.",
           score,
-          earnedXP: score * 25,
-          passed: false
+          earnedXP: 0,
+          passed: false,
+          currentMap,
+          currentLevel: level
         });
       }
     } catch (error: any) {
