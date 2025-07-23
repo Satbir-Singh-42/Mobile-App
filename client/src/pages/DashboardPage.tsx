@@ -493,8 +493,16 @@ export const DashboardPage = (): JSX.Element => {
         </div>
       </main>
 
-      {/* AI Chat Widget */}
-      <ChatWidget userContext={user} />
+      {/* AI Chat Widget positioned above bottom navigation */}
+      <div className="fixed bottom-20 right-4 z-50">
+        <ChatWidget 
+          userContext={{
+            username: user?.username,
+            hasCompletedQuestionnaire: !!user,
+            currentPage: "dashboard"
+          }}
+        />
+      </div>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
@@ -538,15 +546,6 @@ export const DashboardPage = (): JSX.Element => {
           </Button>
         </div>
       </div>
-
-      {/* AI Chat Widget */}
-      <ChatWidget 
-        userContext={{
-          username: user?.username,
-          hasCompletedQuestionnaire: !!user,
-          currentPage: "dashboard"
-        }}
-      />
     </div>
   );
 };
