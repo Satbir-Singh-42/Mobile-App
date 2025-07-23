@@ -914,8 +914,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Mark quiz session as completed
       await storage.completeQuizSession(sessionId, score);
       
-      // Update user progress if score is passing (3/4 or higher)
-      if (score >= 3) {
+      // Update user progress if score is passing (2/4 or higher for progression)
+      if (score >= 2) {
         const progress = await storage.getUserProgress(userId);
         const currentLevel = progress?.currentLevel || 1;
         const completedLevels = progress?.completedLevels || [];

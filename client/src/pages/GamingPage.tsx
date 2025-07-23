@@ -448,9 +448,11 @@ export const GamingPage = (): JSX.Element => {
   };
 
   const renderQuizView = () => {
-    if (!quizSession) return null;
+    if (!quizSession || !quizSession.questions || quizSession.questions.length === 0) return null;
     
     const currentQuestion = quizSession.questions[quizSession.currentQuestionIndex];
+    if (!currentQuestion) return null;
+    
     const questionNumber = quizSession.currentQuestionIndex + 1;
     const progressWidth = (questionNumber / quizSession.questions.length) * 100;
 
@@ -516,7 +518,7 @@ export const GamingPage = (): JSX.Element => {
 
           {/* Answer Options */}
           <div className="space-y-4 mb-8">
-            {currentQuestion.options.map((answer: string, index: number) => (
+            {currentQuestion.options?.map((answer: string, index: number) => (
               <Button
                 key={index}
                 onClick={() => !showFeedback && handleAnswerSubmit(answer)}
@@ -619,7 +621,8 @@ export const GamingPage = (): JSX.Element => {
     
     // Regular quiz completion view
     const scorePercentage = (quizSession.score / quizSession.questions.length) * 100;
-    const stars = scorePercentage >= 75 ? 3 : scorePercentage >= 50 ? 2 : 1;
+    // Star system: 4/4 = 3 stars, 3/4 = 2 stars, 2/4 = 1 star, 1/4 or 0/4 = 1 star
+    const stars = quizSession.score === 4 ? 3 : quizSession.score === 3 ? 2 : 1;
     const basePoints = quizSession.score * 25; // 25 points per correct answer
     const totalPoints = basePoints + bonusPoints;
     
