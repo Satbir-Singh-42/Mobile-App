@@ -24,11 +24,7 @@ export const LandingPage = (): JSX.Element => {
         </svg>
       </div>
       
-      {/* Splash text - top left */}
-      <div className="absolute top-6 left-6 z-10">
-        <div className="text-xs text-gray-400 font-medium">splash</div>
-        <div className="text-lg font-bold text-gray-700">9:41</div>
-      </div>
+
 
       {/* Main Content - Centered */}
       <div className="flex flex-col items-center justify-center min-h-screen px-8 relative z-20">
@@ -39,21 +35,13 @@ export const LandingPage = (): JSX.Element => {
           </h1>
         </div>
 
-        {/* Action Buttons */}
-        <div className="w-full max-w-xs space-y-4">
+        {/* Action Button */}
+        <div className="w-full max-w-xs">
           <Button
             onClick={() => setLocation("/walkthrough")}
             className="w-full bg-[#4157ff] hover:bg-[#3146e6] text-white font-['Poppins'] font-semibold text-lg h-14 rounded-xl transition-all duration-200 transform active:scale-95"
           >
             Get Started
-          </Button>
-          
-          <Button
-            onClick={() => setLocation("/login")}
-            variant="outline"
-            className="w-full border-2 border-[#4157ff] text-[#4157ff] hover:bg-[#4157ff] hover:text-white font-['Poppins'] font-semibold text-lg h-14 rounded-xl transition-all duration-200 transform active:scale-95"
-          >
-            Login
           </Button>
         </div>
       </div>

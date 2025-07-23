@@ -143,20 +143,13 @@ export const Questionnaire = mongoose.model('Questionnaire', questionnaireSchema
 // Database connection
 export const connectDB = async (): Promise<void> => {
   try {
-    // Try to create a MongoDB URI from PostgreSQL connection if available
-    let mongoUri = process.env.MONGODB_URI;
+    // Use the provided MongoDB connection string
+    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://satbirsinghubhi:iVGmMxlrke69nx0I@cluster0.ygrqvfb.mongodb.net/face2finance';
     
-    if (!mongoUri && process.env.DATABASE_URL) {
-      // Convert PostgreSQL DATABASE_URL to MongoDB format
-      const dbUrl = new URL(process.env.DATABASE_URL);
-      mongoUri = `mongodb://${dbUrl.hostname}:27017/face2finance`;
-    }
-    
-    if (!mongoUri) {
-      mongoUri = 'mongodb://localhost:27017/face2finance';
-    }
-    
-    await mongoose.connect(mongoUri);
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+    });
     console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error);

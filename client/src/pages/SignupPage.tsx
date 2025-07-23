@@ -73,10 +73,24 @@ export const SignupPage = (): JSX.Element => {
   };
 
   return (
-    <div className="bg-prima-1 min-h-screen w-full flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-[1062px]">
-        {/* Header */}
-        <div className="text-center mb-8">
+    <div className="bg-prima-1 min-h-screen w-full flex flex-col px-4 py-8">
+      {/* Back Button - Top */}
+      <div className="flex justify-start mb-6">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setLocation("/")}
+          className="flex items-center gap-2 p-2 hover:bg-transparent"
+        >
+          <ArrowLeftIcon className="h-6 w-6 text-[#4157ff]" />
+          <span className="font-['Poppins'] font-medium text-[#4157ff] text-lg">Back</span>
+        </Button>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-full max-w-[1062px]">
+          {/* Header */}
+          <div className="text-center mb-8">
           <h1 className="font-['Anta'] text-[#242424] text-4xl md:text-[121px] tracking-[-4.17px] mb-6">
             Face2Finance
           </h1>
@@ -241,16 +255,6 @@ export const SignupPage = (): JSX.Element => {
           </CardContent>
         </Card>
 
-        {/* Back button */}
-        <div className="mt-6">
-          <Button
-            onClick={() => setLocation("/walkthrough")}
-            variant="ghost"
-            className="font-['Overpass'] font-bold text-[#4157ff] text-lg hover:bg-transparent flex items-center gap-2"
-          >
-            <ArrowLeftIcon className="w-5 h-5" />
-            Back
-          </Button>
         </div>
       </div>
     </div>
