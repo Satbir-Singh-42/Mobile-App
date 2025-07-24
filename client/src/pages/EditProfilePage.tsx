@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, EditIcon, CameraIcon, UserIcon } from "lucide-react";
+import { ArrowLeftIcon, EditIcon, CameraIcon, UserIcon, KeyIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { authAPI } from "@/lib/auth";
 
@@ -18,6 +18,15 @@ export const EditProfilePage = (): JSX.Element => {
     profileImage: ''
   });
   const [isUpdating, setIsUpdating] = useState(false);
+  
+  // Password change state
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
   useEffect(() => {
     loadUserProfile();
@@ -43,7 +52,6 @@ export const EditProfilePage = (): JSX.Element => {
         title: "Profile Updated",
         description: result.message || "Your profile has been updated successfully.",
       });
-      setLocation("/settings");
     } catch (error: any) {
       toast({
         title: "Update Failed",
@@ -66,6 +74,48 @@ export const EditProfilePage = (): JSX.Element => {
     }
   };
 
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "New password and confirmation don't match.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      toast({
+        title: "Password Too Short",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      const result = await authAPI.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+      toast({
+        title: "Password Changed",
+        description: result.message || "Your password has been changed successfully.",
+      });
+      setIsChangingPassword(false);
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error: any) {
+      toast({
+        title: "Password Change Failed",
+        description: error.message || "Failed to change password. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
   return (
     <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
       {/* Header */}
@@ -74,12 +124,12 @@ export const EditProfilePage = (): JSX.Element => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLocation("/settings")}
+            onClick={() => setLocation("/dashboard")}
             className="p-2 text-gray-600"
           >
             <ArrowLeftIcon className="h-6 w-6" />
           </Button>
-          <h1 className="text-xl font-semibold text-[#1F2937]">Edit Profile</h1>
+          <h1 className="text-xl font-semibold text-[#1F2937]">Profile</h1>
           <div className="w-10"></div>
         </div>
       </div>
@@ -168,12 +218,90 @@ export const EditProfilePage = (): JSX.Element => {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => setLocation("/settings")}
+                onClick={() => setLocation("/dashboard")}
                 className="flex-1 font-['Poppins']"
               >
                 Cancel
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Change Password Section */}
+        <Card className="border-2 border-gray-100 shadow-sm">
+          <CardHeader>
+            <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
+              <KeyIcon className="h-6 w-6 text-[#4157ff]" />
+              Change Password
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {!isChangingPassword ? (
+              <div className="text-center py-4">
+                <p className="text-gray-600 mb-4">Keep your account secure by updating your password regularly.</p>
+                <Button
+                  onClick={() => setIsChangingPassword(true)}
+                  className="bg-[#4157ff] hover:bg-[#3146e6] font-['Poppins']"
+                >
+                  Change Password
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword" className="font-['Poppins'] text-sm font-medium">Current Password</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                    className="font-['Poppins']"
+                    placeholder="Enter your current password"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword" className="font-['Poppins'] text-sm font-medium">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                    className="font-['Poppins']"
+                    placeholder="Enter your new password"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="font-['Poppins'] text-sm font-medium">Confirm New Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                    className="font-['Poppins']"
+                    placeholder="Confirm your new password"
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    onClick={handlePasswordChange}
+                    disabled={isUpdatingPassword || !passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword}
+                    className="flex-1 bg-[#4157ff] hover:bg-[#3146e6] font-['Poppins']"
+                  >
+                    {isUpdatingPassword ? 'Changing...' : 'Change Password'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsChangingPassword(false);
+                      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                    }}
+                    className="flex-1 font-['Poppins']"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </main>

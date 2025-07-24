@@ -583,16 +583,16 @@ export const DashboardPage = (): JSX.Element => {
             <span className="text-xs text-gray-500">Gaming</span>
           </Button>
           
-          {/* Settings */}
+          {/* Profile */}
           <Button 
             variant="ghost" 
             className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/settings")}
+            onClick={() => setLocation("/edit-profile")}
           >
             <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
               <UserIcon className="w-4 h-4 text-gray-500" />
             </div>
-            <span className="text-xs text-gray-500">Settings</span>
+            <span className="text-xs text-gray-500">Profile</span>
           </Button>
         </div>
       </div>
