@@ -499,12 +499,15 @@ export const DashboardPage = (): JSX.Element => {
               
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/90 text-sm font-medium">0 points done</span>
+                  <span className="text-white/90 text-sm font-medium">{totalXP} points done</span>
                   <span className="text-white/90 text-sm font-medium">Goal 10,000</span>
                 </div>
                 <div className="relative">
                   <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden border border-white/30">
-                    <div className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full border border-white/40" style={{width: '0%'}}></div>
+                    <div 
+                      className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full border border-white/40" 
+                      style={{width: `${Math.min((totalXP / 10000) * 100, 100)}%`}}
+                    ></div>
                   </div>
                   <div className="absolute -right-1 -top-1 w-5 h-5 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center border-2 border-white">
                     <GiftIcon className="w-2.5 h-2.5 text-white" />
@@ -515,6 +518,7 @@ export const DashboardPage = (): JSX.Element => {
               <div className="flex justify-end">
                 <Button 
                   variant="ghost" 
+                  onClick={() => setLocation("/gaming")}
                   className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-lg px-4 py-2 text-sm font-medium"
                 >
                   Go to game page
