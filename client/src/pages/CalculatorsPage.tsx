@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { ArrowLeftIcon, BookmarkIcon, HomeIcon, MessageCircleIcon, UserIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 
 export const CalculatorsPage = () => {
   const [, setLocation] = useLocation();
@@ -446,63 +447,7 @@ export const CalculatorsPage = () => {
         />
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-lg">
-        <div className="flex items-center justify-between px-6 py-3">
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
-            onClick={() => setLocation("/dashboard")}
-          >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <HomeIcon className="w-5 h-5 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Home</span>
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
-            onClick={() => setLocation("/learning")}
-          >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-              </svg>
-            </div>
-            <span className="text-xs text-gray-500">Learn</span>
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
-            onClick={() => setLocation("/gaming")}
-          >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <div className="w-5 h-5 border-2 border-gray-500 rounded-full"></div>
-            </div>
-            <span className="text-xs text-gray-500">Game</span>
-          </Button>
-          
-          <Button variant="ghost" className="flex flex-col items-center gap-1 p-0 min-w-0">
-            <div className="w-6 h-6 flex items-center justify-center">
-              <MessageCircleIcon className="w-5 h-5 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Chat</span>
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
-            onClick={() => setLocation("/settings")}
-          >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <UserIcon className="w-5 h-5 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Profile</span>
-          </Button>
-        </div>
-      </div>
+      <BottomNavigation currentPage="calculators" />
     </div>
   );
 };

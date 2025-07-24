@@ -21,6 +21,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { ChatWidget } from "@/components/ui/chat-widget";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { authAPI } from "@/lib/auth";
 
 // SVG Icon Components
@@ -765,56 +766,7 @@ export const GamingPage = (): JSX.Element => {
       
       {/* Bottom Navigation - Only show on main view */}
       {currentView === 'main' && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-3 flex justify-around items-center z-50">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation("/dashboard")}
-            className="flex flex-col items-center gap-1 p-2"
-          >
-            <HomeIcon className="h-5 w-5 text-gray-400" />
-            <span className="text-xs text-gray-400">Dashboard</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation("/search")}
-            className="flex flex-col items-center gap-1 p-2"
-          >
-            <SearchIcon className="h-5 w-5 text-gray-400" />
-            <span className="text-xs text-gray-400">Learning</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation("/planner")}
-            className="flex flex-col items-center gap-1 p-2"
-          >
-            <CalendarIcon className="h-5 w-5 text-gray-400" />
-            <span className="text-xs text-gray-400">Planner</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex flex-col items-center gap-1 p-2"
-          >
-            <GamepadIcon className="h-5 w-5 text-[#6366F1]" />
-            <span className="text-xs text-[#6366F1] font-medium">Gaming</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation("/profile")}
-            className="flex flex-col items-center gap-1 p-2"
-          >
-            <UserIcon className="h-5 w-5 text-gray-400" />
-            <span className="text-xs text-gray-400">Settings</span>
-          </Button>
-        </div>
+        <BottomNavigation currentPage="gaming" />
       )}
 
       {/* AI Chat Widget */}

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { authAPI } from "@/lib/auth";
 import { useTranslation } from "@/lib/i18n";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 
 export const ProfilePage = (): JSX.Element => {
   const [, setLocation] = useLocation();
@@ -170,24 +171,7 @@ export const ProfilePage = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
-        <div className="flex justify-around items-center max-w-md mx-auto">
-          {bottomNavItems.map((item, index) => (
-            <Button
-              key={index}
-              variant="ghost"
-              size="sm"
-              onClick={item.action}
-              className={`p-3 hover:bg-gray-100 rounded-full ${
-                item.active ? 'bg-[#4157ff0f]' : ''
-              }`}
-            >
-              {item.icon}
-            </Button>
-          ))}
-        </div>
-      </div>
+      <BottomNavigation currentPage="settings" />
 
       {/* Add bottom padding to prevent content being hidden behind bottom nav */}
       <div className="h-20"></div>

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useLocation, useParams } from "wouter";
 import { ArrowLeftIcon, CalculatorIcon, TrendingUpIcon, PiggyBankIcon, CreditCardIcon, HomeIcon, MessageCircleIcon, UserIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 
 export const IndividualCalculatorPage = () => {
   const [, setLocation] = useLocation();
@@ -507,56 +508,7 @@ export const IndividualCalculatorPage = () => {
         <div className="pb-24"></div>
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-3 z-40">
-        <div className="flex justify-between items-center max-w-sm mx-auto">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setLocation("/dashboard")}
-            className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600"
-          >
-            <HomeIcon className="w-5 h-5" />
-            <span className="text-xs">Home</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setLocation("/learning")}
-            className="flex flex-col items-center gap-1 text-blue-600"
-          >
-            <CalculatorIcon className="w-5 h-5" />
-            <span className="text-xs">Learning</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setLocation("/planner")}
-            className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600"
-          >
-            <MessageCircleIcon className="w-5 h-5" />
-            <span className="text-xs">Planner</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setLocation("/gaming")}
-            className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600"
-          >
-            <span className="text-lg">🎮</span>
-            <span className="text-xs">Gaming</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setLocation("/profile")}
-            className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600"
-          >
-            <UserIcon className="w-5 h-5" />
-            <span className="text-xs">Settings</span>
-          </Button>
-        </div>
-      </div>
+      <BottomNavigation currentPage="calculator" />
 
       {/* AI Chat Widget */}
       <div className="fixed bottom-24 right-4 z-50">

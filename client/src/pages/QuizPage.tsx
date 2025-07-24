@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 // Simple Progress component
 const Progress = ({ value, className }: { value: number; className?: string }) => (
   <div className={`w-full bg-gray-200 rounded-full h-2 ${className}`}>
@@ -193,61 +194,7 @@ export const QuizPage = (): JSX.Element => {
           </CardContent>
         </Card>
 
-        {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-          <div className="flex items-center justify-between px-4 py-2">
-            <Button 
-              variant="ghost" 
-              className="flex flex-col items-center gap-1 p-2 min-w-0"
-              onClick={() => setLocation("/dashboard")}
-            >
-              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                <HomeIcon className="w-4 h-4 text-gray-500" />
-              </div>
-              <span className="text-xs text-gray-500">Dashboard</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="flex flex-col items-center gap-1 p-2 min-w-0"
-              onClick={() => setLocation("/search")}
-            >
-              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                <SearchIcon className="w-4 h-4 text-gray-500" />
-              </div>
-              <span className="text-xs text-gray-500">Learning</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="flex flex-col items-center gap-1 p-2 min-w-0"
-              onClick={() => setLocation("/planner")}
-            >
-              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                <CalendarIcon className="w-4 h-4 text-gray-500" />
-              </div>
-              <span className="text-xs text-gray-500">Planner</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="flex flex-col items-center gap-1 p-2 min-w-0"
-              onClick={() => setLocation("/gaming")}
-            >
-              <div className="w-8 h-8 bg-[#6366F1] rounded-lg flex items-center justify-center">
-                <GiftIcon className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-xs text-[#6366F1] font-medium">Gaming</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="flex flex-col items-center gap-1 p-2 min-w-0"
-              onClick={() => setLocation("/settings")}
-            >
-              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                <UserIcon className="w-4 h-4 text-gray-500" />
-              </div>
-              <span className="text-xs text-gray-500">Settings</span>
-            </Button>
-          </div>
-        </div>
+        <BottomNavigation currentPage="gaming" />
       </div>
     );
   }
@@ -356,61 +303,7 @@ export const QuizPage = (): JSX.Element => {
         </div>
       )}
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-        <div className="flex items-center justify-between px-4 py-2">
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/dashboard")}
-          >
-            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-              <HomeIcon className="w-4 h-4 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Dashboard</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/search")}
-          >
-            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-              <SearchIcon className="w-4 h-4 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Learning</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/planner")}
-          >
-            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-              <CalendarIcon className="w-4 h-4 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Planner</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/gaming")}
-          >
-            <div className="w-8 h-8 bg-[#6366F1] rounded-lg flex items-center justify-center">
-              <GiftIcon className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-xs text-[#6366F1] font-medium">Gaming</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/profile")}
-          >
-            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-              <UserIcon className="w-4 h-4 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Settings</span>
-          </Button>
-        </div>
-      </div>
+      <BottomNavigation currentPage="gaming" />
     </div>
   );
 };
