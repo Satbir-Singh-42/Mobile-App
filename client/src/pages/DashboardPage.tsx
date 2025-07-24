@@ -233,7 +233,7 @@ export const DashboardPage = (): JSX.Element => {
   ];
 
   return (
-    <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
+    <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden pb-24">
       {/* Clean header without status bar */}
       <div className="bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] text-white px-6 pt-6 pb-8 rounded-b-[2rem]">
         {/* Profile header with real date */}

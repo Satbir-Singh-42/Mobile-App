@@ -319,7 +319,7 @@ export const PlannerPage = (): JSX.Element => {
   }
 
   return (
-    <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
+    <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden pb-24">
       {/* Header */}
       <div className="bg-white px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">

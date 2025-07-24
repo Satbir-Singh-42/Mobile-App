@@ -23,7 +23,7 @@ export const LearningPage = () => {
   const tabs = ["All", "Recommended", "Favorite"];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-24">
       {/* Header with clean blue gradient matching dashboard style */}
       <div className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] px-6 pt-8 pb-6 relative">
         {/* Header content matching dashboard style */}
