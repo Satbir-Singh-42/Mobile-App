@@ -254,6 +254,7 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Fixed JWT authentication token handling for better security and compatibility
 - ✓ Enhanced token storage and retrieval with proper cleaning mechanisms
 - ✓ Updated authentication system to prevent malformed token errors
+- ✓ Removed arrow button from Progress section and made "More" navigate to planner (January 24, 2025)
 
 ## Security Considerations
 - Client/server separation implemented
