@@ -6,7 +6,7 @@ export const taskAPI = {
   async getTasks(): Promise<{ tasks: Task[] }> {
     const response = await fetch("/api/tasks", {
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
         "Content-Type": "application/json",
       },
     });
@@ -19,7 +19,7 @@ export const taskAPI = {
     const response = await fetch("/api/tasks", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(task),
@@ -33,7 +33,7 @@ export const taskAPI = {
     const response = await fetch(`/api/tasks/${id}`, {
       method: "PUT",
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updates),
@@ -47,7 +47,7 @@ export const taskAPI = {
     const response = await fetch(`/api/tasks/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
         "Content-Type": "application/json",
       },
     });

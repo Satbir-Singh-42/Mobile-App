@@ -56,7 +56,8 @@ export const PlannerPage = (): JSX.Element => {
         description: "",
         startTime: "",
         endTime: "",
-        category: "Budget Planning"
+        category: "Budget Planning",
+        date: currentDate.toISOString().split('T')[0]
       });
     },
   });
@@ -93,7 +94,8 @@ export const PlannerPage = (): JSX.Element => {
     description: "",
     startTime: "",
     endTime: "",
-    category: "Budget Planning"
+    category: "Budget Planning",
+    date: currentDate.toISOString().split('T')[0] // YYYY-MM-DD format
   });
 
   const weekDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
@@ -136,15 +138,19 @@ export const PlannerPage = (): JSX.Element => {
   const createTask = () => {
     if (!newTask.title.trim()) return;
     
+    // Convert date to display format
+    const taskDate = new Date(newTask.date);
+    const displayDate = taskDate.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+    
     const taskData: InsertTask = {
       userId: "", // This will be set by the server
       title: newTask.title,
       description: newTask.description,
-      date: currentDate.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
-        year: 'numeric' 
-      }),
+      date: displayDate,
       startTime: newTask.startTime,
       endTime: newTask.endTime,
       category: newTask.category,
@@ -192,13 +198,12 @@ export const PlannerPage = (): JSX.Element => {
             {/* Date */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-              <div className="text-lg font-semibold text-[#6366F1]">
-                {currentDate.toLocaleDateString('en-US', { 
-                  month: 'short', 
-                  day: 'numeric', 
-                  year: 'numeric' 
-                })}
-              </div>
+              <input
+                type="date"
+                value={newTask.date}
+                onChange={(e) => setNewTask(prev => ({ ...prev, date: e.target.value }))}
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366F1]"
+              />
             </div>
 
             {/* Time */}
@@ -258,10 +263,18 @@ export const PlannerPage = (): JSX.Element => {
             {/* Create Button */}
             <Button
               onClick={createTask}
-              className="w-full py-4 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-lg font-semibold text-lg"
+              disabled={createTaskMutation.isPending || !newTask.title.trim()}
+              className="w-full py-4 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-lg font-semibold text-lg disabled:opacity-50"
             >
-              Create Task
+              {createTaskMutation.isPending ? "Creating..." : "Create Task"}
             </Button>
+            
+            {/* Error Message */}
+            {createTaskMutation.isError && (
+              <div className="text-red-500 text-sm text-center mt-2">
+                Failed to create task. Please try again.
+              </div>
+            )}
           </div>
         </main>
       </div>
