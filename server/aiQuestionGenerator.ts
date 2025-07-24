@@ -1,5 +1,10 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// Ensure API key is only loaded from environment
+if (!process.env.GOOGLE_API_KEY) {
+  console.warn('GOOGLE_API_KEY not found in environment variables. AI question generation will be disabled.');
+}
+
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
 
 export interface AIGeneratedQuestion {

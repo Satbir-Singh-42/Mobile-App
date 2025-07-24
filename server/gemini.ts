@@ -1,6 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Initialize Gemini AI with API key
+// Initialize Gemini AI with API key from environment only
+if (!process.env.GOOGLE_API_KEY) {
+  console.warn('GOOGLE_API_KEY not found in environment variables. AI features will be disabled.');
+}
+
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
