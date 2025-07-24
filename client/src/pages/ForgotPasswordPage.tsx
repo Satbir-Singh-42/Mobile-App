@@ -27,8 +27,11 @@ export const ForgotPasswordPage = (): JSX.Element => {
     setLoading(true);
     
     try {
-      const response = await apiRequest("/api/auth/forgot-password", {
+      const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email: formData.email }),
       });
 
@@ -63,8 +66,11 @@ export const ForgotPasswordPage = (): JSX.Element => {
     setLoading(true);
     
     try {
-      const response = await apiRequest("/api/auth/verify-otp", {
+      const response = await fetch("/api/auth/verify-otp", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ 
           email: formData.email, 
           otp: formData.otp 
@@ -122,9 +128,10 @@ export const ForgotPasswordPage = (): JSX.Element => {
     setLoading(true);
     
     try {
-      const response = await apiRequest("/api/auth/reset-password", {
+      const response = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Authorization": `Bearer ${resetToken}`,
         },
         body: JSON.stringify({ 
