@@ -33,21 +33,23 @@ export const LearningPage = () => {
           </div>
         </div>
 
-        {/* Search Bar exactly matching Figma */}
+      </div>
+
+      {/* Search Bar positioned between purple section and white content - same as dashboard */}
+      <div className="px-6 relative -mt-6 mb-6 z-10">
         <div className="relative">
-          <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Search tutorials, fraud types, or finance tips..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 bg-white border-0 rounded-xl shadow-sm h-12 text-sm"
-          />
+          <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <button
+            onClick={() => setLocation("/search")}
+            className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl text-gray-900 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-left"
+          >
+            <span className="text-gray-500">Search tutorials, fraud types, or finance tips...</span>
+          </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="bg-white rounded-t-3xl min-h-screen px-6 py-6">
+      <main className="px-6 pb-32">
         {/* Tabs exactly matching Figma */}
         <div className="flex gap-8 mb-6">
           {tabs.map((tab) => (
@@ -151,77 +153,76 @@ export const LearningPage = () => {
 
         {/* Additional spacing for content */}
         <div className="pb-20"></div>
-      </div>
+      </main>
 
-      {/* AI Chat Widget */}
+      {/* AI Chat Widget positioned above bottom navigation */}
       <div className="fixed bottom-24 right-4 z-50">
         <ChatWidget 
           userContext={{
-            username: "User",
+            username: "Satbir Singh",
             hasCompletedQuestionnaire: true,
             currentPage: "learning"
           }}
         />
       </div>
 
-      {/* Bottom Navigation exactly matching Figma */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-lg">
-        <div className="flex items-center justify-between px-6 py-3">
-          {/* Home/Dashboard */}
+      {/* Bottom Navigation - Same as Dashboard */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+        <div className="flex items-center justify-between px-4 py-2">
+          {/* Dashboard */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
             onClick={() => setLocation("/dashboard")}
           >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <HomeIcon className="w-5 h-5 text-gray-500" />
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <HomeIcon className="w-4 h-4 text-gray-500" />
             </div>
-            <span className="text-xs text-gray-500">Home</span>
+            <span className="text-xs text-gray-500">Dashboard</span>
           </Button>
           
-          {/* Learning - Active with blue accent matching Figma */}
-          <Button variant="ghost" className="flex flex-col items-center gap-1 p-0 min-w-0">
-            <div className="w-6 h-6 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#6366F1]">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-              </svg>
+          {/* Learning - Active */}
+          <Button variant="ghost" className="flex flex-col items-center gap-1 p-2 min-w-0">
+            <div className="w-8 h-8 bg-[#6366F1] rounded-lg flex items-center justify-center">
+              <SearchIcon className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xs text-[#6366F1] font-medium">Learn</span>
+            <span className="text-xs text-[#6366F1] font-medium">Learning</span>
           </Button>
           
-          {/* Gaming/Circle icon */}
+          {/* Planner */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
+            onClick={() => setLocation("/planner")}
+          >
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <span className="text-lg">📅</span>
+            </div>
+            <span className="text-xs text-gray-500">Planner</span>
+          </Button>
+          
+          {/* Gaming */}
+          <Button 
+            variant="ghost" 
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
             onClick={() => setLocation("/gaming")}
           >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <div className="w-5 h-5 border-2 border-gray-500 rounded-full"></div>
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <GiftIcon className="w-4 h-4 text-gray-500" />
             </div>
-            <span className="text-xs text-gray-500">Game</span>
+            <span className="text-xs text-gray-500">Gaming</span>
           </Button>
           
-          {/* Chat */}
+          {/* Settings */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
-          >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <MessageCircleIcon className="w-5 h-5 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Chat</span>
-          </Button>
-          
-          {/* Profile */}
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
             onClick={() => setLocation("/settings")}
           >
-            <div className="w-6 h-6 flex items-center justify-center">
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
               <span className="text-lg">👤</span>
             </div>
-            <span className="text-xs text-gray-500">Profile</span>
+            <span className="text-xs text-gray-500">Settings</span>
           </Button>
         </div>
       </div>

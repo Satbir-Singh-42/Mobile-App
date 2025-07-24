@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, HomeIcon, MessageCircleIcon } from "lucide-react";
+import { ArrowLeftIcon, HomeIcon, MessageCircleIcon, SearchIcon, GiftIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
 
 // Import calculator images from assets
@@ -47,41 +47,40 @@ export const CalculatorsOverviewPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header with clean dashboard-style gradient */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 pt-8 pb-8 relative">
+      {/* Header matching Dashboard style - Purple gradient */}
+      <div className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] px-6 pt-8 pb-8 relative">
         {/* Navigation Header */}
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setLocation("/learning")}
-              className="text-white hover:bg-white/10 p-2 rounded-full"
-            >
-              <ArrowLeftIcon className="w-5 h-5" />
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <span className="text-2xl">🧮</span>
-              </div>
-              <div>
-                <h1 className="text-white text-xl font-bold">Financial Calculators</h1>
-                <p className="text-white/80 text-sm">Plan your finances with smart tools</p>
-              </div>
-            </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setLocation("/learning")}
+            className="text-white hover:bg-white/10 p-2 rounded-full"
+          >
+            <ArrowLeftIcon className="w-5 h-5" />
+          </Button>
+          <div className="text-center">
+            <h1 className="text-white text-xl font-bold font-['Poppins']">Financial Calculators</h1>
+            <p className="text-white/90 text-sm">Plan your finances with smart tools</p>
           </div>
-
         </div>
+      </div>
 
-        {/* Subtitle matching Figma */}
-        <div className="text-white/90 text-sm mb-2">
-          <span className="font-medium">{calculators.length} Calculators</span>
+      {/* Search Bar positioned between purple section and white content - same as dashboard */}
+      <div className="px-6 relative -mt-6 mb-6 z-10">
+        <div className="relative">
+          <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <button
+            onClick={() => setLocation("/search")}
+            className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl text-gray-900 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-left"
+          >
+            <span className="text-gray-500">Search tutorials, fraud types, or finance tips...</span>
+          </button>
         </div>
-        <p className="text-white/80 text-sm">Plan your finances better with easy-to-use tools.</p>
       </div>
 
       {/* Main Content */}
-      <div className="bg-white rounded-t-3xl min-h-screen px-6 py-8">
+      <main className="px-6 pb-32">
         {/* Calculator Cards Grid - exactly matching Figma layout */}
         <div className="space-y-4">
           {calculators.map((calculator) => (
@@ -115,73 +114,80 @@ export const CalculatorsOverviewPage = () => {
         </div>
 
         <div className="pb-20"></div>
-      </div>
+      </main>
 
-      {/* AI Chat Widget */}
+      {/* AI Chat Widget positioned above bottom navigation */}
       <div className="fixed bottom-24 right-4 z-50">
         <ChatWidget 
           userContext={{
-            username: "User",
+            username: "Calculator User",
             hasCompletedQuestionnaire: true,
-            currentPage: "calculators-overview"
+            currentPage: "calculators"
           }}
         />
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-lg">
-        <div className="flex items-center justify-between px-6 py-3">
+      {/* Bottom Navigation - Same as Dashboard */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+        <div className="flex items-center justify-between px-4 py-2">
+          {/* Dashboard */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
             onClick={() => setLocation("/dashboard")}
           >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <HomeIcon className="w-5 h-5 text-gray-500" />
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <HomeIcon className="w-4 h-4 text-gray-500" />
             </div>
-            <span className="text-xs text-gray-500">Home</span>
+            <span className="text-xs text-gray-500">Dashboard</span>
           </Button>
           
+          {/* Learning - Active */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
             onClick={() => setLocation("/learning")}
           >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-              </svg>
+            <div className="w-8 h-8 bg-[#6366F1] rounded-lg flex items-center justify-center">
+              <SearchIcon className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xs text-gray-500">Learn</span>
+            <span className="text-xs text-[#6366F1] font-medium">Learning</span>
           </Button>
           
+          {/* Planner */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
+            onClick={() => setLocation("/planner")}
+          >
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <span className="text-lg">📅</span>
+            </div>
+            <span className="text-xs text-gray-500">Planner</span>
+          </Button>
+          
+          {/* Gaming */}
+          <Button 
+            variant="ghost" 
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
             onClick={() => setLocation("/gaming")}
           >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <div className="w-5 h-5 border-2 border-gray-500 rounded-full"></div>
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <GiftIcon className="w-4 h-4 text-gray-500" />
             </div>
-            <span className="text-xs text-gray-500">Game</span>
+            <span className="text-xs text-gray-500">Gaming</span>
           </Button>
           
-          <Button variant="ghost" className="flex flex-col items-center gap-1 p-0 min-w-0">
-            <div className="w-6 h-6 flex items-center justify-center">
-              <MessageCircleIcon className="w-5 h-5 text-gray-500" />
-            </div>
-            <span className="text-xs text-gray-500">Chat</span>
-          </Button>
-          
+          {/* Settings */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-0 min-w-0"
+            className="flex flex-col items-center gap-1 p-2 min-w-0"
             onClick={() => setLocation("/settings")}
           >
-            <div className="w-6 h-6 flex items-center justify-center">
-              <UserIcon className="w-5 h-5 text-gray-500" />
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <span className="text-lg">👤</span>
             </div>
-            <span className="text-xs text-gray-500">Profile</span>
+            <span className="text-xs text-gray-500">Settings</span>
           </Button>
         </div>
       </div>
