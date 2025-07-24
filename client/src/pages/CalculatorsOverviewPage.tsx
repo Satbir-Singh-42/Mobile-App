@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, BookmarkIcon, HomeIcon, MessageCircleIcon, UserIcon } from "lucide-react";
+import { ArrowLeftIcon, BellIcon, HomeIcon, MessageCircleIcon, UserIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
 
 // Import calculator images from assets
@@ -47,45 +47,32 @@ export const CalculatorsOverviewPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header with dark gradient matching Figma */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 pt-12 pb-6 relative">
-        {/* Status bar */}
-        <div className="flex items-center justify-between text-white text-sm font-semibold mb-6">
-          <span>9:41</span>
-          <div className="flex items-center gap-1">
-            <div className="flex items-end gap-0.5">
-              <div className="w-1 h-1 bg-white rounded-full"></div>
-              <div className="w-1 h-1.5 bg-white rounded-full"></div>
-              <div className="w-1 h-2 bg-white rounded-full"></div>
-              <div className="w-1 h-2.5 bg-white rounded-full"></div>
-            </div>
-            <svg className="w-4 h-4 fill-white ml-1" viewBox="0 0 24 24">
-              <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.07 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
-            </svg>
-            <div className="w-6 h-3 border border-white rounded-sm ml-1 relative">
-              <div className="w-4/5 h-full bg-white rounded-sm"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Header content matching Figma exactly */}
+      {/* Header with clean dashboard-style gradient */}
+      <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 pt-8 pb-8 relative">
+        {/* Navigation Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={() => setLocation("/learning")}
-              className="text-white hover:bg-white/10 p-2"
+              className="text-white hover:bg-white/10 p-2 rounded-full"
             >
               <ArrowLeftIcon className="w-5 h-5" />
             </Button>
-            <div>
-              <h1 className="text-white text-xl font-bold mb-1">Financial Calculators</h1>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <span className="text-2xl">🧮</span>
+              </div>
+              <div>
+                <h1 className="text-white text-xl font-bold">Financial Calculators</h1>
+                <p className="text-white/80 text-sm">Plan your finances with smart tools</p>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 p-2">
-              <BookmarkIcon className="w-5 h-5" />
+            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 p-2 rounded-full">
+              <BellIcon className="w-5 h-5" />
             </Button>
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <UserIcon className="w-5 h-5 text-white" />
