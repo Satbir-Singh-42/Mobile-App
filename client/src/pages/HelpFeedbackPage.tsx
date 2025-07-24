@@ -71,7 +71,7 @@ export const HelpFeedbackPage = (): JSX.Element => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLocation("/profile")}
+            onClick={() => setLocation("/settings")}
             className="p-2 text-gray-600"
           >
             <ArrowLeftIcon className="h-6 w-6" />

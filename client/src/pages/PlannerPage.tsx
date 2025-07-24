@@ -516,7 +516,7 @@ export const PlannerPage = (): JSX.Element => {
             <span className="text-xs text-gray-500">Gaming</span>
           </Button>
           
-          {/* Settings */}
+          {/* Profile */}
           <Button 
             variant="ghost" 
             className="flex flex-col items-center gap-1 p-2 min-w-0"

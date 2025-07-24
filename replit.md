@@ -268,6 +268,7 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Created security settings page with 2FA, language preferences, and questionnaire options
 - ✓ Added help and feedback form page for user support and communication
 - ✓ Updated profile page navigation to route to all new dedicated pages
+- ✓ Interchanged Profile and Settings page names - Settings page is now Profile, Profile page is now Settings (January 24, 2025)
 
 ## Security Considerations
 - Client/server separation implemented

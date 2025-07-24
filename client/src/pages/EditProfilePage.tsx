@@ -43,7 +43,7 @@ export const EditProfilePage = (): JSX.Element => {
         title: "Profile Updated",
         description: result.message || "Your profile has been updated successfully.",
       });
-      setLocation("/profile");
+      setLocation("/settings");
     } catch (error: any) {
       toast({
         title: "Update Failed",
@@ -74,7 +74,7 @@ export const EditProfilePage = (): JSX.Element => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLocation("/profile")}
+            onClick={() => setLocation("/settings")}
             className="p-2 text-gray-600"
           >
             <ArrowLeftIcon className="h-6 w-6" />
@@ -168,7 +168,7 @@ export const EditProfilePage = (): JSX.Element => {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => setLocation("/profile")}
+                onClick={() => setLocation("/settings")}
                 className="flex-1 font-['Poppins']"
               >
                 Cancel

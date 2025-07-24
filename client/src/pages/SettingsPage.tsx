@@ -327,7 +327,7 @@ export const SettingsPage = (): JSX.Element => {
         >
           <ArrowLeftIcon className="h-6 w-6 text-[#4157ff]" />
         </Button>
-        <h1 className="font-['Poppins'] font-semibold text-xl text-[#242424]">{t('settings')}</h1>
+        <h1 className="font-['Poppins'] font-semibold text-xl text-[#242424]">Profile</h1>
         <div className="w-10" />
       </div>
 

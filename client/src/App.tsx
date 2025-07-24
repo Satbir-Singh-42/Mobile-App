@@ -36,8 +36,8 @@ function Router() {
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/questionnaire" component={QuestionnairePage} />
       <Route path="/dashboard" component={DashboardPage} />
-      <Route path="/settings" component={SettingsPage} />
-      <Route path="/profile" component={ProfilePage} />
+      <Route path="/profile" component={SettingsPage} />
+      <Route path="/settings" component={ProfilePage} />
       <Route path="/search" component={SearchPage} />
       <Route path="/notifications" component={NotificationsPage} />
       <Route path="/planner" component={PlannerPage} />
