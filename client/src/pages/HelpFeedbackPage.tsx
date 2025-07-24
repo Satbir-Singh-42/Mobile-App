@@ -1,65 +1,24 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-// import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, HelpCircleIcon, MessageSquareIcon, SendIcon } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-// import { authAPI } from "@/lib/auth";
+import { ArrowLeftIcon, HelpCircleIcon, SmartphoneIcon, StarIcon } from "lucide-react";
 
 export const HelpFeedbackPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    type: 'feedback' // feedback, support, bug
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAppStoreRedirect = () => {
+    // Detect platform and redirect accordingly
+    const userAgent = navigator.userAgent || navigator.vendor;
     
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    try {
-      // Simulate sending feedback
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Message Sent",
-        description: "Thank you for your feedback! We'll get back to you soon.",
-      });
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-        type: 'feedback'
-      });
-    } catch (error) {
-      toast({
-        title: "Send Failed",
-        description: "Failed to send your message. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+    if (/iPad|iPhone|iPod/.test(userAgent)) {
+      // iOS - redirect to App Store
+      window.open('https://apps.apple.com/app/face2finance', '_blank');
+    } else if (/android/i.test(userAgent)) {
+      // Android - redirect to Google Play Store
+      window.open('https://play.google.com/store/apps/details?id=com.face2finance', '_blank');
+    } else {
+      // Default fallback - could be web app or desktop
+      window.open('https://face2finance.com/download', '_blank');
     }
   };
 
@@ -84,132 +43,46 @@ export const HelpFeedbackPage = (): JSX.Element => {
       {/* Content */}
       <main className="px-6 py-6">
         <Card className="border-2 border-gray-100 shadow-sm">
-          <CardHeader>
-            <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
-              <MessageSquareIcon className="h-6 w-6 text-[#4157ff]" />
-              Send us a Message
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] rounded-full flex items-center justify-center mx-auto mb-4">
+              <HelpCircleIcon className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="font-['Poppins'] text-xl text-[#242424]">
+              Need Help or Want to Give Feedback?
             </CardTitle>
-            <CardDescription className="font-['Poppins'] text-sm text-gray-600">
-              We'd love to hear from you! Share your feedback, report issues, or ask for help.
-            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Message Type */}
-              <div className="space-y-2">
-                <Label className="font-['Poppins'] text-sm font-medium">Message Type</Label>
-                <select
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full p-3 border border-gray-200 rounded-lg bg-white font-['Poppins'] text-sm"
-                >
-                  <option value="feedback">General Feedback</option>
-                  <option value="support">Support Request</option>
-                  <option value="bug">Bug Report</option>
-                </select>
-              </div>
+          <CardContent className="text-center space-y-6">
+            <p className="text-gray-600 font-['Poppins'] leading-relaxed">
+              We'd love to hear from you! Rate our app and share your experience to help us improve Face2Finance.
+            </p>
 
-              {/* Name */}
-              <div className="space-y-2">
-                <Label htmlFor="name" className="font-['Poppins'] text-sm font-medium">
-                  Name <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="font-['Poppins']"
-                  placeholder="Enter your full name"
-                />
-              </div>
-
-              {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="font-['Poppins'] text-sm font-medium">
-                  Email <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="font-['Poppins']"
-                  placeholder="Enter your email address"
-                />
-              </div>
-
-              {/* Subject */}
-              <div className="space-y-2">
-                <Label htmlFor="subject" className="font-['Poppins'] text-sm font-medium">
-                  Subject <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="subject"
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="font-['Poppins']"
-                  placeholder="Brief description of your message"
-                />
-              </div>
-
-              {/* Message */}
-              <div className="space-y-2">
-                <Label htmlFor="message" className="font-['Poppins'] text-sm font-medium">
-                  Message <span className="text-red-500">*</span>
-                </Label>
-                <textarea
-                  id="message"
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full p-3 border border-gray-200 rounded-lg font-['Poppins'] min-h-[120px] resize-none focus:outline-none focus:ring-2 focus:ring-[#4157ff]"
-                  placeholder="Please provide details about your feedback, issue, or question..."
-                />
-              </div>
-
-              {/* Submit Button */}
+            {/* App Store Redirect Button */}
+            <div className="space-y-4">
               <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-[#4157ff] hover:bg-[#3146e6] font-['Poppins'] flex items-center gap-2"
+                onClick={handleAppStoreRedirect}
+                className="w-full bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white py-4 rounded-lg font-['Poppins'] font-medium text-lg hover:opacity-90 transition-opacity"
               >
-                {isSubmitting ? (
-                  "Sending..."
-                ) : (
-                  <>
-                    <SendIcon className="w-4 h-4" />
-                    Send Message
-                  </>
-                )}
+                <div className="flex items-center justify-center gap-3">
+                  <SmartphoneIcon className="w-5 h-5" />
+                  Rate Us on App Store
+                </div>
               </Button>
-            </form>
-          </CardContent>
-        </Card>
 
-        {/* Help Resources */}
-        <Card className="border-2 border-gray-100 shadow-sm mt-6">
-          <CardHeader>
-            <CardTitle className="font-['Poppins'] text-lg text-[#242424] flex items-center gap-3">
-              <HelpCircleIcon className="h-6 w-6 text-[#4157ff]" />
-              Need Help?
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-semibold text-blue-900 mb-2">Financial Planning Tips</h4>
-              <p className="text-sm text-blue-800">
-                Check out our AI chat widget for personalized financial advice and tips.
+              <div className="flex items-center justify-center gap-1 text-yellow-500">
+                {[...Array(5)].map((_, i) => (
+                  <StarIcon key={i} className="w-5 h-5 fill-current" />
+                ))}
+              </div>
+              
+              <p className="text-sm text-gray-500 font-['Poppins']">
+                Your feedback helps us create better financial literacy experiences
               </p>
             </div>
-            <div className="p-4 bg-green-50 rounded-lg">
-              <h4 className="font-semibold text-green-900 mb-2">Technical Support</h4>
-              <p className="text-sm text-green-800">
-                Having technical issues? Use the "Bug Report" option above to get technical assistance.
-              </p>
-            </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
-              <h4 className="font-semibold text-purple-900 mb-2">Feature Requests</h4>
-              <p className="text-sm text-purple-800">
-                Got ideas for new features? We'd love to hear them! Use the feedback form above.
+
+            {/* Additional Info */}
+            <div className="pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-400 font-['Poppins']">
+                You'll be redirected to the appropriate app store for your device
               </p>
             </div>
           </CardContent>

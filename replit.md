@@ -278,6 +278,9 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Removed /profile route and connected dashboard header directly to /edit-profile route for streamlined navigation
 - ✓ Fixed all navigation references from /profile to /settings for consistent routing (January 24, 2025)
 - ✓ Created comprehensive README.md with complete setup instructions for MongoDB integration and deployment
+- ✓ Updated Help & Feedback page to redirect to app stores instead of contact form (January 24, 2025)
+- ✓ Added platform detection for iOS/Android app store redirects
+- ✓ Simplified help page with clean design focusing on app store rating
 
 ## Security Considerations
 - Client/server separation implemented
