@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, SearchIcon, TrendingUpIcon, BookOpenIcon, CreditCardIcon, ShieldCheckIcon, HomeIcon, CalendarIcon, GiftIcon, UserIcon } from "lucide-react";
+import { ArrowLeftIcon, SearchIcon, TrendingUpIcon, BookOpenIcon, CreditCardIcon, ShieldCheckIcon, HomeIcon, CalendarIcon, GiftIcon, UserIcon, BellIcon, Calculator, PiggyBank, FileText, Eye, Database, ChevronRight, BookmarkIcon, Star } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { ChatWidget } from "@/components/ui/chat-widget";
 import { authAPI } from "@/lib/auth";
@@ -13,6 +14,9 @@ export const SearchPage = (): JSX.Element => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("All");
+  const [showCourseDetail, setShowCourseDetail] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
   useEffect(() => {
     const userData = authAPI.getUser();
