@@ -62,6 +62,11 @@ export const translations: Translations = {
     'Hindi (हिंदी)': 'रद्द करें',
     'Punjabi (ਪੰਜਾਬੀ)': 'ਰੱਦ ਕਰੋ'
   },
+  'logout': {
+    'English': 'Logout',
+    'Hindi (हिंदी)': 'लॉगआउट',
+    'Punjabi (ਪੰਜਾਬੀ)': 'ਲਾਗਆਊਟ'
+  },
   'edit_profile': {
     'English': 'Edit Profile',
     'Hindi (हिंदी)': 'प्रोफ़ाइल संपादित करें',

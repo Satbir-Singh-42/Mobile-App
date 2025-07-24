@@ -14,7 +14,8 @@ import {
   MessageCircleIcon,
   BarChart3Icon,
   FolderIcon,
-  UserIcon
+  UserIcon,
+  LogOutIcon
 } from "lucide-react";
 import { authAPI } from "@/lib/auth";
 import { useTranslation } from "@/lib/i18n";
@@ -69,6 +70,14 @@ export const ProfilePage = (): JSX.Element => {
       icon: <HelpCircleIcon className="h-5 w-5 text-gray-600" />,
       title: t('help_feedback'),
       action: () => setLocation("/help-feedback")
+    },
+    {
+      icon: <LogOutIcon className="h-5 w-5 text-red-600" />,
+      title: t('logout'),
+      action: () => {
+        authAPI.logout();
+        setLocation("/");
+      }
     }
   ];
 
