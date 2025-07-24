@@ -281,6 +281,10 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Updated Help & Feedback page to redirect to app stores instead of contact form (January 24, 2025)
 - ✓ Added platform detection for iOS/Android app store redirects
 - ✓ Simplified help page with clean design focusing on app store rating
+- ✓ Created comprehensive page-by-page documentation in README.md (January 24, 2025)
+- ✓ Added detailed functionality explanations for all 15+ pages
+- ✓ Documented complete API endpoint specifications with payloads and responses
+- ✓ Enhanced README with step-by-step user flow documentation
 
 ## Security Considerations
 - Client/server separation implemented
