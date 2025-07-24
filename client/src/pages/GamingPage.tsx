@@ -35,8 +35,8 @@ const QuestionIcon = () => (
 );
 
 const GiftIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/>
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+    <path d="M26.667 8c0-1.47-1.197-2.667-2.667-2.667s-2.667 1.197-2.667 2.667h-10.666c0-1.47-1.197-2.667-2.667-2.667s-2.667 1.197-2.667 2.667h-2.666c-1.47 0-2.667 1.197-2.667 2.667v2.666c0 1.47 1.197 2.667 2.667 2.667h2.666v10.667c0 1.47 1.197 2.667 2.667 2.667h16c1.47 0 2.667-1.197 2.667-2.667v-10.667h2.666c1.47 0 2.667-1.197 2.667-2.667v-2.666c0-1.47-1.197-2.667-2.667-2.667h-2.666zm-16 16v-10.667h5.333v10.667h-5.333zm10.666 0v-10.667h5.334v10.667h-5.334zm2.667-18.667c0.736 0 1.333 0.597 1.333 1.334s-0.597 1.333-1.333 1.333-1.334-0.597-1.334-1.333 0.598-1.334 1.334-1.334zm-16 0c0.736 0 1.333 0.597 1.333 1.334s-0.597 1.333-1.333 1.333-1.334-0.597-1.334-1.333 0.598-1.334 1.334-1.334z"/>
   </svg>
 );
 
@@ -79,13 +79,28 @@ export const GamingPage = (): JSX.Element => {
   // Store correct answers for current quiz session (received from server)
   const [questionAnswers, setQuestionAnswers] = useState<Record<string, string>>({});
 
-  // Get user progress from server (persistent across logins)
-  const { data: userProgress, error: progressError } = useQuery({
+  // Get user progress from server (persistent across logins with daily reset check)
+  const { data: userProgressData, error: progressError } = useQuery({
     queryKey: ['/api/gaming/progress'],
     enabled: true,
     refetchOnMount: true,
     retry: 1
   });
+
+  const userProgress = userProgressData?.progress;
+
+  // Handle daily reset notifications
+  useEffect(() => {
+    if (userProgressData?.dailyResetOccurred && userProgress) {
+      const currentMap = userProgress.currentMap;
+      const notification = currentMap > 1 
+        ? `🗺️ New Map ${currentMap} unlocked! Previous map completed successfully.`
+        : `🔄 Map ${currentMap} restarted from Level 1. Complete all levels to unlock next map!`;
+      
+      console.log('Daily Reset Notification:', notification);
+      // In a real app, you'd show this as a toast or modal notification
+    }
+  }, [userProgressData?.dailyResetOccurred, userProgress?.currentMap]);
 
   // Handle authentication errors
   useEffect(() => {
@@ -97,9 +112,8 @@ export const GamingPage = (): JSX.Element => {
 
   // Sync user level with server progress
   useEffect(() => {
-    if (userProgress && typeof userProgress === 'object' && userProgress !== null && 'progress' in userProgress) {
-      const progress = (userProgress as any).progress;
-      const serverLevel = progress?.currentLevel || 1;
+    if (userProgress && typeof userProgress === 'object' && userProgress !== null) {
+      const serverLevel = userProgress.currentLevel || 1;
       setUserLevel(serverLevel);
       
       // Also update localStorage for backup (but server is source of truth)
@@ -160,25 +174,7 @@ export const GamingPage = (): JSX.Element => {
     }
   });
 
-  // Restore progress mutation
-  const restoreProgressMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest('/api/gaming/restore-progress', {
-        method: 'POST'
-      });
-      
-      return response.json();
-    },
-    onSuccess: (data) => {
-      console.log('Progress restored successfully:', data);
-      // Refresh progress data from server
-      queryClient.invalidateQueries({ queryKey: ['/api/gaming/progress'] });
-      queryClient.refetchQueries({ queryKey: ['/api/gaming/progress'] });
-    },
-    onError: (error) => {
-      console.error('Failed to restore progress:', error);
-    }
-  });
+
 
   // Complete quiz mutation
   const completeQuizMutation = useMutation({
@@ -332,13 +328,12 @@ export const GamingPage = (): JSX.Element => {
 
   const renderMapView = () => {
     // Use server progress data as source of truth, fallback to local state
-    const progress = (userProgress as any)?.progress;
-    const serverLevel = progress?.currentLevel || 1;
-    const currentMap = progress?.currentMap || 1;
-    const completedLevels = progress?.completedLevels || [];
-    const completedMaps = progress?.completedMaps || [];
-    const mapProgress = progress?.mapProgress || {};
-    const totalXP = progress?.totalXP || 0;
+    const serverLevel = userProgress?.currentLevel || 1;
+    const currentMap = userProgress?.currentMap || 1;
+    const completedLevels = userProgress?.completedLevels || [];
+    const completedMaps = userProgress?.completedMaps || [];
+    const mapProgress = userProgress?.mapProgress || {};
+    const totalXP = userProgress?.totalXP || 0;
     const currentLevel = Math.max(serverLevel, userLevel); // Use highest level available
 
     // Get current map progress
@@ -379,8 +374,8 @@ export const GamingPage = (): JSX.Element => {
               }}
               className="w-20 h-20 bg-gradient-to-br from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 transform rotate-45 rounded-lg flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110"
             >
-              <div className="transform -rotate-45 text-white text-2xl">
-                🎁
+              <div className="transform -rotate-45 text-white">
+                <GiftIcon />
               </div>
             </Button>
             <div className="w-2 h-2 bg-white/30 rounded-full"></div>
@@ -467,8 +462,8 @@ export const GamingPage = (): JSX.Element => {
                   : 'bg-gradient-to-br from-teal-400/60 to-teal-500/60'
               }`}
             >
-              <div className="transform -rotate-45 text-white text-2xl">
-                🎁
+              <div className="transform -rotate-45 text-white">
+                <GiftIcon />
               </div>
             </Button>
           </div>
@@ -493,16 +488,7 @@ export const GamingPage = (): JSX.Element => {
           </div>
         </div>
 
-        {/* Restore Progress Button (Development) */}
-        <div className="fixed bottom-32 right-6">
-          <Button
-            onClick={() => restoreProgressMutation.mutate()}
-            disabled={restoreProgressMutation.isPending}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm shadow-lg"
-          >
-            {restoreProgressMutation.isPending ? 'Restoring...' : 'Restore Progress'}
-          </Button>
-        </div>
+
       </div>
     );
   };

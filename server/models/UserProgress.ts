@@ -57,6 +57,10 @@ const userProgressSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  lastDailyReset: {
+    type: Date,
+    default: null
+  },
   streakDays: {
     type: Number,
     default: 0,
@@ -89,6 +93,7 @@ export interface IUserProgress extends mongoose.Document {
   achievements: string[];
   lastPlayedAt: Date;
   lastNotificationDate?: Date;
+  lastDailyReset?: Date;
   streakDays: number;
   isReturningUser: boolean;
   createdAt: Date;

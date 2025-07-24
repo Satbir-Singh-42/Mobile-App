@@ -44,6 +44,7 @@ export interface IStorage {
   getUserProgress(userId: string): Promise<UserProgress | null>;
   updateUserProgress(userId: string, updates: Partial<UserProgress>): Promise<UserProgress | null>;
   checkDailyGamingNotification(userId: string): Promise<{ shouldNotify: boolean; notificationType: string; message: string } | null>;
+  checkAndHandleDailyReset(userId: string): Promise<boolean>;
   createQuizSession(session: InsertQuizSession): Promise<QuizSession>;
   addQuizAnswer(sessionId: string, answer: { questionId: string; selectedAnswer: string; correctAnswer: string; isCorrect: boolean }): Promise<void>;
   completeQuizSession(sessionId: string, score: number): Promise<void>;
@@ -348,6 +349,12 @@ export class MongoStorage implements IStorage {
         });
         await progress.save();
       }
+
+      // Check for daily reset at 5:00 AM
+      await this.checkAndHandleDailyReset(userId);
+      
+      // Refresh progress after potential reset
+      progress = await UserProgress.findOne({ userId }) || progress;
       
       return {
         _id: progress._id.toString(),
@@ -362,6 +369,7 @@ export class MongoStorage implements IStorage {
         achievements: progress.achievements,
         lastPlayedAt: progress.lastPlayedAt,
         lastNotificationDate: progress.lastNotificationDate,
+        lastDailyReset: progress.lastDailyReset,
         streakDays: progress.streakDays || 0,
         isReturningUser: progress.isReturningUser || false,
         createdAt: progress.createdAt
@@ -404,6 +412,7 @@ export class MongoStorage implements IStorage {
         achievements: progress.achievements,
         lastPlayedAt: progress.lastPlayedAt,
         lastNotificationDate: progress.lastNotificationDate,
+        lastDailyReset: progress.lastDailyReset,
         streakDays: progress.streakDays || 0,
         isReturningUser: progress.isReturningUser || false,
         createdAt: progress.createdAt
@@ -900,6 +909,81 @@ export class MongoStorage implements IStorage {
     } catch (error) {
       console.error('Error checking daily gaming notification:', error);
       return null;
+    }
+  }
+
+  // Check and handle daily reset at 5:00 AM
+  async checkAndHandleDailyReset(userId: string): Promise<boolean> {
+    try {
+      const { UserProgress } = await import('./models/UserProgress');
+      
+      const progress = await UserProgress.findOne({ userId });
+      if (!progress) return false;
+
+      const now = new Date();
+      const lastReset = progress.lastDailyReset;
+      
+      // Get today's 5:00 AM
+      const today5AM = new Date();
+      today5AM.setHours(5, 0, 0, 0);
+      
+      // Get yesterday's 5:00 AM  
+      const yesterday5AM = new Date(today5AM);
+      yesterday5AM.setDate(yesterday5AM.getDate() - 1);
+      
+      // Determine the most recent 5:00 AM reset point
+      const mostRecent5AM = now >= today5AM ? today5AM : yesterday5AM;
+      
+      // If we haven't reset since the most recent 5:00 AM, perform reset
+      if (!lastReset || lastReset < mostRecent5AM) {
+        // Check if user completed current map
+        const currentMapProgress = progress.mapProgress?.get(progress.currentMap?.toString()) || { completed: false };
+        
+        if (currentMapProgress.completed) {
+          // Unlock next map
+          const nextMap = (progress.currentMap || 1) + 1;
+          await UserProgress.findOneAndUpdate(
+            { userId },
+            {
+              currentMap: nextMap,
+              currentLevel: 1, // Reset to level 1 for new map
+              lastDailyReset: now,
+              $set: {
+                [`mapProgress.${nextMap}`]: {
+                  completed: false,
+                  levelsCompleted: [],
+                  pointsEarned: false
+                }
+              }
+            }
+          );
+          console.log(`Daily reset: User ${userId} unlocked Map ${nextMap}`);
+          return true;
+        } else {
+          // Restart current map if not completed
+          await UserProgress.findOneAndUpdate(
+            { userId },
+            {
+              currentLevel: 1, // Reset to level 1
+              lastDailyReset: now,
+              $set: {
+                [`mapProgress.${progress.currentMap || 1}`]: {
+                  completed: false,
+                  levelsCompleted: [],
+                  pointsEarned: false
+                }
+              }
+            }
+          );
+          console.log(`Daily reset: User ${userId} restarted Map ${progress.currentMap || 1}`);
+          return true;
+        }
+      }
+      
+      return false; // No reset needed
+    } catch (error) {
+      console.error('Error in daily reset check:', error);
+      return false;
     }
   }
 }

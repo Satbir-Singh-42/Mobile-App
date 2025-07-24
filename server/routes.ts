@@ -827,13 +827,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get user progress
+  // Get user progress (with automatic daily reset check)
   app.get("/api/gaming/progress", authenticateToken, async (req: Request, res: Response) => {
     try {
       const userId = (req as any).user._id.toString();
+      
+      // Check for daily reset before getting progress
+      const resetOccurred = await storage.checkAndHandleDailyReset(userId);
       const progress = await storage.getUserProgress(userId);
       
-      res.json({ progress });
+      res.json({ 
+        progress,
+        dailyResetOccurred: resetOccurred
+      });
     } catch (error: any) {
       console.error("Get user progress error:", error);
       res.status(500).json({ 
