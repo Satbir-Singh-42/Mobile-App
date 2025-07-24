@@ -368,6 +368,13 @@ export const PlannerPage = (): JSX.Element => {
       <main className="px-6 py-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-[#1F2937]">Tasks</h3>
+          <Button
+            onClick={() => setShowCreateTask(true)}
+            className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+          >
+            <PlusIcon className="h-4 w-4" />
+            Create Task
+          </Button>
         </div>
 
         <div className="space-y-3">
