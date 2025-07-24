@@ -28,18 +28,26 @@ export const LearningPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header with blue gradient background matching Figma */}
       <div className="bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] px-6 pt-12 pb-8 relative">
-        {/* Status bar simulation */}
+        {/* Status bar simulation matching Figma exactly */}
         <div className="flex items-center justify-between text-white text-sm font-medium mb-4">
-          <span>9:41</span>
+          <span className="font-semibold">9:41</span>
           <div className="flex items-center gap-1">
-            <div className="flex gap-1">
+            {/* Signal bars */}
+            <div className="flex items-end gap-0.5">
               <div className="w-1 h-1 bg-white rounded-full"></div>
-              <div className="w-1 h-1 bg-white rounded-full"></div>
-              <div className="w-1 h-1 bg-white rounded-full"></div>
-              <div className="w-1 h-1 bg-white/50 rounded-full"></div>
+              <div className="w-1 h-1.5 bg-white rounded-full"></div>
+              <div className="w-1 h-2 bg-white rounded-full"></div>
+              <div className="w-1 h-2.5 bg-white rounded-full"></div>
             </div>
-            <div className="w-4 h-2 border border-white rounded-sm">
-              <div className="w-3/4 h-full bg-white rounded-sm"></div>
+            {/* WiFi icon */}
+            <div className="w-3 h-3 ml-1">
+              <svg viewBox="0 0 24 24" className="w-full h-full fill-white">
+                <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.07 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+              </svg>
+            </div>
+            {/* Battery */}
+            <div className="w-6 h-3 border border-white rounded-sm ml-1">
+              <div className="w-4/5 h-full bg-white rounded-sm"></div>
             </div>
           </div>
         </div>
@@ -79,15 +87,15 @@ export const LearningPage = () => {
 
       {/* Content */}
       <div className="bg-white rounded-t-3xl min-h-screen px-6 py-6">
-        {/* Tabs */}
-        <div className="flex gap-6 mb-6">
+        {/* Tabs matching Figma exactly */}
+        <div className="flex gap-8 mb-6 border-b border-gray-100">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`text-sm font-medium pb-2 border-b-2 transition-colors ${
+              className={`text-sm font-medium pb-3 border-b-2 transition-colors ${
                 activeTab === tab
-                  ? "text-[#4F46E5] border-[#4F46E5]"
+                  ? "text-gray-900 border-gray-900"
                   : "text-gray-500 border-transparent hover:text-gray-700"
               }`}
             >
@@ -97,7 +105,7 @@ export const LearningPage = () => {
         </div>
 
         {/* Learning Categories Grid - Exact Figma Design */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-2 gap-3 mb-8">
           {/* Budgeting Card */}
           <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
             <CardContent className="bg-gradient-to-br from-pink-200 to-pink-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
@@ -286,63 +294,72 @@ export const LearningPage = () => {
         />
       </div>
 
-      {/* Bottom Navigation */}
+      {/* Bottom Navigation matching Figma exactly */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-        <div className="flex items-center justify-between px-4 py-2">
+        <div className="flex items-center justify-between px-6 py-3">
           {/* Dashboard */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
+            className="flex flex-col items-center gap-1 p-0 min-w-0"
             onClick={() => setLocation("/dashboard")}
           >
-            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-              <div className="w-4 h-4 bg-gray-500 rounded"></div>
+            <div className="w-6 h-6 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              </svg>
             </div>
             <span className="text-xs text-gray-500">Dashboard</span>
           </Button>
           
           {/* Learning - Active */}
-          <Button variant="ghost" className="flex flex-col items-center gap-1 p-2 min-w-0">
-            <div className="w-8 h-8 bg-[#6366F1] rounded-lg flex items-center justify-center">
-              <SearchIcon className="w-4 h-4 text-white" />
+          <Button variant="ghost" className="flex flex-col items-center gap-1 p-0 min-w-0">
+            <div className="w-6 h-6 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#6366F1]">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+              </svg>
             </div>
             <span className="text-xs text-[#6366F1] font-medium">Learning</span>
-          </Button>
-          
-          {/* Planner */}
-          <Button 
-            variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/planner")}
-          >
-            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-              <div className="w-4 h-4 bg-gray-500 rounded"></div>
-            </div>
-            <span className="text-xs text-gray-500">Planner</span>
           </Button>
           
           {/* Gaming */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
+            className="flex flex-col items-center gap-1 p-0 min-w-0"
             onClick={() => setLocation("/gaming")}
           >
-            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-              <div className="w-4 h-4 bg-gray-500 rounded"></div>
+            <div className="w-6 h-6 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
             </div>
             <span className="text-xs text-gray-500">Gaming</span>
           </Button>
           
-          {/* Settings */}
+          {/* Chat */}
           <Button 
             variant="ghost" 
-            className="flex flex-col items-center gap-1 p-2 min-w-0"
+            className="flex flex-col items-center gap-1 p-0 min-w-0"
+          >
+            <div className="w-6 h-6 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+              </svg>
+            </div>
+            <span className="text-xs text-gray-500">Chat</span>
+          </Button>
+          
+          {/* Profile */}
+          <Button 
+            variant="ghost" 
+            className="flex flex-col items-center gap-1 p-0 min-w-0"
             onClick={() => setLocation("/settings")}
           >
-            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-              <UserIcon className="w-4 h-4 text-gray-500" />
+            <div className="w-6 h-6 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
             </div>
-            <span className="text-xs text-gray-500">Settings</span>
+            <span className="text-xs text-gray-500">Profile</span>
           </Button>
         </div>
       </div>
