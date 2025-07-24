@@ -6,16 +6,13 @@ import { useLocation } from "wouter";
 import { SearchIcon, BellIcon, UserIcon, ArrowLeftIcon, BookmarkIcon, HomeIcon, GiftIcon, MessageCircleIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
 
-// Use direct paths to the images from Figma design
-const budgetingImg = "/attached_assets/Image-4_1753339425047.png";
-const savingImg = "/attached_assets/10_1753339425044.png";
-const taxImg = "/attached_assets/9_1753339425044.png";
-const fraudImg = "/attached_assets/Image-5_1753339425047.png";
-const privacyImg = "/attached_assets/Image-1_1753339425045.png";
-const calculatorImg = "/attached_assets/Image_1753339425045.png";
-const sipImg = "/attached_assets/Saly-10 1_1753339425048.png";
-const budgetPlannerImg = "/attached_assets/Image-2_1753339425046.png";
-const emiImg = "/attached_assets/Image-3_1753339425046.png";
+// Import images using @assets alias for proper bundling
+import budgetingImg from "@assets/Image-4_1753339425047.png";
+import savingImg from "@assets/10_1753339425044.png";
+import taxImg from "@assets/9_1753339425044.png";
+import fraudImg from "@assets/Image-5_1753339425047.png";
+import privacyImg from "@assets/Image-1_1753339425045.png";
+import calculatorImg from "@assets/Image_1753339425045.png";
 
 export const LearningPage = () => {
   const [, setLocation] = useLocation();
@@ -170,7 +167,10 @@ export const LearningPage = () => {
           </Card>
 
           {/* Financial Calculators Card - Purple */}
-          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden h-32">
+          <Card 
+            className="border-0 shadow-sm rounded-2xl overflow-hidden h-32 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => setLocation("/calculators")}
+          >
             <CardContent className="bg-gradient-to-br from-purple-200 to-purple-300 p-4 h-full flex flex-col justify-between relative">
               <div className="z-10">
                 <h3 className="text-sm font-semibold text-gray-800 mb-1">Financial Calculators</h3>

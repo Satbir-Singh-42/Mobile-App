@@ -25,6 +25,7 @@ import { GoalsSummaryPage } from "@/pages/GoalsSummaryPage";
 import { SecuritySettingsPage } from "@/pages/SecuritySettingsPage";
 import { HelpFeedbackPage } from "@/pages/HelpFeedbackPage";
 import { LearningPage } from "@/pages/LearningPage";
+import { CalculatorsPage } from "@/pages/CalculatorsPage";
 
 function Router() {
   return (
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/notifications" component={NotificationsPage} />
       <Route path="/planner" component={PlannerPage} />
       <Route path="/learning" component={LearningPage} />
+      <Route path="/calculators" component={CalculatorsPage} />
       <Route path="/gaming" component={GamingPage} />
       <Route path="/quiz" component={QuizPage} />
       
