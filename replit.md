@@ -243,6 +243,12 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Enhanced task creation form with editable date picker for better user control
 - ✓ Added loading states and error handling to task creation process
 - ✓ Resolved authentication issues preventing task creation and management
+- ✓ Added "All Day" toggle option for tasks that don't require specific times (January 24, 2025)
+- ✓ Updated MongoDB schema to make startTime and endTime optional for all-day tasks
+- ✓ Implemented task options menu with edit/delete functionality matching Figma design
+- ✓ Added dropdown menu with three-dot icon for each task item
+- ✓ Enhanced task display to show "All Day" label for all-day tasks
+- ✓ Added click-outside functionality to close task menus automatically
 - ✓ Fixed JWT authentication token handling for better security and compatibility
 - ✓ Enhanced token storage and retrieval with proper cleaning mechanisms
 - ✓ Updated authentication system to prevent malformed token errors

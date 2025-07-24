@@ -154,11 +154,15 @@ const taskSchema = new mongoose.Schema({
   },
   startTime: {
     type: String,
-    required: true
+    required: false
   },
   endTime: {
     type: String,
-    required: true
+    required: false
+  },
+  isAllDay: {
+    type: Boolean,
+    default: false
   },
   category: {
     type: String,
