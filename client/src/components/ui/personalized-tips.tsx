@@ -103,24 +103,40 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
   };
 
   useEffect(() => {
-    // Clear cached tips every 12 hours for automatic refresh
+    // Auto-refresh every 6 hours
     const now = new Date();
     const today = now.toDateString();
-    const currentHour = now.getHours();
-    const refreshKey = `${today}_${currentHour >= 12 ? 'PM' : 'AM'}`;
+    const currentHour = Math.floor(now.getHours() / 6) * 6; // 0, 6, 12, 18
+    const refreshKey = `${today}_${currentHour}h`;
     
     const lastRefreshKey = localStorage.getItem('lastTipRefresh');
-    const cachedTip = localStorage.getItem(`dailyTip_${today}`);
     
-    // Clear cache if it's been 12+ hours or different half-day
-    if (lastRefreshKey !== refreshKey || (cachedTip && JSON.parse(cachedTip).message === "Never share your OTP—even with someone claiming to be from your bank.")) {
+    // Clear cache if it's been 6+ hours
+    if (lastRefreshKey !== refreshKey) {
       localStorage.removeItem(`dailyTip_${today}`);
       localStorage.setItem('lastTipRefresh', refreshKey);
-      console.log('Auto-refreshing tips for 12-hour cycle:', refreshKey);
+      console.log('Auto-refreshing tips for 6-hour cycle:', refreshKey);
       fetchDailyTip(true);
     } else {
       fetchDailyTip(false);
     }
+
+    // Set up interval to refresh every 6 hours
+    const interval = setInterval(() => {
+      const newNow = new Date();
+      const newToday = newNow.toDateString();
+      const newCurrentHour = Math.floor(newNow.getHours() / 6) * 6;
+      const newRefreshKey = `${newToday}_${newCurrentHour}h`;
+      
+      if (localStorage.getItem('lastTipRefresh') !== newRefreshKey) {
+        localStorage.removeItem(`dailyTip_${newToday}`);
+        localStorage.setItem('lastTipRefresh', newRefreshKey);
+        console.log('Auto-refreshing tips for 6-hour cycle:', newRefreshKey);
+        fetchDailyTip(true);
+      }
+    }, 6 * 60 * 60 * 1000); // 6 hours in milliseconds
+
+    return () => clearInterval(interval);
   }, [userId, userContext]);
 
   if (isLoading) {
@@ -161,21 +177,9 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
           <div className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-full px-4 py-2 text-sm font-medium">
             {dailyTip.message.includes("Never share your OTP") ? "Security Tip" : "AI Personalized"}
           </div>
-          <button 
-            onClick={async () => {
-              console.log('Manual refresh clicked');
-              const today = new Date().toDateString();
-              localStorage.removeItem(`dailyTip_${today}`);
-              localStorage.removeItem('lastTipRefresh');
-              setDailyTip(null);
-              setIsLoading(true);
-              await fetchDailyTip(true);
-            }}
-            disabled={isLoading}
-            className="text-white/80 hover:text-white text-sm underline disabled:opacity-50"
-          >
-            {isLoading ? 'Loading...' : 'Refresh'}
-          </button>
+          <div className="text-white/60 text-xs">
+            Updates every 6 hours
+          </div>
         </div>
       </CardContent>
     </Card>
