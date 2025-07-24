@@ -23,7 +23,7 @@ const createEmailTransporter = () => {
 // Generate JWT token
 export const generateToken = (userId: string): string => {
   return jwt.sign(
-    { userId }, 
+    { userId: userId.toString() }, 
     JWT_SECRET, 
     {
       expiresIn: '7d',

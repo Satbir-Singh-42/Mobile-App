@@ -25,8 +25,8 @@ export async function apiRequest(
     headers?: Record<string, string>;
   }
 ): Promise<Response> {
-  // Get JWT token from localStorage
-  const token = localStorage.getItem('auth_token');
+  // Get JWT token from localStorage and clean it
+  const token = localStorage.getItem('auth_token')?.trim();
   
   const headers: Record<string, string> = {
     ...(options.body ? { "Content-Type": "application/json" } : {}),
@@ -51,8 +51,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    // Get JWT token from localStorage
-    const token = localStorage.getItem('auth_token');
+    // Get JWT token from localStorage and clean it
+    const token = localStorage.getItem('auth_token')?.trim();
     
     const headers: Record<string, string> = {
       ...(token ? { "Authorization": `Bearer ${token}` } : {}),

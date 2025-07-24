@@ -57,7 +57,9 @@ export const authAPI = {
       }
       
       if (result.token) {
-        localStorage.setItem('auth_token', result.token);
+        // Clean and store token properly
+        const cleanToken = result.token.trim();
+        localStorage.setItem('auth_token', cleanToken);
         localStorage.setItem('user', JSON.stringify(result.user));
       }
       
@@ -84,7 +86,9 @@ export const authAPI = {
       }
       
       if (result.token) {
-        localStorage.setItem('auth_token', result.token);
+        // Clean and store token properly
+        const cleanToken = result.token.trim();
+        localStorage.setItem('auth_token', cleanToken);
         localStorage.setItem('user', JSON.stringify(result.user));
       }
       
