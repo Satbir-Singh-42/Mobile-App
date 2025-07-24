@@ -87,11 +87,11 @@ export const GamingPage = (): JSX.Element => {
     retry: 1
   });
 
-  const userProgress = userProgressData?.progress;
+  const userProgress = (userProgressData as any)?.progress;
 
   // Handle daily reset notifications
   useEffect(() => {
-    if (userProgressData?.dailyResetOccurred && userProgress) {
+    if ((userProgressData as any)?.dailyResetOccurred && userProgress) {
       const currentMap = userProgress.currentMap;
       const notification = currentMap > 1 
         ? `🗺️ New Map ${currentMap} unlocked! Previous map completed successfully.`
@@ -100,7 +100,7 @@ export const GamingPage = (): JSX.Element => {
       console.log('Daily Reset Notification:', notification);
       // In a real app, you'd show this as a toast or modal notification
     }
-  }, [userProgressData?.dailyResetOccurred, userProgress?.currentMap]);
+  }, [(userProgressData as any)?.dailyResetOccurred, userProgress?.currentMap]);
 
   // Handle authentication errors
   useEffect(() => {

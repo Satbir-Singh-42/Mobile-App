@@ -825,6 +825,204 @@ export class MongoStorage implements IStorage {
           ],
           correctAnswer: "An investment fund that uses complex strategies to generate returns",
           explanation: "Hedge funds are private investment funds that use sophisticated strategies, including leverage, derivatives, and alternative investments, typically available only to accredited investors."
+        },
+
+        // MAP 2 QUESTIONS - Advanced Financial Planning
+        // Level 1 - Map 2
+        {
+          level: 1,
+          mapNumber: 2,
+          question: "What is a credit score range?",
+          options: [
+            "300-850",
+            "100-500", 
+            "1-100"
+          ],
+          correctAnswer: "300-850",
+          explanation: "Credit scores typically range from 300 to 850, with higher scores indicating better creditworthiness and access to better loan terms and interest rates."
+        },
+        {
+          level: 1,
+          mapNumber: 2,
+          question: "What is the debt-to-income ratio?",
+          options: [
+            "Monthly debt payments divided by monthly gross income",
+            "Total debt divided by total assets", 
+            "Annual income divided by total debt"
+          ],
+          correctAnswer: "Monthly debt payments divided by monthly gross income",
+          explanation: "The debt-to-income ratio measures how much of your monthly income goes toward debt payments. Lenders use this to evaluate your ability to manage monthly payments."
+        },
+        {
+          level: 1,
+          mapNumber: 2,
+          question: "What is home equity?",
+          options: [
+            "The difference between your home's value and remaining mortgage balance",
+            "The interest rate on your mortgage", 
+            "The down payment you made on your home"
+          ],
+          correctAnswer: "The difference between your home's value and remaining mortgage balance",
+          explanation: "Home equity represents the portion of your home that you truly own - the market value minus what you still owe on your mortgage."
+        },
+        {
+          level: 1,
+          mapNumber: 2,
+          question: "What is a 401(k) match?",
+          options: [
+            "When employers contribute money to match employee retirement contributions",
+            "A type of investment account", 
+            "A government retirement benefit"
+          ],
+          correctAnswer: "When employers contribute money to match employee retirement contributions",
+          explanation: "A 401(k) match is free money from your employer that matches a percentage of your contributions to your retirement account, often called 'free money' for retirement."
+        },
+        // Level 2 - Map 2
+        {
+          level: 2,
+          mapNumber: 2,
+          question: "What is a Roth vs Traditional IRA difference?",
+          options: [
+            "Roth uses after-tax money, Traditional uses pre-tax money",
+            "Roth is for older people, Traditional for younger", 
+            "No difference between them"
+          ],
+          correctAnswer: "Roth uses after-tax money, Traditional uses pre-tax money",
+          explanation: "Traditional IRAs offer tax deductions now but taxable withdrawals later, while Roth IRAs use after-tax contributions but offer tax-free withdrawals in retirement."
+        },
+        {
+          level: 2,
+          mapNumber: 2,
+          question: "What is dollar-cost averaging?",
+          options: [
+            "Investing the same amount regularly regardless of market conditions",
+            "Buying stocks only when prices are low", 
+            "Calculating the average price of your investments"
+          ],
+          correctAnswer: "Investing the same amount regularly regardless of market conditions",
+          explanation: "Dollar-cost averaging involves investing a fixed amount regularly, which helps reduce the impact of market volatility over time by buying more shares when prices are low."
+        },
+        {
+          level: 2,
+          mapNumber: 2,
+          question: "What is a mutual fund?",
+          options: [
+            "A pool of money from many investors used to buy securities",
+            "A type of bank account", 
+            "A government bond"
+          ],
+          correctAnswer: "A pool of money from many investors used to buy securities",
+          explanation: "Mutual funds pool money from many investors to buy a diversified portfolio of stocks, bonds, or other securities, managed by professional fund managers."
+        },
+        {
+          level: 2,
+          mapNumber: 2,
+          question: "What is an ETF?",
+          options: [
+            "Exchange-traded fund that trades like a stock",
+            "Emergency tax fund", 
+            "Employee transfer fund"
+          ],
+          correctAnswer: "Exchange-traded fund that trades like a stock",
+          explanation: "ETFs are investment funds that trade on stock exchanges like individual stocks but hold a diversified portfolio of assets, often with lower fees than mutual funds."
+        },
+        // Level 3 - Map 2
+        {
+          level: 3,
+          mapNumber: 2,
+          question: "What is a bear vs bull market?",
+          options: [
+            "Bear market declines 20%+, bull market rises significantly",
+            "Bear markets are good, bull markets are bad", 
+            "They refer to different types of stocks"
+          ],
+          correctAnswer: "Bear market declines 20%+, bull market rises significantly",
+          explanation: "A bear market is when stock prices decline 20% or more from recent highs, while a bull market is characterized by rising stock prices and investor optimism."
+        },
+        {
+          level: 3,
+          mapNumber: 2,
+          question: "What is a P/E ratio?",
+          options: [
+            "Price-to-earnings ratio measuring stock valuation",
+            "Profit and expense ratio", 
+            "Personal expense ratio"
+          ],
+          correctAnswer: "Price-to-earnings ratio measuring stock valuation",
+          explanation: "The P/E ratio compares a company's stock price to its earnings per share, helping investors evaluate whether a stock is overvalued or undervalued."
+        },
+        {
+          level: 3,
+          mapNumber: 2,
+          question: "What is market capitalization?",
+          options: [
+            "Total value of a company's shares outstanding",
+            "The maximum amount a company can earn", 
+            "The capital gains tax rate"
+          ],
+          correctAnswer: "Total value of a company's shares outstanding",
+          explanation: "Market cap is calculated by multiplying the stock price by the number of outstanding shares, categorizing companies as small-cap, mid-cap, or large-cap."
+        },
+        {
+          level: 3,
+          mapNumber: 2,
+          question: "What is a dividend?",
+          options: [
+            "Cash payments companies make to shareholders",
+            "A type of investment fee", 
+            "The difference between buy and sell prices"
+          ],
+          correctAnswer: "Cash payments companies make to shareholders",
+          explanation: "Dividends are cash payments that profitable companies distribute to shareholders as a way to share profits, providing income in addition to potential stock price appreciation."
+        },
+        // Level 4 - Map 2
+        {
+          level: 4,
+          mapNumber: 2,
+          question: "What is options trading?",
+          options: [
+            "Contracts giving the right to buy/sell at specific prices",
+            "A type of savings account", 
+            "A form of life insurance"
+          ],
+          correctAnswer: "Contracts giving the right to buy/sell at specific prices",
+          explanation: "Options are financial contracts that give you the right (but not obligation) to buy or sell an asset at a predetermined price within a specific timeframe."
+        },
+        {
+          level: 4,
+          mapNumber: 2,
+          question: "What is leverage in investing?",
+          options: [
+            "Using borrowed money to increase potential returns",
+            "The process of selling investments", 
+            "A type of retirement account"
+          ],
+          correctAnswer: "Using borrowed money to increase potential returns",
+          explanation: "Leverage involves using borrowed capital to increase potential returns, but it also magnifies potential losses and significantly increases investment risk."
+        },
+        {
+          level: 4,
+          mapNumber: 2,
+          question: "What is a REIT?",
+          options: [
+            "Real Estate Investment Trust that owns income-producing real estate",
+            "Retirement investment emergency trust", 
+            "Regional investment exchange trust"
+          ],
+          correctAnswer: "Real Estate Investment Trust that owns income-producing real estate",
+          explanation: "REITs are companies that own, operate, or finance income-generating real estate, allowing investors to invest in real estate without directly owning property."
+        },
+        {
+          level: 4,
+          mapNumber: 2,
+          question: "What is asset allocation?",
+          options: [
+            "Dividing investments among different asset categories",
+            "Buying only the most expensive assets", 
+            "Selling assets when they lose value"
+          ],
+          correctAnswer: "Dividing investments among different asset categories",
+          explanation: "Asset allocation involves spreading investments across stocks, bonds, real estate, and other assets based on your risk tolerance, timeline, and financial goals."
         }
       ];
 
