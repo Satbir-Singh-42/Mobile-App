@@ -249,6 +249,8 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Added dropdown menu with three-dot icon for each task item
 - ✓ Enhanced task display to show "All Day" label for all-day tasks
 - ✓ Added click-outside functionality to close task menus automatically
+- ✓ Removed checkbox from task items per user request (January 24, 2025)
+- ✓ Cleaned up task menu to show only Edit and Delete options
 - ✓ Fixed JWT authentication token handling for better security and compatibility
 - ✓ Enhanced token storage and retrieval with proper cleaning mechanisms
 - ✓ Updated authentication system to prevent malformed token errors

@@ -13,8 +13,7 @@ import {
   ClockIcon,
   EditIcon,
   TrashIcon,
-  CheckIcon,
-  XIcon,
+
   HomeIcon,
   MessageSquareIcon,
   UserIcon,
@@ -82,14 +81,7 @@ export const PlannerPage = (): JSX.Element => {
     },
   });
 
-  // Toggle task completion mutation
-  const toggleTaskMutation = useMutation({
-    mutationFn: ({ id, completed }: { id: string; completed: boolean }) =>
-      taskAPI.toggleTask(id, completed),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
-    },
-  });
+
 
   const [newTask, setNewTask] = useState({
     title: "",
@@ -139,12 +131,7 @@ export const PlannerPage = (): JSX.Element => {
     { name: "Other", color: "bg-[#6B7280]" }
   ];
 
-  const toggleTaskCompletion = (taskId: string) => {
-    const task = allTasks.find(t => t._id === taskId);
-    if (task) {
-      toggleTaskMutation.mutate({ id: taskId, completed: !task.completed });
-    }
-  };
+
 
   const deleteTask = (taskId: string) => {
     deleteTaskMutation.mutate(taskId);
@@ -408,63 +395,50 @@ export const PlannerPage = (): JSX.Element => {
                             {task.isAllDay ? 'All Day' : task.startTime && task.endTime ? `${task.startTime} - ${task.endTime}` : 'No time set'}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        {/* Task Menu Button */}
+                        <div className="relative">
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => toggleTaskCompletion(task._id!)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowTaskMenu(showTaskMenu === task._id ? null : task._id!);
+                            }}
                             className="p-1 h-6 w-6"
-                            disabled={toggleTaskMutation.isPending}
                           >
-                            {task.completed ? (
-                              <CheckIcon className="h-4 w-4 text-green-600" />
-                            ) : (
-                              <div className="h-4 w-4 border-2 border-gray-300 rounded"></div>
-                            )}
+                            <div className="flex flex-col gap-1">
+                              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                            </div>
                           </Button>
                           
-                          {/* Task Menu Button */}
-                          <div className="relative">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setShowTaskMenu(showTaskMenu === task._id ? null : task._id!)}
-                              className="p-1 h-6 w-6"
-                            >
-                              <div className="flex flex-col gap-1">
-                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                              </div>
-                            </Button>
-                            
-                            {/* Dropdown Menu */}
-                            {showTaskMenu === task._id && (
-                              <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-10 min-w-[120px]">
-                                <button
-                                  onClick={() => {
-                                    setSelectedTask(task);
-                                    setShowTaskMenu(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                                >
-                                  <EditIcon className="h-4 w-4" />
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    deleteTask(task._id!);
-                                    setShowTaskMenu(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                                  disabled={deleteTaskMutation.isPending}
-                                >
-                                  <TrashIcon className="h-4 w-4" />
-                                  Delete
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                          {/* Dropdown Menu */}
+                          {showTaskMenu === task._id && (
+                            <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-10 min-w-[120px]">
+                              <button
+                                onClick={() => {
+                                  setSelectedTask(task);
+                                  setShowTaskMenu(null);
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                              >
+                                <EditIcon className="h-4 w-4" />
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => {
+                                  deleteTask(task._id!);
+                                  setShowTaskMenu(null);
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                disabled={deleteTaskMutation.isPending}
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                                Delete
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <p className="text-xs text-gray-400 mb-2">
