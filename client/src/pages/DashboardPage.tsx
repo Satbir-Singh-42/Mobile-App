@@ -348,57 +348,6 @@ export const DashboardPage = (): JSX.Element => {
           )}
         </div>
 
-        {/* Gaming Progress Achievement Card */}
-        <div className="mb-6">
-          <Card className="bg-gradient-to-r from-[#4FC3F7] to-[#29B6F6] border-0 text-white rounded-[25px] shadow-lg overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center relative">
-                    <div className="text-2xl">⭐</div>
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-pink-500 rounded-full flex items-center justify-center">
-                      <div className="text-white text-xs">💎</div>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-['Poppins'] font-bold text-xl text-white mb-1">
-                      You're off to a great start!
-                    </h3>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-['Poppins'] font-medium text-white opacity-90">
-                    {totalXP} points done
-                  </span>
-                  <span className="font-['Poppins'] font-medium text-white opacity-90">
-                    Goal 10,000
-                  </span>
-                </div>
-                <div className="w-full bg-white/20 rounded-full h-3 mb-4">
-                  <div
-                    className="bg-white h-3 rounded-full transition-all duration-500 relative"
-                    style={{ width: `${Math.min((totalXP / 10000) * 100, 100)}%` }}
-                  >
-                    <div className="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center border-2 border-white">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setLocation("/gaming")}
-                className="w-full bg-white/20 hover:bg-white/30 text-white font-['Poppins'] font-semibold py-3 px-6 rounded-xl transition-all duration-200 backdrop-blur-sm border border-white/30"
-              >
-                Go to game page
-              </button>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Monthly Preview */}
         <div className="mb-6">
           <h3 className="font-['Poppins'] font-semibold text-xl text-[#1F2937] mb-4">Monthly Preview</h3>
