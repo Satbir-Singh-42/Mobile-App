@@ -40,7 +40,7 @@ export class GeminiService {
 User Profile:
 - Age: ${userData.age || 'Not specified'}
 - Income Level: ${userData.income || 'Not specified'}
-- Financial Goals: ${userData.goals?.join(', ') || 'Not specified'}
+- Financial Goals: ${Array.isArray(userData.goals) ? userData.goals.join(', ') : (userData.goals || 'Not specified')}
 - Experience Level: ${userData.experience || 'Beginner'}
 - Learning Time: ${userData.practiceTime || 'Not specified'}
 - Language: ${userData.language || 'English'}
@@ -150,7 +150,7 @@ Respond helpfully to the user's financial question.`;
 User Profile:
 - Age: ${userData.age || 'Not specified'}
 - Income Level: ${userData.income || 'Not specified'}
-- Financial Goals: ${userData.goals?.join(', ') || 'Not specified'}
+- Financial Goals: ${Array.isArray(userData.goals) ? userData.goals.join(', ') : (userData.goals || 'Not specified')}
 - Experience Level: ${userData.experience || 'Beginner'}
 - Learning Time: ${userData.practiceTime || 'Not specified'}
 - Language: ${userData.language || 'English'}

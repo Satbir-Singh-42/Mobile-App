@@ -34,7 +34,7 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
         }
       }
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token')?.trim();
       if (!token) {
         // Show fallback tip without auth
         const fallbackTip = {
@@ -159,7 +159,7 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
         </h4>
         <div className="flex items-center justify-between">
           <div className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-full px-4 py-2 text-sm font-medium">
-            AI Personalized
+            {dailyTip.message.includes("Never share your OTP") ? "Security Tip" : "AI Personalized"}
           </div>
           <button 
             onClick={async () => {
