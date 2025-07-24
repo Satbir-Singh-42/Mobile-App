@@ -64,11 +64,7 @@ export const ProfilePage = (): JSX.Element => {
       title: t('security_settings'),
       action: () => setLocation("/security-settings")
     },
-    {
-      icon: <UserIcon className="h-5 w-5 text-gray-600" />,
-      title: "Advanced Settings",
-      action: () => setLocation("/settings")
-    },
+
     {
       icon: <HelpCircleIcon className="h-5 w-5 text-gray-600" />,
       title: t('help_feedback'),
@@ -123,7 +119,7 @@ export const ProfilePage = (): JSX.Element => {
         >
           <ArrowLeftIcon className="h-6 w-6 text-gray-600" />
         </Button>
-        <h1 className="font-['Poppins'] font-semibold text-lg text-[#242424]">Settings</h1>
+        <h1 className="font-['Poppins'] font-semibold text-lg text-[#242424]">Profile</h1>
         <div className="w-10" />
       </div>
 
@@ -171,7 +167,7 @@ export const ProfilePage = (): JSX.Element => {
         </div>
       </div>
 
-      <BottomNavigation currentPage="settings" />
+      <BottomNavigation currentPage="profile" />
 
       {/* Add bottom padding to prevent content being hidden behind bottom nav */}
       <div className="h-20"></div>

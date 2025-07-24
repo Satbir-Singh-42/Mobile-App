@@ -2,6 +2,21 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { HomeIcon, SearchIcon, CalendarIcon, UserIcon } from "lucide-react";
 
+// Gaming Controller Icon Component - Based on user provided icon
+const GamepadIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    className={className}
+    fill="currentColor"
+  >
+    <rect x="2" y="8" width="20" height="8" rx="4" ry="4" />
+    <rect x="6" y="10" width="1" height="4" />
+    <rect x="5" y="11" width="3" height="1" />
+    <rect x="16" y="10" width="2" height="2" />
+    <rect x="15" y="13" width="2" height="2" />
+  </svg>
+);
+
 interface BottomNavigationProps {
   currentPage?: string;
 }
@@ -34,16 +49,16 @@ export const BottomNavigation = ({ currentPage = "" }: BottomNavigationProps) =>
     {
       id: "gaming",
       label: "Gaming",
-      icon: () => <span className="text-lg">🎮</span>,
+      icon: GamepadIcon,
       path: "/gaming",
       activePages: ["gaming", "quiz"]
     },
     {
-      id: "settings",
-      label: "Settings",
+      id: "profile",
+      label: "Profile", 
       icon: UserIcon,
-      path: "/settings",
-      activePages: ["settings", "profile", "edit-profile", "security-settings", "goals-summary", "learning-progress", "help-feedback"]
+      path: "/profile",
+      activePages: ["profile", "edit-profile", "security-settings", "goals-summary", "learning-progress", "help-feedback"]
     }
   ];
 
@@ -71,11 +86,7 @@ export const BottomNavigation = ({ currentPage = "" }: BottomNavigationProps) =>
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                 active ? 'bg-[#6366F1]' : 'bg-gray-100'
               }`}>
-                {typeof IconComponent === 'function' && item.id === 'gaming' ? (
-                  <IconComponent />
-                ) : (
-                  <IconComponent className={`w-4 h-4 ${active ? 'text-white' : 'text-gray-500'}`} />
-                )}
+                <IconComponent className={`w-4 h-4 ${active ? 'text-white' : 'text-gray-500'}`} />
               </div>
               <span className={`text-xs ${active ? 'text-[#6366F1] font-medium' : 'text-gray-500'}`}>
                 {item.label}

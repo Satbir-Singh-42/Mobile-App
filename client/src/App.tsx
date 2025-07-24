@@ -12,7 +12,7 @@ import { SignupPage } from "@/pages/SignupPage";
 import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage";
 import { QuestionnairePage } from "@/pages/QuestionnairePage";
 import { DashboardPage } from "@/pages/DashboardPage";
-import { SettingsPage } from "@/pages/SettingsPage";
+
 import { ProfilePage } from "@/pages/ProfilePage";
 import { SearchPage } from "@/pages/SearchPage";
 import { NotificationsPage } from "@/pages/NotificationsPage";
@@ -39,7 +39,7 @@ function Router() {
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/questionnaire" component={QuestionnairePage} />
       <Route path="/dashboard" component={DashboardPage} />
-      <Route path="/settings" component={SettingsPage} />
+
       <Route path="/profile" component={ProfilePage} />
       <Route path="/search" component={SearchPage} />
       <Route path="/notifications" component={NotificationsPage} />
