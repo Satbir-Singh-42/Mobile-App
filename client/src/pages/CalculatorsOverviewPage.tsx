@@ -6,7 +6,7 @@ import { ArrowLeftIcon, BookmarkIcon, HomeIcon, MessageCircleIcon, UserIcon } fr
 import { ChatWidget } from "@/components/ui/chat-widget";
 
 // Import calculator images from assets
-import sipImg from "@assets/Saly-10 1_1753339425048.png";
+import sipImg from "@assets/Saly-10 1_1753338498072.png";
 import budgetPlannerImg from "@assets/Image-2_1753339425046.png";
 import emiImg from "@assets/Image-3_1753339425046.png";
 import taxImg from "@assets/Image_1753339425045.png";
