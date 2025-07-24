@@ -520,7 +520,7 @@ export const PlannerPage = (): JSX.Element => {
           <Button 
             variant="ghost" 
             className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/settings")}
+            onClick={() => setLocation("/profile")}
           >
             <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
               <UserIcon className="w-4 h-4 text-gray-500" />

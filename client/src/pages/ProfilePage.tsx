@@ -64,6 +64,11 @@ export const ProfilePage = (): JSX.Element => {
       action: () => setLocation("/security-settings")
     },
     {
+      icon: <UserIcon className="h-5 w-5 text-gray-600" />,
+      title: "Advanced Settings",
+      action: () => setLocation("/settings")
+    },
+    {
       icon: <HelpCircleIcon className="h-5 w-5 text-gray-600" />,
       title: t('help_feedback'),
       action: () => setLocation("/help-feedback")
@@ -89,7 +94,7 @@ export const ProfilePage = (): JSX.Element => {
     },
     {
       icon: <UserIcon className="h-6 w-6 text-[#4157ff]" />,
-      action: () => setLocation("/settings"),
+      action: () => setLocation("/profile"),
       active: true
     }
   ];

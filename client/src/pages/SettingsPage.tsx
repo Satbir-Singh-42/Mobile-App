@@ -322,12 +322,12 @@ export const SettingsPage = (): JSX.Element => {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setLocation("/dashboard")}
+          onClick={() => setLocation("/profile")}
           className="p-2 hover:bg-gray-100 rounded-full"
         >
           <ArrowLeftIcon className="h-6 w-6 text-[#4157ff]" />
         </Button>
-        <h1 className="font-['Poppins'] font-semibold text-xl text-[#242424]">Profile</h1>
+        <h1 className="font-['Poppins'] font-semibold text-xl text-[#242424]">Advanced Settings</h1>
         <div className="w-10" />
       </div>
 
