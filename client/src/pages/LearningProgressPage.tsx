@@ -14,7 +14,7 @@ export const LearningProgressPage = (): JSX.Element => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLocation("/settings")}
+            onClick={() => setLocation("/profile")}
             className="p-2 text-gray-600"
           >
             <ArrowLeftIcon className="h-6 w-6" />

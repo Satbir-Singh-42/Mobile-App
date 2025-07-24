@@ -124,7 +124,7 @@ export const EditProfilePage = (): JSX.Element => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLocation("/dashboard")}
+            onClick={() => setLocation("/profile")}
             className="p-2 text-gray-600"
           >
             <ArrowLeftIcon className="h-6 w-6" />
@@ -218,7 +218,7 @@ export const EditProfilePage = (): JSX.Element => {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => setLocation("/dashboard")}
+                onClick={() => setLocation("/profile")}
                 className="flex-1 font-['Poppins']"
               >
                 Cancel
