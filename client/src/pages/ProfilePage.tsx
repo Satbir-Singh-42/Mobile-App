@@ -28,8 +28,31 @@ export const ProfilePage = (): JSX.Element => {
   const [forceRerender, setForceRerender] = useState(0);
 
   useEffect(() => {
-    const userData = authAPI.getUser();
-    setUser(userData);
+    const fetchUserData = () => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        const userData = authAPI.getUser();
+        
+        console.log("Profile page authentication check:", {
+          hasToken: !!token,
+          hasUserData: !!userData,
+          userData: userData
+        });
+        
+        if (!token || !userData) {
+          console.log("No token or user data found, redirecting to login");
+          setLocation("/login");
+          return;
+        }
+        
+        setUser(userData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setLocation("/login");
+      }
+    };
+
+    fetchUserData();
 
     // Listen for language changes
     const handleLanguageChange = () => {
@@ -38,7 +61,7 @@ export const ProfilePage = (): JSX.Element => {
     
     window.addEventListener('languageChanged', handleLanguageChange);
     return () => window.removeEventListener('languageChanged', handleLanguageChange);
-  }, []);
+  }, [setLocation]);
 
   const getInitials = (username: string) => {
     return username ? username.charAt(0).toUpperCase() : "U";
@@ -107,17 +130,17 @@ export const ProfilePage = (): JSX.Element => {
 
   if (!user) {
     return (
-      <div className="bg-prima-1 min-h-screen w-full flex items-center justify-center">
+      <div className="bg-[#F8F9FF] min-h-screen w-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4157ff] mx-auto"></div>
-          <p className="font-['Poppins'] text-gray-600 mt-2">Loading...</p>
+          <p className="font-['Poppins'] text-gray-600 mt-2">Loading profile...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-prima-1 min-h-screen w-full mobile-status-hidden">
+    <div className="bg-[#F8F9FF] min-h-screen w-full mobile-status-hidden">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <Button
