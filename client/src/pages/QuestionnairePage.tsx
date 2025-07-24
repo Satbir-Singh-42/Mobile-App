@@ -13,6 +13,7 @@ interface Question {
   options: string[];
   required: boolean;
   icons?: JSX.Element[];
+  hasNetworkImages?: boolean;
 }
 
 export const QuestionnairePage = (): JSX.Element => {
@@ -58,8 +59,9 @@ export const QuestionnairePage = (): JSX.Element => {
         "Buying a house/property",
         "Paying off debt",
         "Starting a business",
+        "Travel and experiences",
         "Children's education",
-        "Travel and experiences"
+        "Prefer not to say"
       ],
       required: true
     },
@@ -74,23 +76,17 @@ export const QuestionnairePage = (): JSX.Element => {
         "I'm an expert"
       ],
       required: true,
-      icons: [
-        <GraduationCapIcon className="h-4 w-4 text-gray-600" />,
-        <BookOpenIcon className="h-4 w-4 text-gray-600" />,
-        <TrendingUpIcon className="h-4 w-4 text-gray-600" />,
-        <BarChart3Icon className="h-4 w-4 text-gray-600" />,
-        <CrownIcon className="h-4 w-4 text-gray-600" />
-      ]
+      hasNetworkImages: true
     },
     {
       id: "practice_time",
       title: "How much time can you dedicate to learning about finance daily?",
       options: [
-        "5 minutes",
-        "10 minutes", 
-        "15 minutes",
-        "20 minutes",
-        "30 minutes or more"
+        "5-10 minutes",
+        "15-20 minutes", 
+        "25-30 minutes",
+        "35-45 minutes",
+        "1 hour or more"
       ],
       required: true
     },
@@ -158,22 +154,43 @@ export const QuestionnairePage = (): JSX.Element => {
   // Removed different colors for consistency
 
   const getKnowledgeVisualization = (level: string, index: number) => {
-    const bars = [
-      { height: "h-[29px]", active: index >= 0 },
-      { height: "h-[52px]", active: index >= 1 },
-      { height: "h-[65px]", active: index >= 2 },
+    // Using reliable CDN images for different knowledge levels
+    const knowledgeImages = [
+      "https://img.icons8.com/fluency/48/student-male.png", // Complete beginner - student
+      "https://img.icons8.com/fluency/48/reading.png", // Basic knowledge - reading
+      "https://img.icons8.com/fluency/48/calculator.png", // Some experience - calculator
+      "https://img.icons8.com/fluency/48/graph.png", // Quite knowledgeable - graph
+      "https://img.icons8.com/fluency/48/expert.png"  // Expert - expert
     ];
 
     return (
-      <div className="flex items-end justify-center gap-1 mt-2">
-        {bars.map((bar, barIndex) => (
-          <div
-            key={barIndex}
-            className={`w-3 ${bar.height} rounded-t ${
-              bar.active ? "bg-[#5589f4]" : "bg-[#5589f433]"
-            }`}
-          />
-        ))}
+      <div className="flex items-center justify-center">
+        <img 
+          src={knowledgeImages[index] || knowledgeImages[0]} 
+          alt={`Knowledge level ${index + 1}`}
+          className="w-10 h-10 object-contain"
+          onError={(e) => {
+            // Fallback to bars if image fails to load
+            const target = e.currentTarget as HTMLImageElement;
+            target.style.display = 'none';
+            const fallbackDiv = target.nextElementSibling as HTMLElement;
+            if (fallbackDiv) {
+              fallbackDiv.style.display = 'flex';
+            }
+          }}
+        />
+        <div className="hidden items-end justify-center gap-1">
+          {Array.from({length: 3}).map((_, barIndex) => (
+            <div
+              key={barIndex}
+              className={`w-2 rounded-t ${
+                barIndex <= index ? "bg-[#5589f4]" : "bg-[#5589f433]"
+              } ${
+                barIndex === 0 ? "h-4" : barIndex === 1 ? "h-6" : "h-8"
+              }`}
+            />
+          ))}
+        </div>
       </div>
     );
   };
@@ -232,7 +249,12 @@ export const QuestionnairePage = (): JSX.Element => {
                         id={option}
                         className="border-[#4157ff] text-[#4157ff]"
                       />
-                      {currentQuestion.icons && currentQuestion.icons[index] && (
+                      {currentQuestion.hasNetworkImages && currentQuestion.id === "experience" && (
+                        <div className="flex-shrink-0">
+                          {getKnowledgeVisualization(option, index)}
+                        </div>
+                      )}
+                      {currentQuestion.icons && currentQuestion.icons[index] && !currentQuestion.hasNetworkImages && (
                         <div className="flex-shrink-0">
                           {currentQuestion.icons[index]}
                         </div>
@@ -245,9 +267,7 @@ export const QuestionnairePage = (): JSX.Element => {
                       </Label>
                     </div>
 
-                    {/* Knowledge level visualization */}
-                    {currentQuestion.id === "experience" && 
-                     getKnowledgeVisualization(option, index)}
+                    {/* Remove old knowledge level visualization since it's now in the main option */}
                   </div>
                 </div>
               ))}

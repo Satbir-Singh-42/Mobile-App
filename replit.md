@@ -186,6 +186,12 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Fixed JSON parsing errors in password reset API calls (January 24, 2025)
 - ✓ Replaced apiRequest helper with direct fetch calls for proper Content-Type headers
 - ✓ Verified all password reset endpoints working correctly with proper error handling
+- ✓ Updated questionnaire design based on user feedback (January 24, 2025)
+- ✓ Added "Prefer not to say" option to financial goals question
+- ✓ Moved "Children's education" to last position in financial goals list
+- ✓ Updated time dedication options to ranges (5-10 minutes, 15-20 minutes, etc.)
+- ✓ Replaced financial knowledge icons with network images for better visual appeal
+- ✓ Enhanced questionnaire UX with proper image fallbacks and error handling
 - ✓ Successfully completed migration from Replit Agent to Replit environment (January 24, 2025)
 - ✓ All dependencies installed and project running without errors
 - ✓ Database connectivity verified and authentication system functional
