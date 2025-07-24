@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // Using simple select with HTML select element for better compatibility
 import { useLocation, useParams } from "wouter";
-import { ArrowLeftIcon, CalculatorIcon, TrendingUpIcon, PiggyBankIcon, CreditCardIcon, HomeIcon, MessageCircleIcon } from "lucide-react";
+import { ArrowLeftIcon, CalculatorIcon, TrendingUpIcon, PiggyBankIcon, CreditCardIcon, HomeIcon, MessageCircleIcon, UserIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
 
 export const IndividualCalculatorPage = () => {
