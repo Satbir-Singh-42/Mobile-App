@@ -4,12 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
 import { ArrowLeftIcon, CheckIcon } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 type Step = "email" | "otp" | "newPassword" | "success";
 
 export const ForgotPasswordPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState<Step>("email");
+  const [loading, setLoading] = useState(false);
+  const [resetToken, setResetToken] = useState("");
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
     otp: "",
@@ -17,29 +22,140 @@ export const ForgotPasswordPage = (): JSX.Element => {
     confirmPassword: "",
   });
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Send OTP to email
-    console.log("Sending OTP to:", formData.email);
-    setCurrentStep("otp");
+    setLoading(true);
+    
+    try {
+      const response = await apiRequest("/api/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "OTP sent successfully",
+          description: `Verification code sent to ${data.email}`,
+        });
+        setCurrentStep("otp");
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Error",
+          description: error.message || "Failed to send OTP",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Network error. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleOtpSubmit = (e: React.FormEvent) => {
+  const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Verify OTP
-    console.log("Verifying OTP:", formData.otp);
-    setCurrentStep("newPassword");
+    setLoading(true);
+    
+    try {
+      const response = await apiRequest("/api/auth/verify-otp", {
+        method: "POST",
+        body: JSON.stringify({ 
+          email: formData.email, 
+          otp: formData.otp 
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResetToken(data.resetToken);
+        toast({
+          title: "OTP verified",
+          description: "You can now create a new password",
+        });
+        setCurrentStep("newPassword");
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Error",
+          description: error.message || "Invalid OTP",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Network error. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handlePasswordReset = (e: React.FormEvent) => {
+  const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (formData.newPassword !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast({
+        title: "Error",
+        description: "Passwords do not match!",
+        variant: "destructive",
+      });
       return;
     }
-    // TODO: Reset password
-    console.log("Resetting password");
-    setCurrentStep("success");
+
+    if (formData.newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const response = await apiRequest("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${resetToken}`,
+        },
+        body: JSON.stringify({ 
+          token: resetToken,
+          newPassword: formData.newPassword 
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Password reset successfully",
+        });
+        setCurrentStep("success");
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Error",
+          description: error.message || "Failed to reset password",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Network error. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderEmailStep = () => (
@@ -63,9 +179,10 @@ export const ForgotPasswordPage = (): JSX.Element => {
 
       <Button
         type="submit"
-        className="w-full bg-[#4157ff] hover:bg-[#3146e6] text-white font-['Poppins'] font-bold text-lg md:text-[32px] h-12 md:h-[80px] rounded-[15.49px]"
+        disabled={loading}
+        className="w-full bg-[#4157ff] hover:bg-[#3146e6] disabled:bg-[#c4c4c4] text-white font-['Poppins'] font-bold text-lg md:text-[32px] h-12 md:h-[80px] rounded-[15.49px]"
       >
-        Send Verification Code
+        {loading ? "Sending..." : "Send Verification Code"}
       </Button>
     </form>
   );
@@ -90,23 +207,13 @@ export const ForgotPasswordPage = (): JSX.Element => {
         </p>
       </div>
 
-      <div className="space-y-4">
-        <Button
-          type="submit"
-          className="w-full bg-[#4157ff] hover:bg-[#3146e6] text-white font-['Poppins'] font-bold text-lg md:text-[32px] h-12 md:h-[80px] rounded-[15.49px]"
-        >
-          Verify Code
-        </Button>
-        
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => setCurrentStep("email")}
-          className="w-full font-['Poppins'] font-medium text-[#4157ff] text-base md:text-[24px] hover:bg-transparent"
-        >
-          Resend Code
-        </Button>
-      </div>
+      <Button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-[#4157ff] hover:bg-[#3146e6] disabled:bg-[#c4c4c4] text-white font-['Poppins'] font-bold text-lg md:text-[32px] h-12 md:h-[80px] rounded-[15.49px]"
+      >
+        {loading ? "Verifying..." : "Verify Code"}
+      </Button>
     </form>
   );
 
@@ -142,9 +249,10 @@ export const ForgotPasswordPage = (): JSX.Element => {
 
       <Button
         type="submit"
-        className="w-full bg-[#4157ff] hover:bg-[#3146e6] text-white font-['Poppins'] font-bold text-lg md:text-[32px] h-12 md:h-[80px] rounded-[15.49px]"
+        disabled={loading}
+        className="w-full bg-[#4157ff] hover:bg-[#3146e6] disabled:bg-[#c4c4c4] text-white font-['Poppins'] font-bold text-lg md:text-[32px] h-12 md:h-[80px] rounded-[15.49px]"
       >
-        Reset Password
+        {loading ? "Resetting..." : "Reset Password"}
       </Button>
     </form>
   );
@@ -191,6 +299,28 @@ export const ForgotPasswordPage = (): JSX.Element => {
   return (
     <div className="bg-prima-1 min-h-screen w-full flex items-center justify-center px-4">
       <div className="w-full max-w-[800px]">
+        {/* Back button - moved to top */}
+        {currentStep !== "success" && (
+          <div className="mb-6">
+            <Button
+              onClick={() => {
+                if (currentStep === "email") {
+                  setLocation("/login");
+                } else if (currentStep === "otp") {
+                  setCurrentStep("email");
+                } else if (currentStep === "newPassword") {
+                  setCurrentStep("otp");
+                }
+              }}
+              variant="ghost"
+              className="font-['Poppins'] font-bold text-[#4157ff] text-lg hover:bg-transparent flex items-center gap-2 p-0"
+            >
+              <ArrowLeftIcon className="w-5 h-5" />
+              Back
+            </Button>
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="font-['Anta'] text-[#242424] text-4xl md:text-[80px] tracking-[-4.17px] mb-6">
@@ -213,28 +343,6 @@ export const ForgotPasswordPage = (): JSX.Element => {
             {currentStep === "success" && renderSuccessStep()}
           </CardContent>
         </Card>
-
-        {/* Back button */}
-        {currentStep !== "success" && (
-          <div className="mt-6">
-            <Button
-              onClick={() => {
-                if (currentStep === "email") {
-                  setLocation("/login");
-                } else if (currentStep === "otp") {
-                  setCurrentStep("email");
-                } else if (currentStep === "newPassword") {
-                  setCurrentStep("otp");
-                }
-              }}
-              variant="ghost"
-              className="font-['Overpass'] font-bold text-[#4157ff] text-lg hover:bg-transparent flex items-center gap-2"
-            >
-              <ArrowLeftIcon className="w-5 h-5" />
-              Back
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
