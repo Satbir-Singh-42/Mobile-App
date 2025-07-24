@@ -184,16 +184,31 @@ export const DashboardPage = (): JSX.Element => {
 
   // Calculate real stats from database data
   const progressData = (gamingProgress as any)?.progress;
-  const completedLevels = progressData?.completedLevels || 0;
+  
+  // Debug log to see the actual data structure
+  console.log('Gaming Progress Data:', progressData);
+  
+  const completedLevelsArray = progressData?.completedLevels || [];
   const currentMap = progressData?.currentMap || 1;
   const totalCompletedTasks = tasksData?.tasks?.filter(task => task.completed).length || 0;
   const totalActiveTasks = tasksData?.tasks?.filter(task => !task.completed).length || 0;
+  
+  // Count total lessons completed (length of completedLevels array)
+  const totalLessonsCompleted = Array.isArray(completedLevelsArray) ? completedLevelsArray.length : 0;
+  
+  // Get completed maps count
+  const completedMapsArray = progressData?.completedMaps || [];
+  const totalCompletedMaps = Array.isArray(completedMapsArray) ? completedMapsArray.length : 0;
+  
+  console.log('Completed Levels Array:', completedLevelsArray);
+  console.log('Total Lessons Completed:', totalLessonsCompleted);
+  console.log('Current Map:', currentMap);
   
   const monthlyStats = [
     {
       id: "lessons_completed",
       title: "Lessons Completed", 
-      value: completedLevels.toString(),
+      value: totalLessonsCompleted.toString(),
       color: "bg-[#4ECDC4]"
     },
     {
@@ -211,7 +226,7 @@ export const DashboardPage = (): JSX.Element => {
     {
       id: "quizzes_attempted",
       title: "Quizzes Attempted",
-      value: completedLevels.toString(), // Each completed level represents quiz attempts
+      value: totalLessonsCompleted.toString(), // Each completed level equals one quiz attempted
       color: "bg-[#4FC3F7]"
     }
   ];
