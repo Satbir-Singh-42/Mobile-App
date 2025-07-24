@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// Using simple select with HTML select element for better compatibility
 import { useLocation, useParams } from "wouter";
 import { ArrowLeftIcon, BookmarkIcon, UserIcon, CalculatorIcon, TrendingUpIcon, PiggyBankIcon, CreditCardIcon, HomeIcon, MessageCircleIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
@@ -483,15 +483,14 @@ export const IndividualCalculatorPage = () => {
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-700">Tax Regime</Label>
-                  <Select value={taxData.taxRegime} onValueChange={(value) => setTaxData({...taxData, taxRegime: value})}>
-                    <SelectTrigger className="mt-1 border-gray-200 focus:border-cyan-500 rounded-xl">
-                      <SelectValue placeholder="Select tax regime" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="old">Old Tax Regime</SelectItem>
-                      <SelectItem value="new">New Tax Regime</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <select 
+                    value={taxData.taxRegime} 
+                    onChange={(e) => setTaxData({...taxData, taxRegime: e.target.value})}
+                    className="w-full mt-1 border border-gray-200 focus:border-cyan-500 rounded-xl px-3 py-2 bg-white"
+                  >
+                    <option value="old">Old Tax Regime</option>
+                    <option value="new">New Tax Regime</option>
+                  </select>
                 </div>
                 <Button 
                   onClick={calculateTax} 
