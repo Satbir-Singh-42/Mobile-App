@@ -15,9 +15,7 @@ import {
   verifyOtpSchema,
   resetPasswordSchema,
   questionnaireSchema,
-  insertTaskSchema,
-  insertUserProgressSchema,
-  insertQuizSessionSchema
+  insertTaskSchema
 } from "@shared/schema";
 import { GeminiService } from "./gemini";
 

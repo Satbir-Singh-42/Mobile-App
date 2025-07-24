@@ -8,13 +8,10 @@ import type {
   Task as TaskType,
   InsertTask,
   UserProgress,
-  InsertUserProgress,
   QuizSession,
   InsertQuizSession,
   QuizQuestion as QuizQuestionType,
-  InsertQuizQuestion,
-  UserAnsweredQuestion as UserAnsweredQuestionType,
-  InsertUserAnsweredQuestion
+  UserAnsweredQuestion as UserAnsweredQuestionType
 } from "@shared/schema";
 
 export interface IStorage {
