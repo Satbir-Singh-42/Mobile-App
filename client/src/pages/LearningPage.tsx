@@ -11,48 +11,42 @@ const categories = [
     title: "Budgeting",
     subtitle: "Learn to plan your monthly expenses",
     bgColor: "bg-gradient-to-br from-pink-200 to-pink-300",
-    icon: "💰",
-    image: "@assets/attached_assets/Image-4_1753339425047.png"
+    icon: "💰"
   },
   {
     id: 2,
     title: "Saving & Investment",
     subtitle: "Start your savings & beginner investing",
     bgColor: "bg-gradient-to-br from-green-200 to-green-300",
-    icon: "📈",
-    image: "@assets/attached_assets/10_1753339425044.png"
+    icon: "📈"
   },
   {
     id: 3,
     title: "Tax Basics",
     subtitle: "Know about income tax and returns",
     bgColor: "bg-gradient-to-br from-orange-200 to-orange-300",
-    icon: "📋",
-    image: "@assets/attached_assets/9_1753339425044.png"
+    icon: "📋"
   },
   {
     id: 4,
     title: "Fraud Awareness",
     subtitle: "Learn to avoid scams and keep yourself safe",
     bgColor: "bg-gradient-to-br from-blue-200 to-blue-300",
-    icon: "🛡️",
-    image: "@assets/attached_assets/Image-5_1753339425047.png"
+    icon: "🛡️"
   },
   {
     id: 5,
     title: "Data Privacy",
     subtitle: "Secure your digital financial identity",
     bgColor: "bg-gradient-to-br from-yellow-200 to-yellow-300",
-    icon: "🔒",
-    image: "@assets/attached_assets/Image-1_1753339425045.png"
+    icon: "🔒"
   },
   {
     id: 6,
     title: "Financial Calculators",
     subtitle: "Free out EMI and Tax calculations",
     bgColor: "bg-gradient-to-br from-purple-200 to-purple-300",
-    icon: "🧮",
-    image: "@assets/attached_assets/Image_1753339425045.png"
+    icon: "🧮"
   }
 ];
 
@@ -61,32 +55,28 @@ const calculators = [
     id: 1,
     title: "SIP Calculator",
     subtitle: "Estimate investment returns",
-    icon: "📊",
-    bgColor: "bg-white",
+    iconBg: "bg-gradient-to-br from-orange-100 to-orange-200",
     image: "@assets/attached_assets/Saly-10 1_1753339425048.png"
   },
   {
     id: 2,
     title: "Budget Planner",
     subtitle: "Split expenses smartly",
-    icon: "💳",
-    bgColor: "bg-purple-50",
+    iconBg: "bg-gradient-to-br from-purple-100 to-purple-200",
     image: "@assets/attached_assets/Image-2_1753339425046.png"
   },
   {
     id: 3,
     title: "EMI Calculator",
     subtitle: "Split expenses smartly",
-    icon: "🏠",
-    bgColor: "bg-orange-50",
+    iconBg: "bg-gradient-to-br from-green-100 to-green-200",
     image: "@assets/attached_assets/Image-3_1753339425046.png"
   },
   {
     id: 4,
     title: "Tax Estimator",
     subtitle: "Estimate tax payable",
-    icon: "📄",
-    bgColor: "bg-blue-50",
+    iconBg: "bg-gradient-to-br from-blue-100 to-blue-200",
     image: "@assets/attached_assets/Image_1753339425045.png"
   }
 ];
@@ -98,7 +88,16 @@ export const LearningPage = (): JSX.Element => {
 
   const tabs = ["All", "Recommended", "Favorite"];
 
-  const filteredCategories = categories.filter(category =>
+  const categoryData = [
+    { id: 1, title: "Budgeting", subtitle: "Learn to plan your monthly expenses" },
+    { id: 2, title: "Saving & Investment", subtitle: "Start your savings & beginner investing" },
+    { id: 3, title: "Tax Basics", subtitle: "Know about income tax and returns" },
+    { id: 4, title: "Fraud Awareness", subtitle: "Learn to avoid scams and keep yourself safe" },
+    { id: 5, title: "Data Privacy", subtitle: "Secure your digital financial identity" },
+    { id: 6, title: "Financial Calculators", subtitle: "Free out EMI and Tax calculations" }
+  ];
+
+  const filteredCategories = categoryData.filter(category =>
     category.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     category.subtitle.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -161,20 +160,119 @@ export const LearningPage = (): JSX.Element => {
       <div className="bg-white rounded-t-3xl min-h-screen px-6 py-6">
         {/* Learning Categories Grid */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          {filteredCategories.map((category) => (
-            <Card key={category.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className={`${category.bgColor} p-4 rounded-xl h-32 flex flex-col justify-between relative overflow-hidden`}>
-                <div className="z-10">
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1">{category.title}</h3>
-                  <p className="text-xs text-gray-600 leading-tight">{category.subtitle}</p>
+          {/* Budgeting Card */}
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
+            <CardContent className="bg-gradient-to-br from-pink-200 to-pink-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+              <div className="z-10">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">Budgeting</h3>
+                <p className="text-xs text-gray-600 leading-tight">Learn to plan your monthly expenses</p>
+              </div>
+              <div className="absolute bottom-3 right-3">
+                <div className="w-10 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                  <div className="w-6 h-8 bg-pink-400 rounded-md flex items-center justify-center">
+                    <span className="text-white text-xs">💰</span>
+                  </div>
                 </div>
-                <div className="absolute bottom-2 right-2 text-2xl opacity-80">
-                  {category.icon}
+              </div>
+              <div className="absolute -top-4 -right-4 w-12 h-12 bg-white/20 rounded-full"></div>
+              <div className="absolute bottom-6 right-6 w-2 h-2 bg-pink-400 rounded-full"></div>
+            </CardContent>
+          </Card>
+
+          {/* Saving & Investment Card */}
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
+            <CardContent className="bg-gradient-to-br from-green-200 to-green-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+              <div className="z-10">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">Saving & Investment</h3>
+                <p className="text-xs text-gray-600 leading-tight">Start your savings & beginner investing</p>
+              </div>
+              <div className="absolute bottom-2 right-2">
+                <div className="relative">
+                  <div className="w-12 h-8 bg-green-400 rounded-full flex items-center justify-center relative">
+                    <div className="w-2 h-4 bg-white rounded-full"></div>
+                    <div className="absolute -top-1 right-2 w-3 h-3 bg-red-400 rounded-full"></div>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-4 h-1 bg-green-500 rounded-full"></div>
                 </div>
-                <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-white/20 rounded-full"></div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+              <div className="absolute top-2 right-8 w-3 h-3 bg-white/30 rounded-full"></div>
+            </CardContent>
+          </Card>
+
+          {/* Tax Basics Card */}
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
+            <CardContent className="bg-gradient-to-br from-orange-200 to-orange-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+              <div className="z-10">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">Tax Basics</h3>
+                <p className="text-xs text-gray-600 leading-tight">Know about income tax and returns</p>
+              </div>
+              <div className="absolute bottom-1 right-1">
+                <div className="w-14 h-10 bg-white/20 rounded-lg flex items-center justify-center relative">
+                  <div className="w-8 h-6 bg-orange-400 rounded flex items-center justify-center">
+                    <div className="w-4 h-4 bg-white rounded-sm"></div>
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full"></div>
+                </div>
+              </div>
+              <div className="absolute top-4 right-12 w-2 h-2 bg-orange-400 rounded-full"></div>
+            </CardContent>
+          </Card>
+
+          {/* Fraud Awareness Card */}
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
+            <CardContent className="bg-gradient-to-br from-blue-200 to-blue-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+              <div className="z-10">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">Fraud Awareness</h3>
+                <p className="text-xs text-gray-600 leading-tight">Learn to avoid scams and keep yourself safe</p>
+              </div>
+              <div className="absolute bottom-2 right-2">
+                <div className="w-10 h-12 bg-blue-400 rounded-lg flex items-center justify-center relative">
+                  <div className="w-6 h-8 bg-white/30 rounded flex items-center justify-center">
+                    <span className="text-blue-600 text-lg">🛡️</span>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute top-6 right-14 w-3 h-3 bg-white/30 rounded-full"></div>
+            </CardContent>
+          </Card>
+
+          {/* Data Privacy Card */}
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
+            <CardContent className="bg-gradient-to-br from-yellow-200 to-yellow-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+              <div className="z-10">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">Data Privacy</h3>
+                <p className="text-xs text-gray-600 leading-tight">Secure your digital financial identity</p>
+              </div>
+              <div className="absolute bottom-2 right-2">
+                <div className="w-12 h-10 bg-yellow-400 rounded-lg flex items-center justify-center relative">
+                  <div className="w-6 h-6 bg-white/40 rounded flex items-center justify-center">
+                    <span className="text-yellow-700 text-sm">🔒</span>
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-400 rounded-full"></div>
+                </div>
+              </div>
+              <div className="absolute top-8 right-16 w-2 h-2 bg-yellow-500 rounded-full"></div>
+            </CardContent>
+          </Card>
+
+          {/* Financial Calculators Card */}
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
+            <CardContent className="bg-gradient-to-br from-purple-200 to-purple-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+              <div className="z-10">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">Financial Calculators</h3>
+                <p className="text-xs text-gray-600 leading-tight">Free out EMI and Tax calculations</p>
+              </div>
+              <div className="absolute bottom-2 right-2">
+                <div className="w-12 h-10 bg-purple-400 rounded-lg flex items-center justify-center relative">
+                  <div className="w-8 h-6 bg-white/30 rounded flex items-center justify-center">
+                    <span className="text-purple-700 text-sm">🧮</span>
+                  </div>
+                  <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-pink-400 rounded-full"></div>
+                </div>
+              </div>
+              <div className="absolute top-4 right-8 w-4 h-4 bg-white/20 rounded-full"></div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Financial Calculators Section */}
@@ -190,15 +288,20 @@ export const LearningPage = (): JSX.Element => {
             <p className="text-sm text-gray-600 mb-4">4 Calculators</p>
             <p className="text-sm text-gray-500 mb-6">Plan your finances better with easy-to-use tools.</p>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {filteredCalculators.map((calc) => (
-                <Card key={calc.id} className="border border-gray-100 shadow-sm">
+                <Card key={calc.id} className="border border-gray-100 shadow-sm rounded-2xl">
                   <CardContent className="flex items-center p-4 space-x-4">
-                    <div className={`w-12 h-12 ${calc.bgColor} rounded-xl flex items-center justify-center`}>
-                      <span className="text-xl">{calc.icon}</span>
+                    <div className={`w-14 h-14 ${calc.iconBg} rounded-2xl flex items-center justify-center relative overflow-hidden`}>
+                      {/* Image placeholder - in real implementation you'd use the actual image */}
+                      <div className="w-8 h-8 bg-white/50 rounded-lg flex items-center justify-center">
+                        <div className="w-6 h-6 bg-gray-400 rounded"></div>
+                      </div>
+                      {/* Decorative elements */}
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-white/30 rounded-full"></div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-gray-800">{calc.title}</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{calc.title}</h3>
                       <p className="text-xs text-gray-500">{calc.subtitle}</p>
                     </div>
                     <BookmarkIcon className="w-5 h-5 text-gray-300" />
