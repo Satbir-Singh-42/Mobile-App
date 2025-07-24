@@ -7,6 +7,7 @@ A comprehensive mobile-first financial literacy application with gamified learni
 ### Core Functionality
 - **Mobile-First Design**: Optimized for mobile devices with touch-friendly UI
 - **User Authentication**: JWT-based auth with OTP email verification and password reset
+- **Logout Security**: Comprehensive logout functionality across all pages with session cleanup
 - **Biometric Security**: WebAuthn support for fingerprint/Face ID authentication
 - **Multilingual Support**: English, Hindi, and Punjabi language options
 
@@ -25,8 +26,9 @@ A comprehensive mobile-first financial literacy application with gamified learni
 ### Additional Features
 - **Smart Notifications**: Dynamic notifications based on user activity and progress
 - **AI Chat Widget**: Floating chat assistant available across all pages
-- **Profile Management**: Complete profile editing with image upload support
+- **Profile Management**: Complete profile editing with image upload support and logout functionality
 - **Learning Progress**: Track completed lessons and modules
+- **Security Features**: Comprehensive logout system with session cleanup across all pages
 
 ## 🏗️ Complete Technical Architecture
 
@@ -46,12 +48,12 @@ A comprehensive mobile-first financial literacy application with gamified learni
   ```
   client/
   ├── src/
-  │   ├── components/ui/     # Reusable UI components
-  │   ├── pages/            # Page components
-  │   ├── lib/              # Utility functions and API clients
+  │   ├── components/ui/     # 16 optimized UI components (cleaned up)
+  │   ├── pages/            # 22 active page components
+  │   ├── lib/              # Auth, API clients, i18n, utilities
   │   ├── hooks/            # Custom React hooks
   │   └── main.tsx          # Application entry point
-  ├── public/               # Static assets
+  ├── public/               # 18 actively used assets (cleaned up)
   └── index.html           # HTML template
   ```
 
@@ -71,15 +73,21 @@ A comprehensive mobile-first financial literacy application with gamified learni
 - **File Upload**: Multer for image handling
 - **Validation**: Zod schemas for request validation
 - **Error Handling**: Centralized error middleware
+- **Optimized Codebase**: Server-side cleanup completed with unused files removed
 - **File Structure**:
   ```
   server/
-  ├── models/           # Database models
-  ├── routes/           # API route handlers
-  ├── middleware/       # Custom middleware
-  ├── utils/           # Utility functions
-  ├── config/          # Configuration files
-  └── index.ts         # Server entry point
+  ├── models/              # MongoDB models (3 files)
+  │   ├── QuizQuestion.ts  # Quiz question schema
+  │   ├── UserProgress.ts  # Gaming progress tracking
+  │   └── UserAnsweredQuestion.ts # Quiz history
+  ├── auth.ts             # JWT authentication & OTP
+  ├── database.ts         # MongoDB connection & schemas
+  ├── gemini.ts          # AI service integration
+  ├── routes.ts          # All API endpoints (cleaned up)
+  ├── storage.ts         # MongoDB storage operations
+  ├── aiQuestionGenerator.ts # AI question generation
+  └── index.ts           # Server entry point
   ```
 
 ### Database Design (MongoDB)
@@ -235,6 +243,12 @@ A comprehensive mobile-first financial literacy application with gamified learni
 - Node.js 18+ and npm
 - MongoDB Atlas account
 - Google AI API key (optional, for AI features)
+
+### Recent Updates (January 2025)
+- ✅ **Server Optimization**: Removed unused server/db.ts file and cleaned up 5 unused imports
+- ✅ **Logout Enhancement**: Added logout option to profile page with multilingual support
+- ✅ **Code Cleanup**: Optimized server architecture with MongoDB-only data persistence
+- ✅ **Security Improvement**: Enhanced session cleanup and authentication token handling
 
 
 

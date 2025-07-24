@@ -4,6 +4,12 @@
 
 This comprehensive guide will help you convert the Face2Finance web application into a native mobile app using React Native, maintaining the same MongoDB database and Node.js backend while creating a cross-platform mobile experience.
 
+### Recent Web App Updates (January 2025)
+- ✅ **Server Optimization**: Cleaned up server architecture with unused files removed
+- ✅ **Enhanced Security**: Added comprehensive logout functionality across all pages
+- ✅ **Profile Features**: Logout option added to profile page with multilingual support
+- ✅ **Code Quality**: MongoDB-only data persistence confirmed and optimized
+
 ## 🏗️ Mobile App Architecture
 
 ### Technology Stack
@@ -193,6 +199,17 @@ function MainTabs() {
     </Tab.Navigator>
   );
 }
+
+// Enhanced Profile Screen with Logout
+function ProfileStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="ProfileMain" component={ProfileScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="SecuritySettings" component={SecuritySettingsScreen} />
+    </Stack.Navigator>
+  );
+}
 ```
 
 ### Phase 4: Screen Implementation
@@ -223,6 +240,182 @@ export const LandingScreen = ({ navigation }) => {
             Your journey to financial literacy starts here
           </Text>
           <Button
+            size="lg"
+            bg="white"
+            _text={{ color: "primary.500", fontWeight: "bold" }}
+            onPress={() => navigation.navigate('Walkthrough')}
+          >
+            Get Started
+          </Button>
+        </VStack>
+      </Box>
+    </LinearGradient>
+  );
+};
+```
+
+**Profile Screen with Logout**
+```typescript
+// src/screens/profile/ProfileScreen.tsx
+import React from 'react';
+import { Box, VStack, HStack, Text, Button, Avatar, Divider, Pressable } from 'native-base';
+import { useAuth } from '../../hooks/useAuth';
+import { useTranslation } from '../../hooks/useTranslation';
+import {
+  EditIcon,
+  BookOpenIcon,
+  ShieldCheckIcon,
+  HelpCircleIcon,
+  LogOutIcon
+} from 'lucide-react-native';
+
+export const ProfileScreen = ({ navigation }) => {
+  const { user, logout } = useAuth();
+  const { t } = useTranslation();
+
+  const handleLogout = async () => {
+    await logout();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Auth' }]
+    });
+  };
+
+  const menuItems = [
+    {
+      icon: <EditIcon size={20} color="gray.600" />,
+      title: t('edit_profile'),
+      action: () => navigation.navigate('EditProfile')
+    },
+    {
+      icon: <BookOpenIcon size={20} color="gray.600" />,
+      title: t('learning_progress'),
+      action: () => navigation.navigate('LearningProgress')
+    },
+    {
+      icon: <ShieldCheckIcon size={20} color="gray.600" />,
+      title: t('security_settings'),
+      action: () => navigation.navigate('SecuritySettings')
+    },
+    {
+      icon: <HelpCircleIcon size={20} color="gray.600" />,
+      title: t('help_feedback'),
+      action: () => navigation.navigate('HelpFeedback')
+    },
+    {
+      icon: <LogOutIcon size={20} color="red.600" />,
+      title: t('logout'),
+      action: handleLogout,
+      textColor: 'red.600'
+    }
+  ];
+
+  return (
+    <Box flex={1} bg="white">
+      {/* Profile Header */}
+      <Box p={6} borderBottomWidth={1} borderColor="gray.100">
+        <HStack space={4} alignItems="center">
+          <Avatar
+            size="lg"
+            bg="primary.500"
+            _text={{ color: "white", fontWeight: "bold" }}
+          >
+            {user?.username?.charAt(0).toUpperCase()}
+          </Avatar>
+          <VStack flex={1}>
+            <Text fontSize="xl" fontWeight="bold" color="gray.800">
+              Hi, {user?.username}!
+            </Text>
+            <Text fontSize="sm" color="gray.600">
+              {t('welcome_to_face2finance')}
+            </Text>
+          </VStack>
+        </HStack>
+      </Box>
+
+      {/* Menu Items */}
+      <VStack space={0} p={4}>
+        {menuItems.map((item, index) => (
+          <Pressable
+            key={index}
+            onPress={item.action}
+            _pressed={{ bg: "gray.50" }}
+          >
+            <HStack
+              p={4}
+              alignItems="center"
+              space={3}
+              borderBottomWidth={index < menuItems.length - 1 ? 1 : 0}
+              borderColor="gray.100"
+            >
+              {item.icon}
+              <Text
+                flex={1}
+                fontSize="md"
+                color={item.textColor || "gray.800"}
+                fontWeight={item.textColor ? "semibold" : "normal"}
+              >
+                {item.title}
+              </Text>
+            </HStack>
+          </Pressable>
+        ))}
+      </VStack>
+    </Box>
+  );
+};
+```
+
+#### 4.2 Authentication Service
+```typescript
+// src/services/auth.ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiRequest } from './api';
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  phone: string;
+}
+
+export class AuthService {
+  async login(username: string, password: string): Promise<User> {
+    const response = await apiRequest('/api/auth/login', {
+      method: 'POST',
+      body: { username, password }
+    });
+
+    const data = await response.json();
+    
+    if (data.token && data.user) {
+      await AsyncStorage.setItem('auth_token', data.token);
+      await AsyncStorage.setItem('user', JSON.stringify(data.user));
+    }
+
+    return data.user;
+  }
+
+  async logout(): Promise<void> {
+    await AsyncStorage.multiRemove(['auth_token', 'user', 'reset_token']);
+  }
+
+  async getStoredUser(): Promise<User | null> {
+    const userString = await AsyncStorage.getItem('user');
+    return userString ? JSON.parse(userString) : null;
+  }
+
+  async getToken(): Promise<string | null> {
+    return await AsyncStorage.getItem('auth_token');
+  }
+
+  async isAuthenticated(): Promise<boolean> {
+    const token = await this.getToken();
+    return !!token;
+  }
+}
+
+export const authService = new AuthService();
             size="lg"
             bg="white"
             _text={{ color: 'purple.600', fontWeight: 'bold' }}
