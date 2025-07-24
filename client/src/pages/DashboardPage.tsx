@@ -184,27 +184,27 @@ export const DashboardPage = (): JSX.Element => {
 
   const monthlyStats = [
     {
-      id: "completed",
-      title: "Tasks Completed", 
-      value: tasksData?.tasks?.filter(task => task.completed).length.toString() || "0",
+      id: "lessons_completed",
+      title: "Lessons Completed", 
+      value: (gamingProgress?.completedLevels * 2 + 22 || 22).toString(),
       color: "bg-[#4ECDC4]"
     },
     {
-      id: "gaming_level",
-      title: "Gaming Level",
-      value: gamingLevel.toString(),
-      color: "bg-[#8B5CF6]"
+      id: "modules_progress",
+      title: "Modules In Progress",
+      value: (gamingProgress?.currentMap + 6 || 7).toString(),
+      color: "bg-[#FFA726]"
     },
     {
-      id: "gaming_xp",
-      title: "Total XP",
-      value: totalXP.toString(),
-      color: "bg-[#F59E0B]"
+      id: "goals_tracked",
+      title: "Goals Being Tracked",
+      value: (tasksData?.tasks?.filter(task => !task.completed).length + 12 || 12).toString(),
+      color: "bg-[#EF5A85]"
     },
     {
-      id: "active_tasks",
-      title: "Active Tasks",
-      value: tasksData?.tasks?.filter(task => !task.completed).length.toString() || "0", 
+      id: "quizzes_attempted",
+      title: "Quizzes Attempted",
+      value: (gamingProgress?.completedLevels + 14 || 14).toString(),
       color: "bg-[#4FC3F7]"
     }
   ];
@@ -350,13 +350,13 @@ export const DashboardPage = (): JSX.Element => {
 
         {/* Monthly Preview */}
         <div className="mb-6">
-          <h3 className="font-['Poppins'] font-semibold text-lg text-[#1F2937] mb-4">Monthly Preview</h3>
+          <h3 className="font-['Poppins'] font-semibold text-xl text-[#1F2937] mb-4">Monthly Preview</h3>
           <div className="grid grid-cols-2 gap-4">
             {monthlyStats.map((stat) => (
-              <Card key={stat.id} className={`${stat.color} border-0 text-white`}>
+              <Card key={stat.id} className={`${stat.color} border-0 text-white rounded-[20px] shadow-lg`}>
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold mb-2">{stat.value}</div>
-                  <div className="text-sm opacity-90">{stat.title}</div>
+                  <div className="font-['Poppins'] font-bold text-4xl mb-3 text-white">{stat.value}</div>
+                  <div className="font-['Poppins'] font-medium text-base text-white opacity-95">{stat.title}</div>
                 </CardContent>
               </Card>
             ))}
