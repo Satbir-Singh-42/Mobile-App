@@ -21,6 +21,7 @@ import {
   GraduationCapIcon,
   TrashIcon
 } from "lucide-react";
+import { ChatWidget } from "@/components/ui/chat-widget";
 
 export const NotificationsPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
@@ -44,8 +45,8 @@ export const NotificationsPage = (): JSX.Element => {
     const now = new Date();
     
     // Add gaming notification if available
-    if (gamingNotification?.notification?.shouldNotify) {
-      const notification = gamingNotification.notification;
+    if (gamingNotification && (gamingNotification as any).notification?.shouldNotify) {
+      const notification = (gamingNotification as any).notification;
       let icon = InfoIcon;
       let color = "text-blue-600";
       let bgColor = "bg-blue-100";
@@ -238,6 +239,15 @@ export const NotificationsPage = (): JSX.Element => {
           </div>
         )}
       </main>
+
+      {/* AI Chat Widget */}
+      <ChatWidget 
+        userContext={{
+          username: user?.username,
+          hasCompletedQuestionnaire: !!user,
+          currentPage: "notifications"
+        }}
+      />
     </div>
   );
 };

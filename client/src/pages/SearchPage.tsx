@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
 import { ArrowLeftIcon, SearchIcon, TrendingUpIcon, BookOpenIcon, CreditCardIcon, ShieldCheckIcon, HomeIcon, CalendarIcon, GiftIcon, UserIcon } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { ChatWidget } from "@/components/ui/chat-widget";
+import { authAPI } from "@/lib/auth";
 
 export const SearchPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userData = authAPI.getUser();
+    setUser(userData);
+  }, []);
 
   // Dynamic search results based on query and user progress
   const getSearchResults = (query: string) => {
@@ -204,19 +212,28 @@ export const SearchPage = (): JSX.Element => {
             <span className="text-xs text-gray-500">Gaming</span>
           </Button>
           
-          {/* Settings */}
+          {/* Profile */}
           <Button 
             variant="ghost" 
             className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/settings")}
+            onClick={() => setLocation("/profile")}
           >
             <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
               <UserIcon className="w-4 h-4 text-gray-500" />
             </div>
-            <span className="text-xs text-gray-500">Settings</span>
+            <span className="text-xs text-gray-500">Profile</span>
           </Button>
         </div>
       </div>
+
+      {/* AI Chat Widget */}
+      <ChatWidget 
+        userContext={{
+          username: user?.username,
+          hasCompletedQuestionnaire: !!user,
+          currentPage: "search"
+        }}
+      />
     </div>
   );
 };

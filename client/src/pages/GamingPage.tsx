@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryClient, apiRequest } from '@/lib/queryClient';
+import { ChatWidget } from "@/components/ui/chat-widget";
+import { authAPI } from "@/lib/auth";
 
 // SVG Icon Components
 const LockIcon = () => (
@@ -68,6 +70,12 @@ export const GamingPage = (): JSX.Element => {
   const [userLevel, setUserLevel] = useState<number>(1);
   const [bonusPoints, setBonusPoints] = useState<number>(0);
   const [levelUnlocked, setLevelUnlocked] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userData = authAPI.getUser();
+    setUser(userData);
+  }, []);
 
   const achievements = [
     { name: "Budget Master", points: 100, completed: true, icon: "💰" },
@@ -800,14 +808,23 @@ export const GamingPage = (): JSX.Element => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLocation("/settings")}
+            onClick={() => setLocation("/profile")}
             className="flex flex-col items-center gap-1 p-2"
           >
             <UserIcon className="h-5 w-5 text-gray-400" />
-            <span className="text-xs text-gray-400">Settings</span>
+            <span className="text-xs text-gray-400">Profile</span>
           </Button>
         </div>
       )}
+
+      {/* AI Chat Widget */}
+      <ChatWidget 
+        userContext={{
+          username: user?.username,
+          hasCompletedQuestionnaire: !!user,
+          currentPage: "gaming"
+        }}
+      />
     </>
   );
 };

@@ -19,6 +19,8 @@ import {
   UserIcon,
   GiftIcon
 } from "lucide-react";
+import { ChatWidget } from "@/components/ui/chat-widget";
+import { authAPI } from "@/lib/auth";
 
 
 
@@ -29,6 +31,12 @@ export const PlannerPage = (): JSX.Element => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showTaskMenu, setShowTaskMenu] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userData = authAPI.getUser();
+    setUser(userData);
+  }, []);
 
   // Fetch tasks from API
   const { data: tasksData, isLoading } = useQuery({
@@ -531,15 +539,24 @@ export const PlannerPage = (): JSX.Element => {
           <Button 
             variant="ghost" 
             className="flex flex-col items-center gap-1 p-2 min-w-0"
-            onClick={() => setLocation("/settings")}
+            onClick={() => setLocation("/profile")}
           >
             <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
               <UserIcon className="w-4 h-4 text-gray-500" />
             </div>
-            <span className="text-xs text-gray-500">Settings</span>
+            <span className="text-xs text-gray-500">Profile</span>
           </Button>
         </div>
       </div>
+
+      {/* AI Chat Widget */}
+      <ChatWidget 
+        userContext={{
+          username: user?.username,
+          hasCompletedQuestionnaire: !!user,
+          currentPage: "planner"
+        }}
+      />
     </div>
   );
 };
