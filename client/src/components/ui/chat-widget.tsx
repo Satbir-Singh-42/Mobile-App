@@ -78,7 +78,7 @@ export const ChatWidget = ({ userContext }: ChatWidgetProps): JSX.Element => {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       if (!token) {
         throw new Error("Authentication required");
       }
