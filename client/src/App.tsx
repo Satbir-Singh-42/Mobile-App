@@ -13,7 +13,7 @@ import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage";
 import { QuestionnairePage } from "@/pages/QuestionnairePage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { SettingsPage } from "@/pages/SettingsPage";
-import { ProfilePage } from "@/pages/ProfilePage";
+
 import { SearchPage } from "@/pages/SearchPage";
 import { NotificationsPage } from "@/pages/NotificationsPage";
 import { PlannerPage } from "@/pages/PlannerPage";
@@ -37,7 +37,7 @@ function Router() {
       <Route path="/questionnaire" component={QuestionnairePage} />
       <Route path="/dashboard" component={DashboardPage} />
       <Route path="/profile" component={SettingsPage} />
-      <Route path="/settings" component={ProfilePage} />
+      <Route path="/settings" component={SettingsPage} />
       <Route path="/search" component={SearchPage} />
       <Route path="/notifications" component={NotificationsPage} />
       <Route path="/planner" component={PlannerPage} />
