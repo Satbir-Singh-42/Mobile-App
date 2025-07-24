@@ -808,11 +808,11 @@ export const GamingPage = (): JSX.Element => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLocation("/profile")}
+            onClick={() => setLocation("/settings")}
             className="flex flex-col items-center gap-1 p-2"
           >
             <UserIcon className="h-5 w-5 text-gray-400" />
-            <span className="text-xs text-gray-400">Profile</span>
+            <span className="text-xs text-gray-400">Settings</span>
           </Button>
         </div>
       )}
