@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
-import { SearchIcon, BellIcon, UserIcon, ArrowLeftIcon, BookmarkIcon, HomeIcon, GiftIcon, MessageCircleIcon } from "lucide-react";
+import { SearchIcon, HomeIcon, GiftIcon, MessageCircleIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
 
 // Import images using @assets alias for proper bundling
@@ -23,47 +23,13 @@ export const LearningPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header with blue gradient matching Figma exactly */}
-      <div className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] px-6 pt-12 pb-6 relative">
-        {/* Status bar exactly matching Figma */}
-        <div className="flex items-center justify-between text-white text-sm font-semibold mb-6">
-          <span>9:41</span>
-          <div className="flex items-center gap-1">
-            {/* Signal strength bars */}
-            <div className="flex items-end gap-0.5">
-              <div className="w-1 h-1 bg-white rounded-full"></div>
-              <div className="w-1 h-1.5 bg-white rounded-full"></div>
-              <div className="w-1 h-2 bg-white rounded-full"></div>
-              <div className="w-1 h-2.5 bg-white rounded-full"></div>
-            </div>
-            {/* WiFi icon */}
-            <svg className="w-4 h-4 fill-white ml-1" viewBox="0 0 24 24">
-              <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.07 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
-            </svg>
-            {/* Battery */}
-            <div className="w-6 h-3 border border-white rounded-sm ml-1 relative">
-              <div className="w-4/5 h-full bg-white rounded-sm"></div>
-              <div className="absolute -right-0.5 top-0.5 w-0.5 h-2 bg-white rounded-r"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Header content */}
+      {/* Header with clean blue gradient matching dashboard style */}
+      <div className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] px-6 pt-8 pb-6 relative">
+        {/* Header content matching dashboard style */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex-1">
             <h1 className="text-white text-2xl font-bold mb-1 font-['Poppins']">Ready To Learn?</h1>
             <p className="text-white/90 text-sm">Choose your subject</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <BellIcon className="w-6 h-6 text-white" />
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                <span className="text-[10px] text-white font-bold">3</span>
-              </div>
-            </div>
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <UserIcon className="w-5 h-5 text-white" />
-            </div>
           </div>
         </div>
 
@@ -253,7 +219,7 @@ export const LearningPage = () => {
             onClick={() => setLocation("/settings")}
           >
             <div className="w-6 h-6 flex items-center justify-center">
-              <UserIcon className="w-5 h-5 text-gray-500" />
+              <span className="text-lg">👤</span>
             </div>
             <span className="text-xs text-gray-500">Profile</span>
           </Button>

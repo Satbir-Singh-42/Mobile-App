@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // Using simple select with HTML select element for better compatibility
 import { useLocation, useParams } from "wouter";
-import { ArrowLeftIcon, BellIcon, UserIcon, CalculatorIcon, TrendingUpIcon, PiggyBankIcon, CreditCardIcon, HomeIcon, MessageCircleIcon } from "lucide-react";
+import { ArrowLeftIcon, CalculatorIcon, TrendingUpIcon, PiggyBankIcon, CreditCardIcon, HomeIcon, MessageCircleIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
 
 export const IndividualCalculatorPage = () => {
@@ -200,14 +200,7 @@ export const IndividualCalculatorPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 p-2 rounded-full">
-              <BellIcon className="w-5 h-5" />
-            </Button>
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <UserIcon className="w-5 h-5 text-white" />
-            </div>
-          </div>
+
         </div>
       </div>
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
-import { ArrowLeftIcon, BellIcon, HomeIcon, MessageCircleIcon, UserIcon } from "lucide-react";
+import { ArrowLeftIcon, HomeIcon, MessageCircleIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
 
 // Import calculator images from assets
@@ -70,14 +70,7 @@ export const CalculatorsOverviewPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 p-2 rounded-full">
-              <BellIcon className="w-5 h-5" />
-            </Button>
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <UserIcon className="w-5 h-5 text-white" />
-            </div>
-          </div>
+
         </div>
 
         {/* Subtitle matching Figma */}
