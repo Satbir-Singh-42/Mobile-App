@@ -1,7 +1,8 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize Gemini AI with API key
-const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY || "" });
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export interface PersonalizedTip {
   id: string;
@@ -58,29 +59,11 @@ Generate exactly 3 tips in JSON format with this structure:
 
 Always include at least one security tip like "Never share your OTP—even with someone claiming to be from your bank." Focus on practical, actionable advice.`;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-pro",
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "string" },
-                title: { type: "string" },
-                message: { type: "string" },
-                category: { type: "string", enum: ["security", "budgeting", "investment", "savings", "general"] },
-                priority: { type: "string", enum: ["high", "medium", "low"] }
-              },
-              required: ["id", "title", "message", "category", "priority"]
-            }
-          }
-        },
-        contents: prompt,
-      });
+      const response = await model.generateContent(prompt);
 
-      const tips = JSON.parse(response.text || "[]");
+      const result = await response.response;
+      const text = result.text();
+      const tips = JSON.parse(text || "[]");
       return tips;
     } catch (error) {
       console.error("Error generating personalized tips:", error);
@@ -128,15 +111,10 @@ User Context: ${userContext ? JSON.stringify(userContext) : 'No specific context
 
 Respond helpfully to the user's financial question.`;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        config: {
-          systemInstruction: systemPrompt,
-        },
-        contents: message,
-      });
-
-      return response.text || "I apologize, but I'm unable to provide a response right now. Please try asking your question again.";
+      const response = await model.generateContent(`${systemPrompt}\n\nUser: ${message}`);
+      const result = await response.response;
+      
+      return result.text() || "I apologize, but I'm unable to provide a response right now. Please try asking your question again.";
     } catch (error) {
       console.error("Error handling chat message:", error);
       return "I'm experiencing technical difficulties. Please try again later or contact support if the issue persists.";
@@ -148,12 +126,10 @@ Respond helpfully to the user's financial question.`;
     try {
       const prompt = `Generate a brief financial security tip or alert (under 100 words) about current fraud trends or protection methods. Focus on practical advice users can implement immediately.`;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-      });
-
-      return response.text || "Always verify the identity of anyone asking for your financial information by contacting your bank directly through official channels.";
+      const response = await model.generateContent(prompt);
+      const result = await response.response;
+      
+      return result.text() || "Always verify the identity of anyone asking for your financial information by contacting your bank directly through official channels.";
     } catch (error) {
       console.error("Error generating security alert:", error);
       return "Never share your OTP—even with someone claiming to be from your bank.";
@@ -188,23 +164,11 @@ Generate exactly one tip in JSON format:
 
 Focus on actionable advice. Include security tips frequently like OTP safety, fraud prevention, or safe banking practices.`;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-pro",
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "object",
-            properties: {
-              id: { type: "string" },
-              message: { type: "string" }
-            },
-            required: ["id", "message"]
-          }
-        },
-        contents: prompt,
-      });
-
-      const tipData = JSON.parse(response.text || "{}");
+      const response = await model.generateContent(prompt);
+      const result = await response.response;
+      const text = result.text();
+      
+      const tipData = JSON.parse(text || "{}");
       
       return {
         id: tipData.id || `daily_${Date.now()}`,
@@ -242,25 +206,11 @@ Focus on actionable advice. Include security tips frequently like OTP safety, fr
     Make sure the question is practical and relevant to daily financial decisions.`;
 
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-pro",
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "object",
-            properties: {
-              question: { type: "string" },
-              options: { type: "array", items: { type: "string" } },
-              correctAnswer: { type: "string" },
-              explanation: { type: "string" }
-            },
-            required: ["question", "options", "correctAnswer", "explanation"]
-          }
-        },
-        contents: prompt,
-      });
+      const response = await model.generateContent(prompt);
+      const result = await response.response;
+      const text = result.text();
       
-      return JSON.parse(response.text || "{}");
+      return JSON.parse(text || "{}");
     } catch (error) {
       console.error('Error generating quiz question:', error);
       // Return fallback question

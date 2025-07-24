@@ -865,6 +865,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Check AI status
+  app.get("/api/gaming/ai-status", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const { aiQuestionGenerator } = await import('./aiQuestionGenerator');
+      const isWorking = await aiQuestionGenerator.isAPIWorking();
+      
+      res.json({ 
+        aiEnabled: isWorking,
+        message: isWorking ? "AI question generation is available" : "Using stored questions only"
+      });
+    } catch (error: any) {
+      res.json({ 
+        aiEnabled: false,
+        message: "AI question generation is not available"
+      });
+    }
+  });
+
   // Start quiz session
   app.post("/api/gaming/start-quiz", authenticateToken, async (req: Request, res: Response) => {
     try {
@@ -872,13 +890,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { level } = req.body;
       const currentLevel = level || 1;
       
+      console.log(`Starting quiz for user ${userId}, level ${currentLevel}`);
+      
       // Get available questions for this level (4 questions per round)
       const questions = await storage.getAvailableQuestions(userId, currentLevel, 4);
       
       if (questions.length === 0) {
-        return res.status(404).json({ 
-          message: "No questions available for this level", 
-          details: "Please try again later"
+        return res.status(500).json({ 
+          message: "Unable to load questions", 
+          details: "Questions are being generated. Please try again in a moment."
         });
       }
 

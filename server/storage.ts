@@ -462,6 +462,7 @@ export class MongoStorage implements IStorage {
   async getAvailableQuestions(userId: string, level: number, count: number): Promise<QuizQuestionType[]> {
     try {
       const { UserProgress } = await import('./models/UserProgress');
+      const { aiQuestionGenerator } = await import('./aiQuestionGenerator');
       
       // Get user's current map
       const userProgress = await UserProgress.findOne({ userId }) || { currentMap: 1 };
@@ -475,25 +476,104 @@ export class MongoStorage implements IStorage {
       
       const answeredQuestionIds = answeredQuestions.map(aq => aq.questionId.toString());
       
-      // Get available questions for current map (not answered by user)
-      const questions = await QuizQuestion.find({
+      // First try to get stored questions for current map
+      const storedQuestions = await QuizQuestion.find({
         level,
         mapNumber: currentMap,
         isActive: true,
         _id: { $nin: answeredQuestionIds }
       }).limit(count);
 
-      // If we don't have enough unanswered questions for this map, get random ones from the same level/map
-      if (questions.length < count) {
-        const additionalQuestions = await QuizQuestion.aggregate([
-          { $match: { level, mapNumber: currentMap, isActive: true } },
-          { $sample: { size: count - questions.length } }
-        ]);
-        
-        questions.push(...additionalQuestions);
+      // If we have enough stored questions, return them
+      if (storedQuestions.length >= count) {
+        return storedQuestions.map(q => ({
+          _id: q._id.toString(),
+          level: q.level,
+          mapNumber: q.mapNumber || currentMap,
+          question: q.question,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation,
+          category: q.category,
+          difficulty: q.difficulty,
+          isActive: q.isActive,
+          createdAt: q.createdAt
+        }));
       }
 
-      return questions.map(q => ({
+      // Check if AI is working and user needs new questions
+      const isAIWorking = await aiQuestionGenerator.isAPIWorking();
+      
+      if (isAIWorking) {
+        console.log(`Generating AI questions for user ${userId}, level ${level}, map ${currentMap}`);
+        
+        try {
+          // Generate new questions using AI
+          const aiQuestions = await aiQuestionGenerator.generateQuestions(level, currentMap, count);
+          
+          // Store AI-generated questions in database for future use
+          const questionsToStore = aiQuestions.map(q => ({
+            level: q.level,
+            mapNumber: q.mapNumber,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+            category: q.category,
+            difficulty: q.difficulty,
+            isActive: true
+          }));
+          
+          const savedQuestions = await QuizQuestion.insertMany(questionsToStore);
+          
+          return savedQuestions.map(q => ({
+            _id: q._id.toString(),
+            level: q.level,
+            mapNumber: q.mapNumber,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+            category: q.category,
+            difficulty: q.difficulty,
+            isActive: q.isActive,
+            createdAt: q.createdAt
+          }));
+        } catch (aiError) {
+          console.error('AI question generation failed:', aiError);
+          // Fall back to any available questions from different maps/levels
+        }
+      }
+
+      // Fallback: Get any available questions if AI fails or not working
+      const fallbackQuestions = await QuizQuestion.aggregate([
+        { $match: { level, isActive: true, _id: { $nin: answeredQuestionIds } } },
+        { $sample: { size: count } }
+      ]);
+
+      if (fallbackQuestions.length > 0) {
+        return fallbackQuestions.map(q => ({
+          _id: q._id.toString(),
+          level: q.level,
+          mapNumber: q.mapNumber || currentMap,
+          question: q.question,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation,
+          category: q.category,
+          difficulty: q.difficulty,
+          isActive: q.isActive,
+          createdAt: q.createdAt
+        }));
+      }
+
+      // Last resort: Return any questions for the level, even if answered before
+      const lastResortQuestions = await QuizQuestion.aggregate([
+        { $match: { level, isActive: true } },
+        { $sample: { size: count } }
+      ]);
+
+      return lastResortQuestions.map(q => ({
         _id: q._id.toString(),
         level: q.level,
         mapNumber: q.mapNumber || currentMap,
