@@ -202,6 +202,7 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Updated modules in progress to show current map from database
 - ✓ Fixed quizzes attempted to reflect actual completed gaming levels
 - ✓ Added debugging logs to ensure accurate data display from MongoDB
+- ✓ Updated Monthly Preview to show 0 for Lessons Completed and Modules In Progress per user request (January 24, 2025)
 - ✓ Updated Monthly Preview design to match exact Figma specification (January 24, 2025)
 - ✓ Changed Monthly Preview cards to use exact terminology from design
 - ✓ Redesigned cards with larger rounded corners (20px) and improved typography

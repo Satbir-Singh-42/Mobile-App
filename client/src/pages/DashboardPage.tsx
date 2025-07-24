@@ -208,13 +208,13 @@ export const DashboardPage = (): JSX.Element => {
     {
       id: "lessons_completed",
       title: "Lessons Completed", 
-      value: totalLessonsCompleted.toString(),
+      value: "0", // Set to 0 as requested
       color: "bg-[#4ECDC4]"
     },
     {
       id: "modules_progress",
       title: "Modules In Progress",
-      value: currentMap.toString(),
+      value: "0", // Set to 0 as requested
       color: "bg-[#FFA726]"
     },
     {
@@ -226,7 +226,7 @@ export const DashboardPage = (): JSX.Element => {
     {
       id: "quizzes_attempted",
       title: "Quizzes Attempted",
-      value: totalLessonsCompleted.toString(), // Each completed level equals one quiz attempted
+      value: totalLessonsCompleted.toString(), // Keep real data for quizzes
       color: "bg-[#4FC3F7]"
     }
   ];
