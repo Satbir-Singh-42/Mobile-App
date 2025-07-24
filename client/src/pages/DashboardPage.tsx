@@ -252,7 +252,7 @@ export const DashboardPage = (): JSX.Element => {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
             </button>
             <button
-              onClick={() => setLocation("/profile")}
+              onClick={() => setLocation("/edit-profile")}
               className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30 hover:bg-white/30 transition-colors"
             >
               <UserIcon className="w-6 h-6 text-white" />

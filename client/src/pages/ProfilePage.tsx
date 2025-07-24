@@ -89,7 +89,7 @@ export const ProfilePage = (): JSX.Element => {
     },
     {
       icon: <UserIcon className="h-6 w-6 text-[#4157ff]" />,
-      action: () => setLocation("/profile"),
+      action: () => setLocation("/settings"),
       active: true
     }
   ];

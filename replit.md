@@ -271,6 +271,8 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Interchanged Profile and Settings page names - Settings page is now Profile, Profile page is now Settings (January 24, 2025)
 - ✓ Added change password functionality to Edit Profile page with current/new password fields and validation (January 24, 2025)
 - ✓ Removed /profile route and connected dashboard header directly to /edit-profile route for streamlined navigation
+- ✓ Fixed all navigation references from /profile to /settings for consistent routing (January 24, 2025)
+- ✓ Created comprehensive README.md with complete setup instructions for MongoDB integration and deployment
 
 ## Security Considerations
 - Client/server separation implemented
