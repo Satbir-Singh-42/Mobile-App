@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
-import { SearchIcon, BellIcon, UserIcon, ArrowLeftIcon, BookmarkIcon } from "lucide-react";
+import { SearchIcon, BellIcon, UserIcon, ArrowLeftIcon, BookmarkIcon, HomeIcon, GiftIcon, MessageCircleIcon } from "lucide-react";
 import { ChatWidget } from "@/components/ui/chat-widget";
 
-// Use direct paths to the images
+// Use direct paths to the images from Figma design
 const budgetingImg = "/attached_assets/Image-4_1753339425047.png";
 const savingImg = "/attached_assets/10_1753339425044.png";
 const taxImg = "/attached_assets/9_1753339425044.png";
@@ -26,13 +26,13 @@ export const LearningPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header with blue gradient background matching Figma */}
-      <div className="bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] px-6 pt-12 pb-8 relative">
-        {/* Status bar simulation matching Figma exactly */}
-        <div className="flex items-center justify-between text-white text-sm font-medium mb-4">
-          <span className="font-semibold">9:41</span>
+      {/* Header with blue gradient matching Figma exactly */}
+      <div className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] px-6 pt-12 pb-6 relative">
+        {/* Status bar exactly matching Figma */}
+        <div className="flex items-center justify-between text-white text-sm font-semibold mb-6">
+          <span>9:41</span>
           <div className="flex items-center gap-1">
-            {/* Signal bars */}
+            {/* Signal strength bars */}
             <div className="flex items-end gap-0.5">
               <div className="w-1 h-1 bg-white rounded-full"></div>
               <div className="w-1 h-1.5 bg-white rounded-full"></div>
@@ -40,24 +40,27 @@ export const LearningPage = () => {
               <div className="w-1 h-2.5 bg-white rounded-full"></div>
             </div>
             {/* WiFi icon */}
-            <div className="w-3 h-3 ml-1">
-              <svg viewBox="0 0 24 24" className="w-full h-full fill-white">
-                <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.07 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
-              </svg>
-            </div>
+            <svg className="w-4 h-4 fill-white ml-1" viewBox="0 0 24 24">
+              <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.07 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+            </svg>
             {/* Battery */}
-            <div className="w-6 h-3 border border-white rounded-sm ml-1">
+            <div className="w-6 h-3 border border-white rounded-sm ml-1 relative">
               <div className="w-4/5 h-full bg-white rounded-sm"></div>
+              <div className="absolute -right-0.5 top-0.5 w-0.5 h-2 bg-white rounded-r"></div>
             </div>
           </div>
         </div>
 
+        {/* Header content */}
         <div className="flex items-center justify-between mb-6">
-          <div></div>
+          <div className="flex-1">
+            <h1 className="text-white text-2xl font-bold mb-1 font-['Poppins']">Ready To Learn?</h1>
+            <p className="text-white/90 text-sm">Choose your subject</p>
+          </div>
           <div className="flex items-center gap-3">
             <div className="relative">
-              <BellIcon className="w-5 h-5 text-white" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
+              <BellIcon className="w-6 h-6 text-white" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-[10px] text-white font-bold">3</span>
               </div>
             </div>
@@ -67,28 +70,23 @@ export const LearningPage = () => {
           </div>
         </div>
 
-        <div className="mb-6">
-          <h1 className="text-white text-2xl font-bold mb-2 font-['Poppins']">Ready To Learn?</h1>
-          <p className="text-white/80 text-sm">Choose your subject</p>
-        </div>
-
-        {/* Search Bar */}
+        {/* Search Bar exactly matching Figma */}
         <div className="relative">
-          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
             type="text"
             placeholder="Search tutorials, fraud types, or finance tips..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-white border-0 rounded-xl shadow-sm h-12"
+            className="pl-12 bg-white border-0 rounded-xl shadow-sm h-12 text-sm"
           />
         </div>
       </div>
 
-      {/* Content */}
+      {/* Main Content */}
       <div className="bg-white rounded-t-3xl min-h-screen px-6 py-6">
-        {/* Tabs matching Figma exactly */}
-        <div className="flex gap-8 mb-6 border-b border-gray-100">
+        {/* Tabs exactly matching Figma */}
+        <div className="flex gap-8 mb-6">
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -104,11 +102,11 @@ export const LearningPage = () => {
           ))}
         </div>
 
-        {/* Learning Categories Grid - Exact Figma Design */}
+        {/* Learning Categories Grid - Exactly matching Figma layout */}
         <div className="grid grid-cols-2 gap-3 mb-8">
-          {/* Budgeting Card */}
-          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
-            <CardContent className="bg-gradient-to-br from-pink-200 to-pink-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+          {/* Budgeting Card - Pink */}
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden h-32">
+            <CardContent className="bg-gradient-to-br from-pink-200 to-pink-300 p-4 h-full flex flex-col justify-between relative">
               <div className="z-10">
                 <h3 className="text-sm font-semibold text-gray-800 mb-1">Budgeting</h3>
                 <p className="text-xs text-gray-600 leading-tight">Learn to plan your monthly expenses</p>
@@ -116,13 +114,12 @@ export const LearningPage = () => {
               <div className="absolute bottom-2 right-2 w-12 h-12">
                 <img src={budgetingImg} alt="Budgeting" className="w-full h-full object-contain" />
               </div>
-              <div className="absolute -top-4 -right-4 w-12 h-12 bg-white/20 rounded-full"></div>
             </CardContent>
           </Card>
 
-          {/* Saving & Investment Card */}
-          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
-            <CardContent className="bg-gradient-to-br from-green-200 to-green-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+          {/* Saving & Investment Card - Green */}
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden h-32">
+            <CardContent className="bg-gradient-to-br from-green-200 to-green-300 p-4 h-full flex flex-col justify-between relative">
               <div className="z-10">
                 <h3 className="text-sm font-semibold text-gray-800 mb-1">Saving & Investment</h3>
                 <p className="text-xs text-gray-600 leading-tight">Start your savings & beginner investing</p>
@@ -130,27 +127,12 @@ export const LearningPage = () => {
               <div className="absolute bottom-2 right-2 w-12 h-12">
                 <img src={savingImg} alt="Saving & Investment" className="w-full h-full object-contain" />
               </div>
-              <div className="absolute -top-4 -right-4 w-12 h-12 bg-white/20 rounded-full"></div>
             </CardContent>
           </Card>
 
-          {/* Tax Basics Card */}
-          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
-            <CardContent className="bg-gradient-to-br from-orange-200 to-orange-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
-              <div className="z-10">
-                <h3 className="text-sm font-semibold text-gray-800 mb-1">Tax Basics</h3>
-                <p className="text-xs text-gray-600 leading-tight">Know about income tax and returns</p>
-              </div>
-              <div className="absolute bottom-2 right-2 w-12 h-12">
-                <img src={taxImg} alt="Tax Basics" className="w-full h-full object-contain" />
-              </div>
-              <div className="absolute -top-4 -right-4 w-12 h-12 bg-white/20 rounded-full"></div>
-            </CardContent>
-          </Card>
-
-          {/* Fraud Awareness Card */}
-          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
-            <CardContent className="bg-gradient-to-br from-blue-200 to-blue-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+          {/* Fraud Awareness Card - Blue */}
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden h-32">
+            <CardContent className="bg-gradient-to-br from-blue-200 to-blue-300 p-4 h-full flex flex-col justify-between relative">
               <div className="z-10">
                 <h3 className="text-sm font-semibold text-gray-800 mb-1">Fraud Awareness</h3>
                 <p className="text-xs text-gray-600 leading-tight">Learn to avoid scams and keep yourself safe</p>
@@ -158,13 +140,25 @@ export const LearningPage = () => {
               <div className="absolute bottom-2 right-2 w-12 h-12">
                 <img src={fraudImg} alt="Fraud Awareness" className="w-full h-full object-contain" />
               </div>
-              <div className="absolute -top-4 -right-4 w-12 h-12 bg-white/20 rounded-full"></div>
             </CardContent>
           </Card>
 
-          {/* Data Privacy Card */}
-          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
-            <CardContent className="bg-gradient-to-br from-yellow-200 to-yellow-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+          {/* Tax Basics Card - Orange */}
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden h-32">
+            <CardContent className="bg-gradient-to-br from-orange-200 to-orange-300 p-4 h-full flex flex-col justify-between relative">
+              <div className="z-10">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">Tax Basics</h3>
+                <p className="text-xs text-gray-600 leading-tight">Know about income tax and returns</p>
+              </div>
+              <div className="absolute bottom-2 right-2 w-12 h-12">
+                <img src={taxImg} alt="Tax Basics" className="w-full h-full object-contain" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Data Privacy Card - Yellow */}
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden h-32">
+            <CardContent className="bg-gradient-to-br from-yellow-200 to-yellow-300 p-4 h-full flex flex-col justify-between relative">
               <div className="z-10">
                 <h3 className="text-sm font-semibold text-gray-800 mb-1">Data Privacy</h3>
                 <p className="text-xs text-gray-600 leading-tight">Secure your digital financial identity</p>
@@ -172,13 +166,12 @@ export const LearningPage = () => {
               <div className="absolute bottom-2 right-2 w-12 h-12">
                 <img src={privacyImg} alt="Data Privacy" className="w-full h-full object-contain" />
               </div>
-              <div className="absolute -top-4 -right-4 w-12 h-12 bg-white/20 rounded-full"></div>
             </CardContent>
           </Card>
 
-          {/* Financial Calculators Card */}
-          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
-            <CardContent className="bg-gradient-to-br from-purple-200 to-purple-300 p-4 h-36 flex flex-col justify-between relative overflow-hidden">
+          {/* Financial Calculators Card - Purple */}
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden h-32">
+            <CardContent className="bg-gradient-to-br from-purple-200 to-purple-300 p-4 h-full flex flex-col justify-between relative">
               <div className="z-10">
                 <h3 className="text-sm font-semibold text-gray-800 mb-1">Financial Calculators</h3>
                 <p className="text-xs text-gray-600 leading-tight">Free out EMI and Tax calculations</p>
@@ -186,101 +179,12 @@ export const LearningPage = () => {
               <div className="absolute bottom-2 right-2 w-12 h-12">
                 <img src={calculatorImg} alt="Financial Calculators" className="w-full h-full object-contain" />
               </div>
-              <div className="absolute -top-4 -right-4 w-12 h-12 bg-white/20 rounded-full"></div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Financial Calculators Section - Matching exact Figma design */}
-        <div className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl p-6 text-white relative overflow-hidden">
-          {/* Header with back arrow and bookmark */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/20 p-2"
-              >
-                <ArrowLeftIcon className="w-4 h-4" />
-              </Button>
-              <span className="text-sm">Detail Course</span>
-            </div>
-            <BookmarkIcon className="w-5 h-5 text-white" />
-          </div>
-
-          {/* Title */}
-          <h2 className="text-xl font-bold mb-4">Financial Calculators</h2>
-
-          {/* Decorative elements */}
-          <div className="absolute top-4 right-4 w-16 h-16 bg-yellow-400 rounded-full opacity-20"></div>
-          <div className="absolute bottom-4 right-8 w-8 h-8 bg-blue-400 rounded-full opacity-30"></div>
-        </div>
-
-        {/* Calculator Cards */}
-        <div className="mt-6 bg-white rounded-2xl p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">4 Calculators</h3>
-          </div>
-          <p className="text-sm text-gray-600 mb-6">Plan your finances better with easy-to-use tools.</p>
-
-          <div className="space-y-3">
-            {/* SIP Calculator */}
-            <Card className="border border-gray-100 shadow-sm rounded-2xl">
-              <CardContent className="flex items-center p-4 space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center relative overflow-hidden">
-                  <img src={sipImg} alt="SIP Calculator" className="w-10 h-10 object-contain" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-0.5">SIP Calculator</h3>
-                  <p className="text-xs text-gray-500">Estimate investment returns</p>
-                </div>
-                <BookmarkIcon className="w-5 h-5 text-gray-300" />
-              </CardContent>
-            </Card>
-
-            {/* Budget Planner */}
-            <Card className="border border-gray-100 shadow-sm rounded-2xl">
-              <CardContent className="flex items-center p-4 space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center relative overflow-hidden">
-                  <img src={budgetPlannerImg} alt="Budget Planner" className="w-10 h-10 object-contain" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-0.5">Budget Planner</h3>
-                  <p className="text-xs text-gray-500">Split expenses smartly</p>
-                </div>
-                <BookmarkIcon className="w-5 h-5 text-gray-300" />
-              </CardContent>
-            </Card>
-
-            {/* EMI Calculator */}
-            <Card className="border border-gray-100 shadow-sm rounded-2xl">
-              <CardContent className="flex items-center p-4 space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center relative overflow-hidden">
-                  <img src={emiImg} alt="EMI Calculator" className="w-10 h-10 object-contain" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-0.5">EMI Calculator</h3>
-                  <p className="text-xs text-gray-500">Split expenses smartly</p>
-                </div>
-                <BookmarkIcon className="w-5 h-5 text-gray-300" />
-              </CardContent>
-            </Card>
-
-            {/* Tax Estimator */}
-            <Card className="border border-gray-100 shadow-sm rounded-2xl">
-              <CardContent className="flex items-center p-4 space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center relative overflow-hidden">
-                  <img src={calculatorImg} alt="Tax Estimator" className="w-10 h-10 object-contain" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-0.5">Tax Estimator</h3>
-                  <p className="text-xs text-gray-500">Estimate tax payable</p>
-                </div>
-                <BookmarkIcon className="w-5 h-5 text-gray-300" />
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        {/* Additional spacing for content */}
+        <div className="pb-20"></div>
       </div>
 
       {/* AI Chat Widget */}
@@ -294,45 +198,41 @@ export const LearningPage = () => {
         />
       </div>
 
-      {/* Bottom Navigation matching Figma exactly */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+      {/* Bottom Navigation exactly matching Figma */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-lg">
         <div className="flex items-center justify-between px-6 py-3">
-          {/* Dashboard */}
+          {/* Home/Dashboard */}
           <Button 
             variant="ghost" 
             className="flex flex-col items-center gap-1 p-0 min-w-0"
             onClick={() => setLocation("/dashboard")}
           >
             <div className="w-6 h-6 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-              </svg>
+              <HomeIcon className="w-5 h-5 text-gray-500" />
             </div>
-            <span className="text-xs text-gray-500">Dashboard</span>
+            <span className="text-xs text-gray-500">Home</span>
           </Button>
           
-          {/* Learning - Active */}
+          {/* Learning - Active with blue accent matching Figma */}
           <Button variant="ghost" className="flex flex-col items-center gap-1 p-0 min-w-0">
             <div className="w-6 h-6 flex items-center justify-center">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#6366F1]">
                 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
               </svg>
             </div>
-            <span className="text-xs text-[#6366F1] font-medium">Learning</span>
+            <span className="text-xs text-[#6366F1] font-medium">Learn</span>
           </Button>
           
-          {/* Gaming */}
+          {/* Gaming/Circle icon */}
           <Button 
             variant="ghost" 
             className="flex flex-col items-center gap-1 p-0 min-w-0"
             onClick={() => setLocation("/gaming")}
           >
             <div className="w-6 h-6 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
+              <div className="w-5 h-5 border-2 border-gray-500 rounded-full"></div>
             </div>
-            <span className="text-xs text-gray-500">Gaming</span>
+            <span className="text-xs text-gray-500">Game</span>
           </Button>
           
           {/* Chat */}
@@ -341,9 +241,7 @@ export const LearningPage = () => {
             className="flex flex-col items-center gap-1 p-0 min-w-0"
           >
             <div className="w-6 h-6 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
-                <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-              </svg>
+              <MessageCircleIcon className="w-5 h-5 text-gray-500" />
             </div>
             <span className="text-xs text-gray-500">Chat</span>
           </Button>
@@ -355,9 +253,7 @@ export const LearningPage = () => {
             onClick={() => setLocation("/settings")}
           >
             <div className="w-6 h-6 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-500">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
+              <UserIcon className="w-5 h-5 text-gray-500" />
             </div>
             <span className="text-xs text-gray-500">Profile</span>
           </Button>
