@@ -226,7 +226,7 @@ export const DashboardPage = (): JSX.Element => {
     {
       id: "quizzes_attempted",
       title: "Quizzes Attempted",
-      value: totalLessonsCompleted.toString(), // Keep real data for quizzes
+      value: "5", // User has completed 5 quizzes as requested
       color: "bg-[#4FC3F7]"
     }
   ];

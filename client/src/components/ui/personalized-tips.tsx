@@ -97,19 +97,24 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
   };
 
   useEffect(() => {
-    // Clear any cached fallback tips first
-    const today = new Date().toDateString();
-    const cachedTip = localStorage.getItem(`dailyTip_${today}`);
-    if (cachedTip) {
-      const parsed = JSON.parse(cachedTip);
-      if (parsed.message === "Never share your OTP—even with someone claiming to be from your bank.") {
-        localStorage.removeItem(`dailyTip_${today}`);
-        console.log('Cleared fallback OTP tip from cache');
-      }
-    }
+    // Clear cached tips every 12 hours for automatic refresh
+    const now = new Date();
+    const today = now.toDateString();
+    const currentHour = now.getHours();
+    const refreshKey = `${today}_${currentHour >= 12 ? 'PM' : 'AM'}`;
     
-    // Force refresh on component mount to get fresh AI content
-    fetchDailyTip(true);
+    const lastRefreshKey = localStorage.getItem('lastTipRefresh');
+    const cachedTip = localStorage.getItem(`dailyTip_${today}`);
+    
+    // Clear cache if it's been 12+ hours or different half-day
+    if (lastRefreshKey !== refreshKey || (cachedTip && JSON.parse(cachedTip).message === "Never share your OTP—even with someone claiming to be from your bank.")) {
+      localStorage.removeItem(`dailyTip_${today}`);
+      localStorage.setItem('lastTipRefresh', refreshKey);
+      console.log('Auto-refreshing tips for 12-hour cycle:', refreshKey);
+      fetchDailyTip(true);
+    } else {
+      fetchDailyTip(false);
+    }
   }, [userId, userContext]);
 
   if (isLoading) {
@@ -151,7 +156,12 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
             AI Personalized
           </div>
           <button 
-            onClick={() => fetchDailyTip(true)}
+            onClick={() => {
+              const today = new Date().toDateString();
+              localStorage.removeItem(`dailyTip_${today}`);
+              setDailyTip(null);
+              fetchDailyTip(true);
+            }}
             className="text-white/80 hover:text-white text-sm underline"
           >
             Refresh
