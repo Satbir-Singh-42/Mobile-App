@@ -255,6 +255,7 @@ Face2Finance is a mobile-first financial literacy onboarding application with co
 - ✓ Enhanced token storage and retrieval with proper cleaning mechanisms
 - ✓ Updated authentication system to prevent malformed token errors
 - ✓ Removed arrow button from Progress section and made "More" navigate to planner (January 24, 2025)
+- ✓ Removed "More" button from Progress section per user request (January 24, 2025)
 
 ## Security Considerations
 - Client/server separation implemented

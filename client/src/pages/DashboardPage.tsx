@@ -304,16 +304,8 @@ export const DashboardPage = (): JSX.Element => {
 
         {/* Progress Section */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4">
             <h3 className="font-['Poppins'] font-semibold text-lg text-[#1F2937]">Progress</h3>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-[#6366F1] font-['Poppins']"
-              onClick={() => setLocation("/planner")}
-            >
-              More
-            </Button>
           </div>
           
           {/* Real Tasks from Database - Only 2 Most Urgent */}
