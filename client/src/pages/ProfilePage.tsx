@@ -46,27 +46,27 @@ export const ProfilePage = (): JSX.Element => {
     {
       icon: <EditIcon className="h-5 w-5 text-gray-600" />,
       title: t('edit_profile'),
-      action: () => setLocation("/settings")
+      action: () => setLocation("/edit-profile")
     },
     {
       icon: <BookOpenIcon className="h-5 w-5 text-gray-600" />,
       title: t('learning_progress'),
-      action: () => setLocation("/dashboard")
+      action: () => setLocation("/learning-progress")
     },
     {
       icon: <TrendingUpIcon className="h-5 w-5 text-gray-600" />,
       title: t('goals_summary'),
-      action: () => setLocation("/dashboard")
+      action: () => setLocation("/goals-summary")
     },
     {
       icon: <ShieldCheckIcon className="h-5 w-5 text-gray-600" />,
       title: t('security_settings'),
-      action: () => setLocation("/settings")
+      action: () => setLocation("/security-settings")
     },
     {
       icon: <HelpCircleIcon className="h-5 w-5 text-gray-600" />,
       title: t('help_feedback'),
-      action: () => {}
+      action: () => setLocation("/help-feedback")
     }
   ];
 

@@ -19,6 +19,11 @@ import { NotificationsPage } from "@/pages/NotificationsPage";
 import { PlannerPage } from "@/pages/PlannerPage";
 import { GamingPage } from "@/pages/GamingPage";
 import { QuizPage } from "@/pages/QuizPage";
+import { EditProfilePage } from "@/pages/EditProfilePage";
+import { LearningProgressPage } from "@/pages/LearningProgressPage";
+import { GoalsSummaryPage } from "@/pages/GoalsSummaryPage";
+import { SecuritySettingsPage } from "@/pages/SecuritySettingsPage";
+import { HelpFeedbackPage } from "@/pages/HelpFeedbackPage";
 
 function Router() {
   return (
@@ -38,6 +43,13 @@ function Router() {
       <Route path="/planner" component={PlannerPage} />
       <Route path="/gaming" component={GamingPage} />
       <Route path="/quiz" component={QuizPage} />
+      
+      {/* Profile sub-pages */}
+      <Route path="/edit-profile" component={EditProfilePage} />
+      <Route path="/learning-progress" component={LearningProgressPage} />
+      <Route path="/goals-summary" component={GoalsSummaryPage} />
+      <Route path="/security-settings" component={SecuritySettingsPage} />
+      <Route path="/help-feedback" component={HelpFeedbackPage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

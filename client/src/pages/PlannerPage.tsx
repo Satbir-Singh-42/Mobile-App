@@ -339,12 +339,6 @@ export const PlannerPage = (): JSX.Element => {
           <h2 className="text-2xl font-bold text-[#1F2937]">
             {currentDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
           </h2>
-          <Button
-            onClick={() => setShowCreateTask(true)}
-            className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white px-4 py-2 rounded-lg text-sm font-medium"
-          >
-            + Add task
-          </Button>
         </div>
 
         {/* Calendar Grid */}
@@ -468,25 +462,12 @@ export const PlannerPage = (): JSX.Element => {
             <CalendarIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-500 mb-2">No Tasks Scheduled</h3>
             <p className="text-gray-400 mb-4">Create your first task to get started with planning!</p>
-            <Button
-              onClick={() => setShowCreateTask(true)}
-              className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white px-6 py-2 rounded-lg"
-            >
-              Create Task
-            </Button>
+            <p className="text-sm text-gray-400">Tasks will be displayed here when available</p>
           </div>
         )}
       </main>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-24 right-6">
-        <Button
-          onClick={() => setShowCreateTask(true)}
-          className="w-14 h-14 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
-        >
-          <PlusIcon className="w-6 h-6" />
-        </Button>
-      </div>
+
 
       {/* Bottom Navigation - Enhanced */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
