@@ -49,6 +49,9 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
       }
 
       console.log('Fetching new daily tip from API...');
+      console.log('Request details:', { userId, userContext, date: today });
+      console.log('Token available:', !!token);
+      
       const response = await fetch("/api/daily-tip", {
         method: "POST",
         headers: {
@@ -62,9 +65,12 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
         }),
       });
 
+      console.log('Response status:', response.status, response.statusText);
+      
       if (!response.ok) {
-        console.error('Daily tip API error:', response.status, response.statusText);
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('Daily tip API error:', response.status, response.statusText, errorText);
+        throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
       }
 
       const data = await response.json();
@@ -156,15 +162,19 @@ export const PersonalizedTips = ({ userId, userContext }: DailyTipProps): JSX.El
             AI Personalized
           </div>
           <button 
-            onClick={() => {
+            onClick={async () => {
+              console.log('Manual refresh clicked');
               const today = new Date().toDateString();
               localStorage.removeItem(`dailyTip_${today}`);
+              localStorage.removeItem('lastTipRefresh');
               setDailyTip(null);
-              fetchDailyTip(true);
+              setIsLoading(true);
+              await fetchDailyTip(true);
             }}
-            className="text-white/80 hover:text-white text-sm underline"
+            disabled={isLoading}
+            className="text-white/80 hover:text-white text-sm underline disabled:opacity-50"
           >
-            Refresh
+            {isLoading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
       </CardContent>
