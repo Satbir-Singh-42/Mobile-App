@@ -66,7 +66,13 @@ Always include at least one security tip like "Never share your OTP—even with 
       const response = await model.generateContent(prompt);
 
       const result = await response.response;
-      const text = result.text();
+      let text = result.text();
+      
+      // Clean the response by removing markdown code blocks if present
+      if (text) {
+        text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+      }
+      
       const tips = JSON.parse(text || "[]");
       return tips;
     } catch (error) {
@@ -170,7 +176,12 @@ Focus on actionable advice. Include security tips frequently like OTP safety, fr
 
       const response = await model.generateContent(prompt);
       const result = await response.response;
-      const text = result.text();
+      let text = result.text();
+      
+      // Clean the response by removing markdown code blocks if present
+      if (text) {
+        text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+      }
       
       const tipData = JSON.parse(text || "{}");
       
